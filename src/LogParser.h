@@ -18,6 +18,7 @@
 #pragma once
 
 #include <LogEntry.h>
+#include <QFile>
 #include <QString>
 #include <QTextStream>
 
@@ -33,7 +34,7 @@ class LogParser final
 	uint64_t lineNumber = 1;
 	bool ownsFile = false;
 
-	QMap<QString, std::shared_ptr<LogType>> logTypeMap;
+	QMap<QString, std::shared_ptr<LogLevel>> logLevelMap;
 
 public:
 

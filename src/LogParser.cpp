@@ -84,7 +84,7 @@ LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumbe
 	LogEntry e;
 	e.entryNumber = ++entryCount;
 	e.lineNumber = startLineNumber;
-	static QRegularExpression logEntryRegex{ R"(^(?<date>\d\d-\d\d-\d\d(\d\d)?)\s+(?<time>\d\d:\d\d:\d\d(\.\d+)?):?\s+(?<type>\w+)\s*:?\s+((?<subsys>(\[\s*\w+\s*\]|\w+\s?:|UI\s*:\s*\w+\s*))\s*:)?\s*(?<message>.*)\s+(?<where>in\s+~?\w+(\([^\s]*\))*\s+function\s+at\s+line\s+\d+))" };
+	static QRegularExpression logEntryRegex{ R"(^(?<date>\d\d-\d\d-\d\d(\d\d)?)\s+(?<time>\d\d:\d\d:\d\d(\.\d+)?):?\s+(?<level>\w+)\s*:?\s+((?<subsys>(\[\s*\w+\s*\]|\w+\s?:|UI\s*:\s*\w+\s*))\s*:)?\s*(?<message>.*)\s+(?<where>in\s+~?\w+(\([^\s]*\))*\s+function\s+at\s+line\s+\d+))" };
 	const auto match = logEntryRegex.match(message);
 	TryExtractEnvironment(message);
 	if (match.hasMatch())
@@ -95,6 +95,18 @@ LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumbe
 		e.subSystem = match.captured("subsys");
 		e.message = match.captured("message");
 		e.where = match.captured("where");
+
+		// Read log level
+		const QString type = match.captured("level");
+		if (logLevelMap.contains(type))
+		{
+			e.level = logLevelMap[type];
+		}
+		else
+		{
+			e.level = std::make_shared<LogLevel>(type);
+			logLevelMap.insert(type, e.level);
+		}
 
 		//TODO
 		e.timeStamp = QDateTime::fromString("20" + e.date + ' ' + e.time, Qt::ISODateWithMs);

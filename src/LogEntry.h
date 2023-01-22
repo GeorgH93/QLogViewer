@@ -19,6 +19,9 @@
 
 #include <QString>
 #include <QTime>
+#include "LogLevel.h"
+#include <memory>
+#include <chrono>
 
 struct LogEntry
 {
@@ -26,7 +29,7 @@ struct LogEntry
 	uint64_t lineNumber;
 	QDateTime timeStamp;
 	QString date, time;
-	QString type;
+	std::shared_ptr<LogLevel> level;
 	QString thread;
 	QString subSystem;
 	QString where;
@@ -38,6 +41,9 @@ struct LogEntry
 
 	QString entryNumberString;
 	QString lineNumberString;
+
+	std::chrono::microseconds sinceStart, sincePrevious;
+	QString sinceStartString, sincePreviousString;
 
 	void Process()
 	{
