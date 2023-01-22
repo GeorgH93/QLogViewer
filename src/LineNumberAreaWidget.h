@@ -24,7 +24,7 @@ class LineNumberAreaWidget : public EditInfoAreaWidget
     QString lineNumberString;
     QColor fontColor;
     QColor fontBackgroundColor;
-    MetaDescription description;
+    EditInfoAreaWidgetMetaDescription description;
 
 public:
     LineNumberAreaWidget(InfoAreaEnabledPlainTextEdit* editor, int marginLeft = 3, int marginRight = 3, int alignment = Qt::AlignRight)
@@ -66,7 +66,7 @@ public:
         description.alignment = alignment;
     }
 
-    const MetaDescription& GetMetaDescriptionForLine(int lineNr)
+    const EditInfoAreaWidgetMetaDescription& GetMetaDescriptionForLine(int lineNr)
     {
         lineNumberString = QString::number(lineNr + 1);
         return description;

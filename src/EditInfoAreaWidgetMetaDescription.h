@@ -17,23 +17,13 @@
 
 #pragma once
 
-#include <QDebug>
+#include <QString>
+#include <QColor>
 
-class BlockProfiler final
+struct EditInfoAreaWidgetMetaDescription
 {
-	std::chrono::time_point<std::chrono::steady_clock> start;
-	const QString name;
-
-public:
-	BlockProfiler(const QString& name) : name(name)
-	{
-		start = std::chrono::high_resolution_clock::now();
-	}
-
-	~BlockProfiler()
-	{
-		const auto done = std::chrono::high_resolution_clock::now();
-		const auto time = std::chrono::duration_cast<std::chrono::milliseconds>(done - start);
-		qInfo() << name << " took " << time.count() << " ms";
-	}
+    QString& text;
+    QColor& fontColor;
+    QColor& fontBackgroundColor;
+    int alignment = Qt::AlignLeft;
 };

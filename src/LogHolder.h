@@ -43,7 +43,7 @@ public:
 
     ~LogHolder() = default;
 
-    void Load(const std::string filePath)
+    void Load(const std::string& filePath)
     {
         QFile f(QString(filePath.c_str()));
         Load(&f);
@@ -51,18 +51,14 @@ public:
 
     void Load(QFile* file)
     {
-        BlockProfiler parseProfiler("Parse log");
         LogParser parser(file);
-        logEntries = parser.Parse();
-        systemInfo = parser.GetSystemInfo();
+        Load(parser);
     }
 
     void Load(QString* log)
     {
-        BlockProfiler parseProfiler("Parse log");
         LogParser parser(log);
-        logEntries = parser.Parse();
-        systemInfo = parser.GetSystemInfo();
+        Load(parser);
     }
 
     void Filter(const std::function<bool(const LogEntry&)>& filterFunction)
@@ -102,18 +98,28 @@ public:
         return filteredLogEntries[editorLineNumber]->entryNumberString;
     }
 
-    inline uint64_t GetMaxLineNumber()
+    inline uint64_t GetMaxLineNumber() const
     {
         return logEntries.back().entryNumber;
     }
 
-    inline const std::vector<const LogEntry*>& GetFilteredEntries()
+    inline const std::vector<const LogEntry*>& GetFilteredEntries() const
     {
         return filteredLogEntries;
     }
 
-    inline const QString& GetSystemInfo()
+    inline const QString& GetSystemInfo() const
     {
 	    return systemInfo;
+    }
+
+private:
+    void Load(LogParser& parser)
+    {
+        {
+            BlockProfiler parseProfiler("Parse log");
+            logEntries = parser.Parse();
+            systemInfo = parser.GetSystemInfo();
+        }
     }
 };

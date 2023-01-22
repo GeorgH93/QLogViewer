@@ -18,20 +18,12 @@
 #pragma once
 
 #include "InfoAreaEnabledPlainTextEdit.h"
+#include "EditInfoAreaWidgetMetaDescription.h"
 #include <QWidget>
 #include <QString>
 #include <QPlainTextEdit>
 #include <QPainter>
 #include <QTextBlock>
-
-
-struct MetaDescription
-{
-    QString& text;
-    QColor& fontColor;
-    QColor& fontBackgroundColor;
-    int alignment = Qt::AlignLeft;
-};
 
 class EditInfoAreaWidget : public QWidget
 {
@@ -39,7 +31,7 @@ class EditInfoAreaWidget : public QWidget
     std::function<void()> onAreaWidthChanged = [](){};
 
 public:
-    EditInfoAreaWidget(InfoAreaEnabledPlainTextEdit* editor, const std::function<const MetaDescription&(int)>& metaDescriptionProvider, int marginLeft = 3, int marginRight = 3) :
+    EditInfoAreaWidget(InfoAreaEnabledPlainTextEdit* editor, const std::function<const EditInfoAreaWidgetMetaDescription&(int)>& metaDescriptionProvider, int marginLeft = 3, int marginRight = 3) :
         QWidget(editor), editor(editor), areaWidth(0), areaMarginLeft(marginLeft), areaMarginRight(marginRight), metaDescriptionProvider(metaDescriptionProvider)
     {}
 
@@ -85,7 +77,7 @@ protected:
         while (block.isValid() && top <= event->rect().bottom())
         {
             if (block.isVisible() && bottom >= event->rect().top()) {
-                MetaDescription metaDescription = metaDescriptionProvider(blockNumber);
+                EditInfoAreaWidgetMetaDescription metaDescription = metaDescriptionProvider(blockNumber);
                 painter.setPen(metaDescription.fontColor);
                 painter.setBackground(metaDescription.fontBackgroundColor);
                 painter.drawText(0, top, width() - areaMarginRight, fontMetrics().height(), metaDescription.alignment, metaDescription.text);
@@ -100,6 +92,6 @@ protected:
 
 private:
     InfoAreaEnabledPlainTextEdit* editor;
-    std::function<MetaDescription(int)> metaDescriptionProvider;
+    std::function<EditInfoAreaWidgetMetaDescription(int)> metaDescriptionProvider;
     int areaWidth, areaMarginLeft, areaMarginRight;
 };

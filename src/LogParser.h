@@ -19,9 +19,7 @@
 
 #include <LogEntry.h>
 #include <QString>
-#include <QTime>
 #include <QTextStream>
-#include <QRegularExpression>
 
 //TODO improve handling of multi line log messages
 
@@ -35,150 +33,32 @@ class LogParser final
 	uint64_t lineNumber = 1;
 	bool ownsFile = false;
 
+	QMap<QString, std::shared_ptr<LogType>> logTypeMap;
+
 public:
 
 	QString version, device, os;
 
 	LogParser(const std::string& filePath) : inputFile(new QFile(QString(filePath.c_str()))), ownsFile(true)
-	{
-	}
+	{}
 
 	LogParser(QFile* file) : inputFile(file)
-	{
-	}
+	{}
 
 	LogParser(QString* log) : logMessage(log)
 	{}
 
-	~LogParser()
-	{
-		if (ownsFile)
-		{
-			delete inputFile;
-		}
-	}
+	~LogParser();
 
-	QString GetNextMessage(QTextStream& inputStream)
-	{
-		static QRegularExpression newLogEntryStart("^\\d\\d-\\d\\d-\\d\\d");
-		QString message = "";
-		while (message.isEmpty() || (!readAhead.isNull() && !newLogEntryStart.match(readAhead).hasMatch()))
-		{
-			if (message.isEmpty())
-			{
-				message = readAhead;
-			}
-			else if(!readAhead.isEmpty())
-			{
-				message += QChar(0x000023CE); //("⏎");
-				message += readAhead;
-			}
-			readAhead = inputStream.readLine();
-			lineNumber++;
-		}
-		return message;
-	}
+	QString GetNextMessage(QTextStream& inputStream);
 
-	std::vector<LogEntry> Parse()
-	{
-		std::vector<LogEntry> entries;
-		entries.reserve(100000);
-		QTextStream* inputStream;
-		if (inputFile)
-		{
-			if (!inputFile->open(QIODevice::ReadOnly)) { return entries; }
-			inputStream = new QTextStream(inputFile);
-		}
-		else
-		{
-			inputStream = new QTextStream(logMessage);
-		}
-		inputStream->setCodec("UTF-8");
-		while(!inputStream->atEnd())
-		{
-			const uint64_t currentLine = lineNumber;
-			QString msg = GetNextMessage(*inputStream);
-			entries.push_back(ParseMessage(msg, currentLine));
-		}
-		if (inputFile)
-		{
-			inputFile->close();
-		}
-		delete inputStream;
-		return entries;
-	}
+	std::vector<LogEntry> Parse();
 
-	LogEntry ParseMessage(const QString& message, uint64_t startLineNumber)
-	{
-		LogEntry e;
-		e.entryNumber = ++entryCount;
-		e.lineNumber = startLineNumber;
-		static QRegularExpression logEntryRegex{R"(^(?<date>\d\d-\d\d-\d\d(\d\d)?)\s+(?<time>\d\d:\d\d:\d\d(\.\d+)?):?\s+(?<type>\w+)\s*:?\s+((?<subsys>(\[\s*\w+\s*\]|\w+\s?:|UI\s*:\s*\w+\s*))\s*:)?\s*(?<message>.*)\s+(?<where>in\s+~?\w+(\([^\s]*\))*\s+function\s+at\s+line\s+\d+))"};
-		const auto match = logEntryRegex.match(message);
-		TryExtractEnvironment(message);
-		if (match.hasMatch())
-		{
-			e.date = match.captured("date");
-			e.time = match.captured("time");
-			e.type = match.captured("type");
-			e.thread = match.captured("thread");
-			e.subSystem = match.captured("subsys");
-			e.message = match.captured("message");
-			e.where = match.captured("where");
+	LogEntry ParseMessage(const QString& message, uint64_t startLineNumber);
 
-			//TODO
-			e.timeStamp = QDateTime::fromString(e.date + ' ' + e.time, Qt::ISODateWithMs);
-		}
-		else
-		{
-			e.message = message;
-		}
-		e.originalMessage = message;
-		e.Process();
+	void TryExtractEnvironment(const QString& message);
 
-		return e;
-	}
-
-	void TryExtractEnvironment(const QString& message)
-	{
-		static QRegularExpression versionRegex{ R"(Version\s*(:|=)?\s*([vV]?(?<version>\d+(\.\d+)*)(?<tags>(-[^-\s]+)*))\s*(\((?<buildnr>\d+)\))?)" };
-		static QRegularExpression deviceRegex{ R"(Device\s*[:=]\s*(?<device>[\w ,-]+(\([\w ,]+\))?))" };
-		static QRegularExpression osRegex{R"((OS|Operating\s*System)\s*[:=]\s*(?<os>(Windows|Android|iOS) [\d\.]+(\s*,\s*SDK\s*\d+)?))"};
-
-		if (entryCount > 100) return;
-
-		if (version.isEmpty())
-		{
-			const auto match = versionRegex.match(message);
-			if (match.hasMatch())
-			{
-				version = match.captured("version") + match.captured("tags");
-				auto bnr = match.captured("buildnr");
-				if (!bnr.isEmpty())
-				{
-					version += " (" + bnr + ")";
-				}
-			}
-		}
-		if (device.isEmpty())
-		{
-			const auto match = deviceRegex.match(message);
-			if (match.hasMatch())
-			{
-				device = match.captured("device");
-			}
-		}
-		if (os.isEmpty())
-		{
-			const auto match = osRegex.match(message);
-			if (match.hasMatch())
-			{
-				os = match.captured("os");
-			}
-		}
-	}
-
-	QString GetSystemInfo()
+	QString GetSystemInfo() const
 	{
 		QString systemInfo;
 		if (!version.isEmpty())
