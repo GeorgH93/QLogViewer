@@ -67,9 +67,9 @@ std::vector<LogEntry> LogParser::Parse()
 
 	while (!inputStream->atEnd())
 	{
-		const uint64_t currentLine = lineNumber;
+		const uint64_t currentLine = lineNumber == 0 ? 1 : lineNumber;
 		QString msg = GetNextMessage(*inputStream);
-		entries.push_back(ParseMessage(msg, currentLine));
+		if (!msg.isEmpty()) entries.push_back(ParseMessage(msg, currentLine));
 	}
 	if (inputFile)
 	{

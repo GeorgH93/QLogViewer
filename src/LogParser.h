@@ -31,7 +31,7 @@ class LogParser final
 	QString readAhead;
 
 	uint64_t entryCount = 0;
-	uint64_t lineNumber = 1;
+	uint64_t lineNumber = 0;
 	bool ownsFile = false;
 
 	QMap<QString, std::shared_ptr<LogLevel>> logLevelMap;

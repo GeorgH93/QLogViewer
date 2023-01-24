@@ -35,11 +35,50 @@ LogViewerTab::LogViewerTab(QFile* file, QWidget *parent)
 	const auto mainView = ui.mainViewSplitter;
 	setCollapsible(this->indexOf(mainView), false);
 	mainView->setCollapsible(mainView->indexOf(ui.logViewer), false);
+
+	connect(ui.logViewer, &LogViewer::cursorPositionChanged, this, &LogViewerTab::OnSelectedLineChange);
 }
 
 LogViewerTab::~LogViewerTab()
 {
 	ui.logViewer = nullptr;
+}
+
+void LogViewerTab::OnSelectedLineChange() const
+{
+	const auto textCursor = ui.logViewer->textCursor();
+	const auto& entries = logHolder.GetFilteredEntries();
+	const auto lineNumber = entries[std::min(static_cast<size_t>(textCursor.blockNumber()), entries.size() - 1)]->lineNumber;
+	QTextCursor cursor = ui.fullLogView->textCursor();
+	cursor.movePosition(QTextCursor::Start);
+	if (lineNumber > 0)
+	{
+		cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, lineNumber - 1);
+	}
+	ui.fullLogView->setTextCursor(cursor);
+	ui.fullLogView->centerCursor();
+
+	if (true) //TODO check if highlighting is enabled
+	{
+		HighlightCurrentLineInFullView();
+	}
+}
+
+void LogViewerTab::HighlightCurrentLineInFullView() const
+{
+	QList<QTextEdit::ExtraSelection> extraSelections;
+	
+	QTextEdit::ExtraSelection selection;
+
+	const QColor lineColor = QColor(Qt::yellow).lighter(160);
+
+	selection.format.setBackground(lineColor);
+	selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+	selection.cursor = ui.fullLogView->textCursor();
+	selection.cursor.clearSelection();
+	extraSelections.append(selection);
+
+	ui.fullLogView->setExtraSelections(extraSelections);
 }
 
 void LogViewerTab::Load(QFile* file)
@@ -67,3 +106,4 @@ void LogViewerTab::Load(QFile* file)
 	ui.logViewer->SetLogHolder(&logHolder);
 	
 }
+
