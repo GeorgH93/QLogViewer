@@ -43,12 +43,12 @@ public:
 	inline const QString& GetSystemInfo() const { return systemInfo; }
 
 private slots:
-	void OnSelectedLineChange();
+	void OnSelectedLineChange() const;
 
 private:
 	void Load(QFile* file);
 
-	void HighlightCurrentLineInFullView();
+	void HighlightCurrentLineInFullView() const;
 
 	Ui::LogViewerTabClass ui;
 

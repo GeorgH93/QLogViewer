@@ -16,7 +16,7 @@
  */
 
 #include "MainWindow.h"
-#include "ui_mainwindow.h"
+#include "ui_MainWindow.h"
 #include "LogViewerTab.h"
 #include <QFileDialog>
 #include <QFile>

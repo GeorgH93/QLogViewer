@@ -30,7 +30,7 @@ QString LogParser::GetNextMessage(QTextStream& inputStream)
 {
 	static QRegularExpression newLogEntryStart("^\\d\\d-\\d\\d-\\d\\d");
 	QString message = "";
-	while (message.isEmpty() || (!readAhead.isNull() && !newLogEntryStart.match(readAhead).hasMatch()))
+	while ((message.isEmpty() || (!readAhead.isNull() && !newLogEntryStart.match(readAhead).hasMatch())) && !inputStream.atEnd())
 	{
 		if (message.isEmpty())
 		{
