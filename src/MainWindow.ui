@@ -24,16 +24,7 @@
     <property name="spacing">
      <number>0</number>
     </property>
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
+    <property name="margin">
      <number>0</number>
     </property>
     <item>
@@ -86,16 +77,7 @@
         <property name="spacing">
          <number>0</number>
         </property>
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item>
@@ -136,7 +118,7 @@
      <x>0</x>
      <y>0</y>
      <width>878</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -152,17 +134,8 @@
      <string>Edit</string>
     </property>
    </widget>
-   <widget class="QMenu" name="menuFormat">
-    <property name="title">
-     <string>Format</string>
-    </property>
-    <addaction name="actionBold"/>
-    <addaction name="actionSubscript"/>
-    <addaction name="actionSuperscript"/>
-   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
-   <addaction name="menuFormat"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionNew_File">
@@ -182,7 +155,7 @@
   </action>
   <action name="actionOpen">
    <property name="icon">
-    <iconset>
+    <iconset theme="document-open">
      <normaloff>:/resources/data/icons/open.png</normaloff>:/resources/data/icons/open.png</iconset>
    </property>
    <property name="text">
@@ -290,7 +263,7 @@
   </action>
   <action name="actionQuit">
    <property name="icon">
-    <iconset>
+    <iconset theme="application-exit">
      <normaloff>:/resources/data/icons/remove.png</normaloff>:/resources/data/icons/remove.png</iconset>
    </property>
    <property name="text">
