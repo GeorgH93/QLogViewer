@@ -353,6 +353,7 @@ MigrationBackup/
 
 # ignore build folder
 build/
+cmake-build-*
 
 # xmake vs config
 vsxmake20[0-9][0-9]/
