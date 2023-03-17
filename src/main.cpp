@@ -24,14 +24,14 @@ int main(int argv, char **args)
 	QApplication app(argv, args);
 
 	QStringList files;
-    for(int i = 1; i < argv; i++)
-    {
-        files.append(args[i]);
-    }
+	for(int i = 1; i < argv; i++)
+	{
+		files.append(args[i]);
+	}
 
-    MainWindow w;
-    w.show();
+	MainWindow w;
+	w.show();
 
-    return app.exec();
+	return app.exec();
 }
 

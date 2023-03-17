@@ -18,6 +18,7 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "LogViewerTab.h"
+#include "SettingsWindow.h"
 #include <QFileDialog>
 #include <QFile>
 #include <QCoreApplication>
@@ -26,6 +27,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+	, settingsWindow(new SettingsWindow(this))
 {
     ui->setupUi(this);
     ui->stackedWidget->setCurrentIndex(0);
@@ -117,13 +119,22 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
 
 void MainWindow::on_actionOpen_triggered()
 {
-    const QStringList files = QFileDialog::getOpenFileNames(this, tr("Open File"), "./");
+    const QStringList files = QFileDialog::getOpenFileNames(this, tr("Open File"), "./", "Log files (*.log);;Text files (*.txt);;Everything (*)");
     Open(files);
 }
 
-void MainWindow::on_actionQuit_triggered()
+void MainWindow::on_actionSettings_triggered()
+{
+	if (settingsWindow->isHidden())
+	{
+		settingsWindow->show();
+	}
+}
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "readability-convert-member-functions-to-static"
+[[maybe_unused]] void MainWindow::on_actionQuit_triggered()
 {
     QCoreApplication::quit();
 }
-
-
+#pragma clang diagnostic pop

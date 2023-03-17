@@ -125,8 +125,17 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuRecent">
+     <property name="title">
+      <string>Recent</string>
+     </property>
+     <addaction name="separator"/>
+     <addaction name="actionClear_List"/>
+    </widget>
     <addaction name="actionOpen"/>
+    <addaction name="menuRecent"/>
     <addaction name="separator"/>
+    <addaction name="actionSettings"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -307,6 +316,22 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+=</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="icon">
+    <iconset theme="preferences-desktop"/>
+   </property>
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionClear_List">
+   <property name="icon">
+    <iconset theme="edit-clear"/>
+   </property>
+   <property name="text">
+    <string>Clear List</string>
    </property>
   </action>
  </widget>

@@ -21,6 +21,7 @@
 #include <QList>
 
 class LogViewerTab;
+class SettingsWindow;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -31,7 +32,7 @@ class MainWindow final : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent = nullptr);
 
     ~MainWindow() override;
 
@@ -48,7 +49,9 @@ private slots:
 
     void on_actionOpen_triggered();
 
-    void on_actionQuit_triggered();
+	void on_actionSettings_triggered();
+
+	[[maybe_unused]] void on_actionQuit_triggered();
 
     void dropEvent(QDropEvent* event) override;
 
@@ -57,4 +60,5 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QList<LogViewerTab*> logTabs;
+	SettingsWindow *settingsWindow;
 };
