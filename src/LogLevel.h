@@ -41,7 +41,7 @@ public:
 		metaDescription.alignment = old.GetAlignment();
 	}
 
-	explicit LogLevel(LogLevel&& old) noexcept
+	LogLevel(LogLevel&& old) noexcept
 		: levelName(std::move(old.levelName)), fontColor(std::move(old.fontColor)), backgroundColor(std::move(old.backgroundColor))
 	{
 		metaDescription.alignment = old.GetAlignment();
@@ -59,13 +59,13 @@ public:
 
 	void SetAlignment(int align) { metaDescription.alignment = align; }
 
-	const QString& GetLevelName() const { return levelName; }
+	[[nodiscard]] const QString& GetLevelName() const { return levelName; }
 
-	const QColor& GetFontColor() const { return fontColor; }
+	[[nodiscard]] const QColor& GetFontColor() const { return fontColor; }
 
-	const QColor& GetBackgroundColor() const { return backgroundColor; }
+	[[nodiscard]] const QColor& GetBackgroundColor() const { return backgroundColor; }
 
-	int GetAlignment() const { return metaDescription.alignment; }
+	[[nodiscard]] int GetAlignment() const { return metaDescription.alignment; }
 	
 	LogLevel& operator =(const LogLevel& right)
 	{

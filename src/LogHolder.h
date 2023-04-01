@@ -24,6 +24,8 @@
 
 class LogHolder final
 {
+    static constexpr QStringView EMPTY_MESSAGE = u"";
+
     std::vector<LogEntry> logEntries;
     std::vector<const LogEntry*> filteredLogEntries;
     QString systemInfo;
@@ -36,7 +38,7 @@ public:
         Load(filePath);
     }
 
-    LogHolder(QFile* file)
+    explicit LogHolder(QFile* file)
     {
         Load(file);
     }
@@ -78,37 +80,37 @@ public:
         filteredLogEntries = std::move(newlyFilteredLog);
     }
 
-    size_t GetFilteredLineCount() const
+    [[nodiscard]] size_t GetFilteredLineCount() const
     {
         //TODO handle multi line messages
         return filteredLogEntries.size();
     }
 
-    const QString& GetFilteredLineNumber(int editorLineNumber) const
+    [[nodiscard]] QStringView GetFilteredLineNumber(int editorLineNumber) const
     {
         //TODO handle multi line messages
-        if (editorLineNumber >= filteredLogEntries.size()) return "";
+        if (editorLineNumber >= filteredLogEntries.size()) return EMPTY_MESSAGE;
         return filteredLogEntries[editorLineNumber]->lineNumberString;
     }
 
-    const QString& GetFilteredEntryNumber(int editorLineNumber) const
+    [[nodiscard]] QStringView GetFilteredEntryNumber(int editorLineNumber) const
     {
         //TODO handle multi line messages
-        if (editorLineNumber >= filteredLogEntries.size()) return "";
+        if (editorLineNumber >= filteredLogEntries.size()) return EMPTY_MESSAGE;
         return filteredLogEntries[editorLineNumber]->entryNumberString;
     }
 
-    inline uint64_t GetMaxLineNumber() const
+    [[nodiscard]] inline uint64_t GetMaxLineNumber() const
     {
         return logEntries.back().entryNumber;
     }
 
-    inline const std::vector<const LogEntry*>& GetFilteredEntries() const
+    [[nodiscard]] inline const std::vector<const LogEntry*>& GetFilteredEntries() const
     {
         return filteredLogEntries;
     }
 
-    inline const QString& GetSystemInfo() const
+    [[nodiscard]] inline const QString& GetSystemInfo() const
     {
 	    return systemInfo;
     }
@@ -120,6 +122,21 @@ private:
             BlockProfiler parseProfiler("Parse log");
             logEntries = parser.Parse();
             systemInfo = parser.GetSystemInfo();
+        }
+        PreprocessLogEntries();
+    }
+
+    void PreprocessLogEntries()
+    {
+        if (logEntries.empty()) return;
+        const LogEntry* first = &logEntries[0];
+        const LogEntry* previous = &logEntries[0];
+        LogEntry* current = nullptr;
+        for (auto& logEntry : logEntries)
+        {
+            current = &logEntry;
+            logEntry.Process();
+            previous = current;
         }
     }
 };
