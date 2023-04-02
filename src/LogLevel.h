@@ -73,6 +73,7 @@ public:
 		fontColor = right.fontColor;
 		backgroundColor = right.backgroundColor;
 		metaDescription.alignment = right.metaDescription.alignment;
+		return *this;
 	}
 
 	LogLevel& operator =(LogLevel&& right) noexcept
@@ -81,5 +82,6 @@ public:
 		fontColor = std::move(right.fontColor);
 		backgroundColor = std::move(right.backgroundColor);
 		metaDescription.alignment = right.metaDescription.alignment;
+		return *this;
 	}
 };
