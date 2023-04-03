@@ -22,9 +22,11 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <yaml-cpp/yaml.h>
+#include <filesystem>
 
 AppConfig::AppConfig()
 {
+	filePath = (GetAppDataLocation() + "config.yml").toStdString();
 	Load();
 }
 
@@ -34,7 +36,16 @@ void AppConfig::Load()
 	QDir().mkpath(appDataDir); // Ensure app config dir exists
 	QDir().mkpath(GetProfilesLocation()); // Ensure app config dir exists
 
+	LoadConfig();
+
 	LoadProfiles();
+}
+
+void AppConfig::LoadConfig()
+{
+	if (!std::filesystem::exists(filePath)) return;
+	YAML::Node config = YAML::LoadFile(filePath);
+	copyOnWrite = config["CopyOnWrite"].as<bool>(false);
 }
 
 void AppConfig::LoadProfiles()
@@ -71,6 +82,20 @@ void AppConfig::Save()
 
 }
 
+void AppConfig::HandleBackupFiles() const
+{
+	if (!UseCopyOnWriteEnabled()) return;
+	std::string backupPath = filePath + ".back";
+	if (std::filesystem::exists(backupPath))
+	{ // delete old backup file
+		std::filesystem::remove(backupPath);
+	}
+	if (std::filesystem::exists(filePath))
+	{ // move file to backup file
+		std::filesystem::rename(filePath, backupPath);
+	}
+}
+
 std::shared_ptr<LogProfile> AppConfig::FindProfile(const QString& logLine) const
 {
 	for(const auto& profile : profiles)
@@ -86,5 +111,11 @@ std::shared_ptr<LogProfile> AppConfig::FindProfile(const QString& logLine) const
 void AppConfig::AddProfile(const std::shared_ptr<LogProfile>& profile)
 {
 	profiles.push_back(profile);
+}
+
+void AppConfig::SetCopyOnWrite(bool enableCOW)
+{
+	copyOnWrite = enableCOW;
+	Save();
 }
 

@@ -47,12 +47,24 @@ public:
 
 	[[nodiscard]] const std::vector<std::shared_ptr<LogProfile>>& GetProfiles() const { return profiles; }
 
+	bool UseCopyOnWriteEnabled() const { return copyOnWrite; }
+
+	void SetCopyOnWrite(bool enableCOW);
+
 private:
 	void Load();
 
+	void LoadConfig();
+
 	void LoadProfiles();
 
+	void HandleBackupFiles() const;
+
+	std::string filePath;
+
 	std::vector<std::shared_ptr<LogProfile>> profiles;
+
+	bool copyOnWrite = false;
 
 public:
 	static const QString& GetAppDataLocation();

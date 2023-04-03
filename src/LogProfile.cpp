@@ -112,7 +112,7 @@ void LogProfile::Load()
 {
 	YAML::Node config = YAML::LoadFile(filePath);
 	profileName = config["Name"].as<QString>();
-	priority = config["Priority"].as<int>();
+	priority = config["Priority"].as<int>(1);
 	detectionRegex = QRegularExpression(config["DetectionRegex"].as<QString>());
 	detectionLinesToCheck = config["DetectionRange"].as<int>(10);
 	filterPresets = config["FilterPresets"].as<decltype(filterPresets)>(decltype(filterPresets)());
@@ -121,8 +121,8 @@ void LogProfile::Load()
 
 void LogProfile::Save() const
 {
-	if (readOnly) return;
-	if (filePath.empty()) return;
+	if (readOnly || filePath.empty()) return;
+	HandleBackupFiles();
 	std::ofstream stream;
 	stream.open(filePath, std::ios::out);
 	YAML::Emitter configWriter(stream);
@@ -139,4 +139,20 @@ void LogProfile::Save() const
 	configWriter << config;
 
 	stream.close();
+}
+
+void LogProfile::HandleBackupFiles() const
+{
+	std::string backupPath = filePath + ".back";
+	if (std::filesystem::exists(backupPath))
+	{ // delete old backup file
+		std::filesystem::remove(backupPath);
+	}
+	if (AppConfig::GetInstance()->UseCopyOnWriteEnabled())
+	{
+		if (std::filesystem::exists(filePath))
+		{ // move file to backup file
+			std::filesystem::rename(filePath, backupPath);
+		}
+	}
 }

@@ -86,4 +86,6 @@ public:
 
 private:
 	void Load();
+
+	void HandleBackupFiles() const;
 };

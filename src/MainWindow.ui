@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>notePad</string>
+   <string>QLogViewer</string>
   </property>
   <property name="unifiedTitleAndToolBarOnMac">
    <bool>true</bool>
