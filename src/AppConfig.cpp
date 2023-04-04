@@ -23,6 +23,7 @@
 #include <QDir>
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
+#include <fstream>
 
 AppConfig::AppConfig()
 {
@@ -46,6 +47,20 @@ void AppConfig::LoadConfig()
 	if (!std::filesystem::exists(filePath)) return;
 	YAML::Node config = YAML::LoadFile(filePath);
 	copyOnWrite = config["CopyOnWrite"].as<bool>(false);
+}
+
+void AppConfig::Save()
+{
+	HandleBackupFiles();
+	std::ofstream stream;
+	stream.open(filePath, std::ios::out);
+	YAML::Emitter configWriter(stream);
+
+	YAML::Node config;
+	config["CopyOnWrite"] = copyOnWrite;
+
+	configWriter << config;
+	stream.close();
 }
 
 void AppConfig::LoadProfiles()
@@ -75,11 +90,6 @@ AppConfig* AppConfig::GetInstance()
 {
 	static AppConfig config;
 	return &config;
-}
-
-void AppConfig::Save()
-{
-
 }
 
 void AppConfig::HandleBackupFiles() const
@@ -115,6 +125,7 @@ void AppConfig::AddProfile(const std::shared_ptr<LogProfile>& profile)
 
 void AppConfig::SetCopyOnWrite(bool enableCOW)
 {
+	if (copyOnWrite == enableCOW) return;
 	copyOnWrite = enableCOW;
 	Save();
 }

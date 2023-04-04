@@ -47,7 +47,7 @@ public:
 
 	[[nodiscard]] const std::vector<std::shared_ptr<LogProfile>>& GetProfiles() const { return profiles; }
 
-	bool UseCopyOnWriteEnabled() const { return copyOnWrite; }
+	[[nodiscard]] bool UseCopyOnWriteEnabled() const { return copyOnWrite; }
 
 	void SetCopyOnWrite(bool enableCOW);
 
@@ -65,6 +65,8 @@ private:
 	std::vector<std::shared_ptr<LogProfile>> profiles;
 
 	bool copyOnWrite = false;
+
+	TextViewConfig mainLogViewConfig, fullLogViewConfig;
 
 public:
 	static const QString& GetAppDataLocation();
