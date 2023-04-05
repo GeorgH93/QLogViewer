@@ -76,7 +76,13 @@ void AppConfig::LoadProfiles()
 
 const QString& AppConfig::GetAppDataLocation()
 {
-	static const QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/QLogViewer/";
+	static const QString appDataPath =
+#ifdef WIN32
+			QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/";
+#else
+			QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/";
+#endif
+
 	return appDataPath;
 }
 
