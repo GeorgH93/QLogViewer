@@ -19,10 +19,12 @@
 #include "ui_MainWindow.h"
 #include "LogViewerTab.h"
 #include "SettingsWindow.h"
+#include "RecentFiles.h"
 #include <QFileDialog>
 #include <QFile>
 #include <QCoreApplication>
 #include <QMimeData>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -31,8 +33,16 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->stackedWidget->setCurrentIndex(0);
-    ui->tabWidget->clear();
     setAcceptDrops(true);
+
+	connect(ui->tabWidget, &QTabWidget::currentChanged, this, &MainWindow::OnTabCurrentChanged);
+	connect(ui->tabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::OnTabCloseRequested);
+	connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::OnActionOpenTriggered);
+	connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::OnActionSettingsTriggered);
+	connect(ui->actionClearList, &QAction::triggered, this, &MainWindow::OnActionClearRecent);
+	connect(ui->actionQuit, &QAction::triggered, &QCoreApplication::quit);
+
+	RecentFiles::GetInstance().Link(ui->menuRecent, this, ui->menuRecent->actions()[0], [this](const QString& file) { Open(file); });
 }
 
 MainWindow::~MainWindow()
@@ -65,7 +75,6 @@ void MainWindow::dropEvent(QDropEvent* event)
         
         Open(pathList);
     }
-
 }
 
 
@@ -78,10 +87,18 @@ void MainWindow::Open(const QStringList& files)
 }
 
 void MainWindow::Open(const QString& filePath)
-{ //TODO run async
+{
     QFile file(filePath);
-    LogViewerTab* viewerTab = new LogViewerTab(&file, this);
-    AddTab(viewerTab);
+	if (file.exists())
+	{ //TODO run async
+		LogViewerTab* viewerTab = new LogViewerTab(&file, this);
+		AddTab(viewerTab);
+		RecentFiles::GetInstance().Add(filePath);
+	}
+	else
+	{
+		QMessageBox::warning(this, tr("File not found"), tr("Cannot load file:\n%1").arg(filePath));
+	}
 }
 
 void MainWindow::AddTab(LogViewerTab* viewerTab)
@@ -95,7 +112,7 @@ void MainWindow::AddTab(LogViewerTab* viewerTab)
     ui->tabWidget->setTabIcon(index, viewerTab->GetTabIcon());
 }
 
-void MainWindow::on_tabWidget_currentChanged(int index)
+void MainWindow::OnTabCurrentChanged(int index)
 {
     if (logTabs.isEmpty() || index < 0 || index >= logTabs.count())
     {
@@ -107,7 +124,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     setWindowTitle("QLogViewer - " + ui->tabWidget->tabText(index));
 }
 
-void MainWindow::on_tabWidget_tabCloseRequested(int index)
+void MainWindow::OnTabCloseRequested(int index)
 {
     logTabs.removeAt(index);
     ui->tabWidget->removeTab(index);
@@ -117,13 +134,13 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
     }
 }
 
-void MainWindow::on_actionOpen_triggered()
+void MainWindow::OnActionOpenTriggered()
 {
     const QStringList files = QFileDialog::getOpenFileNames(this, tr("Open File"), "./", "Log files (*.log);;Text files (*.txt);;Everything (*)");
     Open(files);
 }
 
-void MainWindow::on_actionSettings_triggered()
+void MainWindow::OnActionSettingsTriggered()
 {
 	if (settingsWindow->isHidden())
 	{
@@ -131,10 +148,8 @@ void MainWindow::on_actionSettings_triggered()
 	}
 }
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "readability-convert-member-functions-to-static"
-[[maybe_unused]] void MainWindow::on_actionQuit_triggered()
+void MainWindow::OnActionClearRecent()
 {
-    QCoreApplication::quit();
+	RecentFiles::GetInstance().ClearList();
 }
-#pragma clang diagnostic pop
+

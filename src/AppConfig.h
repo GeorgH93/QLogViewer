@@ -43,13 +43,19 @@ public:
 
 	void AddProfile(const std::shared_ptr<LogProfile>& profile);
 
-	[[nodiscard]] std::shared_ptr<LogProfile> FindProfile(const QString& logLine) const;
+	[[nodiscard]] std::shared_ptr<LogProfile> FindProfile(const QString& logLine, int lineNumber) const;
 
 	[[nodiscard]] const std::vector<std::shared_ptr<LogProfile>>& GetProfiles() const { return profiles; }
+
+	[[nodiscard]] std::shared_ptr<LogProfile> GetDefaultProfile() const;
 
 	[[nodiscard]] bool UseCopyOnWriteEnabled() const { return copyOnWrite; }
 
 	void SetCopyOnWrite(bool enableCOW);
+
+	[[nodiscard]] uint32_t GetFilesToKeepInHistory() const { return filesToKeepInHistory; }
+
+	void SetFilesToKeepInHistory(uint32_t count);
 
 private:
 	void Load();
@@ -67,6 +73,8 @@ private:
 	bool copyOnWrite = false;
 
 	TextViewConfig mainLogViewConfig, fullLogViewConfig;
+
+	uint32_t filesToKeepInHistory;
 
 public:
 	static const QString& GetAppDataLocation();

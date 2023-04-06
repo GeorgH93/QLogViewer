@@ -24,7 +24,16 @@
     <property name="spacing">
      <number>0</number>
     </property>
-    <property name="margin">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
      <number>0</number>
     </property>
     <item>
@@ -36,7 +45,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page">
        <property name="sizePolicy">
@@ -77,7 +86,16 @@
         <property name="spacing">
          <number>0</number>
         </property>
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
@@ -86,7 +104,7 @@
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>-1</number>
           </property>
           <property name="tabsClosable">
            <bool>true</bool>
@@ -94,16 +112,6 @@
           <property name="movable">
            <bool>true</bool>
           </property>
-          <widget class="QWidget" name="tab">
-           <attribute name="title">
-            <string>Tab 1</string>
-           </attribute>
-          </widget>
-          <widget class="QWidget" name="tab_2">
-           <attribute name="title">
-            <string>Tab 2</string>
-           </attribute>
-          </widget>
          </widget>
         </item>
        </layout>
@@ -118,7 +126,7 @@
      <x>0</x>
      <y>0</y>
      <width>878</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -130,7 +138,7 @@
       <string>Recent</string>
      </property>
      <addaction name="separator"/>
-     <addaction name="actionClear_List"/>
+     <addaction name="actionClearList"/>
     </widget>
     <addaction name="actionOpen"/>
     <addaction name="menuRecent"/>
@@ -143,25 +151,18 @@
      <string>Edit</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionWiki"/>
+    <addaction name="actionAbout"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionNew_File">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset>
-     <normaloff>:/resources/data/icons/New.png</normaloff>:/resources/data/icons/New.png</iconset>
-   </property>
-   <property name="text">
-    <string>New File</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+N</string>
-   </property>
-  </action>
   <action name="actionOpen">
    <property name="icon">
     <iconset theme="document-open">
@@ -172,102 +173,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
-   </property>
-  </action>
-  <action name="actionSave">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/resources/data/icons/save.png</normaloff>:/resources/data/icons/save.png</iconset>
-   </property>
-   <property name="text">
-    <string>Save</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+S</string>
-   </property>
-  </action>
-  <action name="actionSave_As">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/resources/data/icons/save-as.png</normaloff>:/resources/data/icons/save-as.png</iconset>
-   </property>
-   <property name="text">
-    <string>Save As...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
-   </property>
-  </action>
-  <action name="actionUndo">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/resources/data/icons/undo.png</normaloff>:/resources/data/icons/undo.png</iconset>
-   </property>
-   <property name="text">
-    <string>Undo</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Z</string>
-   </property>
-  </action>
-  <action name="actionRedo">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/resources/data/icons/redo.png</normaloff>:/resources/data/icons/redo.png</iconset>
-   </property>
-   <property name="text">
-    <string>Redo</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+Z</string>
-   </property>
-  </action>
-  <action name="actionCut">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/resources/data/icons/cut.png</normaloff>:/resources/data/icons/cut.png</iconset>
-   </property>
-   <property name="text">
-    <string>Cut</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+X</string>
-   </property>
-  </action>
-  <action name="actionCopy">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/resources/data/icons/copy.png</normaloff>:/resources/data/icons/copy.png</iconset>
-   </property>
-   <property name="text">
-    <string>Copy</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+C</string>
-   </property>
-  </action>
-  <action name="actionPaste">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/resources/data/icons/paste.png</normaloff>:/resources/data/icons/paste.png</iconset>
-   </property>
-   <property name="text">
-    <string>Paste</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+V</string>
-   </property>
-  </action>
-  <action name="actionSelect_All">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/resources/data/icons/select.png</normaloff>:/resources/data/icons/select.png</iconset>
-   </property>
-   <property name="text">
-    <string>Select All</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+A</string>
    </property>
   </action>
   <action name="actionQuit">
@@ -282,56 +187,32 @@
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="actionBold">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/resources/data/icons/bold.png</normaloff>:/resources/data/icons/bold.png</iconset>
-   </property>
-   <property name="text">
-    <string>Bold/Unbold</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+B</string>
-   </property>
-  </action>
-  <action name="actionSubscript">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/resources/data/icons/subscript.png</normaloff>:/resources/data/icons/subscript.png</iconset>
-   </property>
-   <property name="text">
-    <string>Subscript</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+=</string>
-   </property>
-  </action>
-  <action name="actionSuperscript">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/resources/data/icons/superscript.png</normaloff>:/resources/data/icons/superscript.png</iconset>
-   </property>
-   <property name="text">
-    <string>Superscript</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+=</string>
-   </property>
-  </action>
   <action name="actionSettings">
    <property name="icon">
-    <iconset theme="preferences-desktop"/>
+    <iconset theme="preferences-desktop">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Settings</string>
    </property>
   </action>
-  <action name="actionClear_List">
+  <action name="actionClearList">
    <property name="icon">
-    <iconset theme="edit-clear"/>
+    <iconset theme="edit-clear">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Clear List</string>
+   </property>
+  </action>
+  <action name="actionWiki">
+   <property name="text">
+    <string>Wiki</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

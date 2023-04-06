@@ -43,15 +43,15 @@ public:
     void AddTab(LogViewerTab* viewerTab);
 
 private slots:
-    void on_tabWidget_tabCloseRequested(int index);
+    void OnTabCloseRequested(int index);
 
-    void on_tabWidget_currentChanged(int index);
+    void OnTabCurrentChanged(int index);
 
-    void on_actionOpen_triggered();
+    void OnActionOpenTriggered();
 
-	void on_actionSettings_triggered();
+	void OnActionSettingsTriggered();
 
-	[[maybe_unused]] void on_actionQuit_triggered();
+	void OnActionClearRecent();
 
     void dropEvent(QDropEvent* event) override;
 

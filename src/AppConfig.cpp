@@ -25,7 +25,7 @@
 #include <filesystem>
 #include <fstream>
 
-AppConfig::AppConfig()
+AppConfig::AppConfig() : filesToKeepInHistory(12)
 {
 	filePath = (GetAppDataLocation() + "config.yml").toStdString();
 	Load();
@@ -47,6 +47,7 @@ void AppConfig::LoadConfig()
 	if (!std::filesystem::exists(filePath)) return;
 	YAML::Node config = YAML::LoadFile(filePath);
 	copyOnWrite = config["CopyOnWrite"].as<bool>(false);
+	filesToKeepInHistory = config["FilesToKeepInHistory"].as<uint32_t>(12);
 }
 
 void AppConfig::Save()
@@ -58,6 +59,7 @@ void AppConfig::Save()
 
 	YAML::Node config;
 	config["CopyOnWrite"] = copyOnWrite;
+	config["FilesToKeepInHistory"] = filesToKeepInHistory;
 
 	configWriter << config;
 	stream.close();
@@ -133,6 +135,12 @@ void AppConfig::SetCopyOnWrite(bool enableCOW)
 {
 	if (copyOnWrite == enableCOW) return;
 	copyOnWrite = enableCOW;
+	Save();
+}
+
+void AppConfig::SetFilesToKeepInHistory(uint32_t count)
+{
+	filesToKeepInHistory = count;
 	Save();
 }
 
