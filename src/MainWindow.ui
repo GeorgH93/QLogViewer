@@ -45,7 +45,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page">
        <property name="sizePolicy">
@@ -137,6 +137,9 @@
      <property name="title">
       <string>Recent</string>
      </property>
+     <property name="icon">
+      <iconset theme="folder-open-recent"/>
+     </property>
      <addaction name="separator"/>
      <addaction name="actionClearList"/>
     </widget>
@@ -156,7 +159,9 @@
      <string>Help</string>
     </property>
     <addaction name="actionWiki"/>
+    <addaction name="separator"/>
     <addaction name="actionAbout"/>
+    <addaction name="actionAboutQT"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -195,6 +200,9 @@
    <property name="text">
     <string>Settings</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+S</string>
+   </property>
   </action>
   <action name="actionClearList">
    <property name="icon">
@@ -206,13 +214,27 @@
    </property>
   </action>
   <action name="actionWiki">
+   <property name="icon">
+    <iconset theme="help-contents"/>
+   </property>
    <property name="text">
     <string>Wiki</string>
    </property>
   </action>
   <action name="actionAbout">
+   <property name="icon">
+    <iconset theme="help-about"/>
+   </property>
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionAboutQT">
+   <property name="icon">
+    <iconset theme="qt"/>
+   </property>
+   <property name="text">
+    <string>About QT</string>
    </property>
   </action>
  </widget>

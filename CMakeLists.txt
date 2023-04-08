@@ -17,14 +17,14 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 
 file(GLOB SRC_FILES "src/*.cpp" "src/*.ui")
-add_executable(QLogViewerExec "src/main.cpp")
+add_executable(QLogViewer "src/main.cpp")
 
-target_sources(QLogViewerExec PRIVATE ${SRC_FILES})
+target_sources(QLogViewer PRIVATE ${SRC_FILES})
 
 include_directories(src)
 
 
-target_link_libraries(QLogViewerExec Qt5::Widgets)
+target_link_libraries(QLogViewer Qt5::Widgets)
 
 
 include(FetchContent)
@@ -37,4 +37,4 @@ FetchContent_Declare(
 
 set(YAML_CPP_BUILD_TESTS OFF)
 FetchContent_MakeAvailable(yaml-cpp)
-target_link_libraries(QLogViewerExec yaml-cpp)
+target_link_libraries(QLogViewer yaml-cpp)

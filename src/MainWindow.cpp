@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::OnActionSettingsTriggered);
 	connect(ui->actionClearList, &QAction::triggered, this, &MainWindow::OnActionClearRecent);
 	connect(ui->actionQuit, &QAction::triggered, &QCoreApplication::quit);
+	connect(ui->actionAboutQT, &QAction::triggered, &QApplication::aboutQt);
 
 	RecentFiles::GetInstance().Link(ui->menuRecent, this, ui->menuRecent->actions()[0], [this](const QString& file) { Open(file); });
 }
