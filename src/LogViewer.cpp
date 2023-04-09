@@ -19,6 +19,7 @@
 #include "LogParser.h"
 #include "Profiler.hpp"
 #include "LineNumberAreaWidget.h"
+#include "AppConfig.h"
 
 #include <QPainter>
 #include <QTextBlock>
@@ -75,9 +76,7 @@ void LogViewer::HighlightCurrentLine()
     {
         QTextEdit::ExtraSelection selection;
 
-        QColor lineColor = QColor(Qt::yellow).lighter(160);
-
-        selection.format.setBackground(lineColor);
+        selection.format.setBackground(AppConfig::GetInstance()->GetHighlightedLineBackgroundColor());
         selection.format.setProperty(QTextFormat::FullWidthSelection, true);
         selection.cursor = textCursor();
         selection.cursor.clearSelection();

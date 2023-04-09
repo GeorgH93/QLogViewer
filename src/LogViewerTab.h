@@ -32,15 +32,15 @@ public:
 
 	~LogViewerTab() override;
 
-	inline const QString& GetTabTitle() const { return tabTitle; }
+	[[nodiscard]] inline const QString& GetTabTitle() const { return tabTitle; }
 
-	inline const QString& GetTabToolTip() const { return tabToolTip; }
+	[[nodiscard]] inline const QString& GetTabToolTip() const { return tabToolTip; }
 
-	inline const QString& GetFileName() const { return fileName; }
+	[[nodiscard]] inline const QString& GetFileName() const { return fileName; }
 
-	inline const QIcon& GetTabIcon() const { return tabIcon; }
+	[[nodiscard]] inline const QIcon& GetTabIcon() const { return tabIcon; }
 
-	inline const QString& GetSystemInfo() const { return systemInfo; }
+	[[nodiscard]] inline const QString& GetSystemInfo() const { return systemInfo; }
 
 private slots:
 	void OnSelectedLineChange() const;

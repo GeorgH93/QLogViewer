@@ -20,6 +20,10 @@
 #include <yaml-cpp/yaml.h>
 #include <QString>
 #include <QColor>
+#include <QPixmap>
+#include <QImage>
+#include <QBuffer>
+#include <QIcon>
 
 #include "LogLevel.h"
 
@@ -44,6 +48,34 @@ namespace YAML
             return false;
         }
     };
+
+	template<>
+	struct convert<QStringList>
+	{
+		static Node encode(const QStringList& stringList)
+		{
+			Node node;
+			for(const auto& string : stringList)
+			{
+				node.push_back(string);
+			}
+			return node;
+		}
+
+		static bool decode(const Node& node, QStringList& stringList)
+		{
+			if (node.IsSequence())
+			{
+				stringList.clear();
+				for (const Node& n : node)
+				{
+					stringList.push_back(n.as<QString>());
+				}
+				return true;
+			}
+			return false;
+		}
+	};
 
     template<>
     struct convert<QColor>

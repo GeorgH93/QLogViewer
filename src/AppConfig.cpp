@@ -25,7 +25,10 @@
 #include <filesystem>
 #include <fstream>
 
-AppConfig::AppConfig() : filesToKeepInHistory(12)
+AppConfig::AppConfig()
+	: filesToKeepInHistory(12)
+	, copyOnWrite(false)
+	, highlightedLineBackgroundColor(QColor(Qt::yellow).lighter(160))
 {
 	filePath = (GetAppDataLocation() + "config.yml").toStdString();
 	Load();
@@ -46,8 +49,9 @@ void AppConfig::LoadConfig()
 {
 	if (!std::filesystem::exists(filePath)) return;
 	YAML::Node config = YAML::LoadFile(filePath);
-	copyOnWrite = config["CopyOnWrite"].as<bool>(false);
-	filesToKeepInHistory = config["FilesToKeepInHistory"].as<uint32_t>(12);
+	copyOnWrite = config["CopyOnWrite"].as<bool>(copyOnWrite);
+	filesToKeepInHistory = config["FilesToKeepInHistory"].as<uint32_t>(filesToKeepInHistory);
+	highlightedLineBackgroundColor = config["HighlightedLineBackgroundColor"].as<QColor>(highlightedLineBackgroundColor);
 }
 
 void AppConfig::Save()
@@ -60,6 +64,7 @@ void AppConfig::Save()
 	YAML::Node config;
 	config["CopyOnWrite"] = copyOnWrite;
 	config["FilesToKeepInHistory"] = filesToKeepInHistory;
+	config["HighlightedLineBackgroundColor"] = highlightedLineBackgroundColor;
 
 	configWriter << config;
 	stream.close();
@@ -141,6 +146,12 @@ void AppConfig::SetCopyOnWrite(bool enableCOW)
 void AppConfig::SetFilesToKeepInHistory(uint32_t count)
 {
 	filesToKeepInHistory = count;
+	Save();
+}
+
+void AppConfig::SetHighlightedLineBackgroundColor(const QColor &color)
+{
+	highlightedLineBackgroundColor = color;
 	Save();
 }
 

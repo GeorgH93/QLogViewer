@@ -51,8 +51,6 @@ private slots:
 
 	void OnActionSettingsTriggered();
 
-	void OnActionClearRecent();
-
     void dropEvent(QDropEvent* event) override;
 
     void dragEnterEvent(QDragEnterEvent* event) override;

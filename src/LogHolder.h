@@ -102,6 +102,7 @@ public:
 
     [[nodiscard]] inline uint64_t GetMaxLineNumber() const
     {
+		if (logEntries.empty()) return 0;
         return logEntries.back().entryNumber;
     }
 

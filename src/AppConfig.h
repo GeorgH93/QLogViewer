@@ -57,6 +57,10 @@ public:
 
 	void SetFilesToKeepInHistory(uint32_t count);
 
+	[[nodiscard]] QColor GetHighlightedLineBackgroundColor() const { return highlightedLineBackgroundColor; };
+
+	void SetHighlightedLineBackgroundColor(const QColor& color);
+
 private:
 	void Load();
 
@@ -75,6 +79,8 @@ private:
 	TextViewConfig mainLogViewConfig, fullLogViewConfig;
 
 	uint32_t filesToKeepInHistory;
+
+	QColor highlightedLineBackgroundColor;
 
 public:
 	static const QString& GetAppDataLocation();

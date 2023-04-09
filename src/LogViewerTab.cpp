@@ -18,6 +18,7 @@
 #include "LogViewerTab.h"
 #include "LogViewer.h"
 #include "LogParser.h"
+#include "AppConfig.h"
 #include <QFile>
 #include <QFileInfo>
 
@@ -70,9 +71,7 @@ void LogViewerTab::HighlightCurrentLineInFullView() const
 	
 	QTextEdit::ExtraSelection selection;
 
-	const QColor lineColor = QColor(Qt::yellow).lighter(160);
-
-	selection.format.setBackground(lineColor);
+	selection.format.setBackground(AppConfig::GetInstance()->GetHighlightedLineBackgroundColor());
 	selection.format.setProperty(QTextFormat::FullWidthSelection, true);
 	selection.cursor = ui.fullLogView->textCursor();
 	selection.cursor.clearSelection();

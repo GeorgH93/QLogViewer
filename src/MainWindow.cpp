@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui->tabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::OnTabCloseRequested);
 	connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::OnActionOpenTriggered);
 	connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::OnActionSettingsTriggered);
-	connect(ui->actionClearList, &QAction::triggered, this, &MainWindow::OnActionClearRecent);
+	connect(ui->actionClearList, &QAction::triggered, [] {RecentFiles::GetInstance().ClearList();});
 	connect(ui->actionQuit, &QAction::triggered, &QCoreApplication::quit);
 	connect(ui->actionAboutQT, &QAction::triggered, &QApplication::aboutQt);
 
@@ -59,7 +59,6 @@ void MainWindow::dragEnterEvent(QDragEnterEvent* event)
     event->accept();
 }
 
-
 void MainWindow::dropEvent(QDropEvent* event)
 {
     const QMimeData* mimeData = event->mimeData();
@@ -77,7 +76,6 @@ void MainWindow::dropEvent(QDropEvent* event)
         Open(pathList);
     }
 }
-
 
 void MainWindow::Open(const QStringList& files)
 {
@@ -147,10 +145,5 @@ void MainWindow::OnActionSettingsTriggered()
 	{
 		settingsWindow->show();
 	}
-}
-
-void MainWindow::OnActionClearRecent()
-{
-	RecentFiles::GetInstance().ClearList();
 }
 
