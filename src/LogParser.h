@@ -59,7 +59,7 @@ public:
 
 	void TryExtractEnvironment(const QString& message);
 
-	QString GetSystemInfo() const
+	[[nodiscard]] QString GetSystemInfo() const
 	{
 		QString systemInfo;
 		if (!version.isEmpty())

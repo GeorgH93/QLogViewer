@@ -26,27 +26,6 @@ LogParser::~LogParser()
 	}
 }
 
-QString LogParser::GetNextMessage(QTextStream& inputStream)
-{
-	static QRegularExpression newLogEntryStart("^\\d\\d-\\d\\d-\\d\\d");
-	QString message = "";
-	while ((message.isEmpty() || (!readAhead.isNull() && !newLogEntryStart.match(readAhead).hasMatch())) && !inputStream.atEnd())
-	{
-		if (message.isEmpty())
-		{
-			message = readAhead;
-		}
-		else if (!readAhead.isEmpty())
-		{
-			message += QChar(0x000023CE); //("⏎");
-			message += readAhead;
-		}
-		readAhead = inputStream.readLine();
-		lineNumber++;
-	}
-	return message;
-}
-
 std::vector<LogEntry> LogParser::Parse()
 {
 	std::vector<LogEntry> entries;
@@ -65,11 +44,12 @@ std::vector<LogEntry> LogParser::Parse()
 
 	//TODO fill logType with known log types from profile
 
-	while (!inputStream->atEnd())
+	QString msg;
+	uint64_t currentLine = 1;
+	while (!(msg = GetNextMessage(*inputStream)).isEmpty())
 	{
-		const uint64_t currentLine = lineNumber == 0 ? 1 : lineNumber;
-		QString msg = GetNextMessage(*inputStream);
 		if (!msg.isEmpty()) entries.push_back(ParseMessage(msg, currentLine));
+		currentLine = lineNumber;
 	}
 	if (inputFile)
 	{
@@ -77,6 +57,33 @@ std::vector<LogEntry> LogParser::Parse()
 	}
 	delete inputStream;
 	return entries;
+}
+
+bool IsNewLogMessage(const QString& string)
+{ //TODO move to log profile
+	static const QRegularExpression newLogEntryStart(R"(^\d\d-\d\d-\d\d)");
+	if (string.isEmpty()) return false;
+	return newLogEntryStart.match(string).hasMatch();
+}
+
+QString LogParser::GetNextMessage(QTextStream& inputStream)
+{
+	QString message;
+	while((message.isEmpty() || !IsNewLogMessage(readAhead)) && (!inputStream.atEnd() || !readAhead.isNull()))
+	{
+		if (message.isEmpty())
+		{
+			message = readAhead;
+		}
+		else if (!readAhead.isEmpty())
+		{
+			message += QChar(0x000023CE); //("⏎");
+			message += readAhead;
+		}
+		readAhead = inputStream.readLine();
+		lineNumber++;
+	}
+	return message;
 }
 
 LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumber)
