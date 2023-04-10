@@ -59,7 +59,11 @@ void LogViewer::UpdateLogView()
         BlockProfiler buildProfiler("Build log message");
         for (const LogEntry* entry : logHolder->GetFilteredEntries())
         {
-            string.append(entry->message).append("\n");
+			if (!string.isEmpty())
+			{
+				string.append('\n');
+			}
+            string.append(entry->message);
         }
     }
     {

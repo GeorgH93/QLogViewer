@@ -19,6 +19,7 @@
 #include "LogViewer.h"
 #include "LogParser.h"
 #include "AppConfig.h"
+#include "Profiler.hpp"
 #include <QFile>
 #include <QFileInfo>
 
@@ -98,7 +99,7 @@ void LogViewerTab::Load(QFile* file)
 		ui.fullLogView->setPlainText(log);
 	}
 	
-	logHolder.Load(&log);
+	logHolder.Load(log);
 	logHolder.Filter([](auto) -> bool { return true; }); //TODO
 	systemInfo = logHolder.GetSystemInfo();
 	

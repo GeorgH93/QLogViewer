@@ -35,8 +35,9 @@ LogProfile::LogProfile(const std::string& path)
 	Load();
 }
 
-bool LogProfile::IsProfile(const QString& logMessageLine) const
+bool LogProfile::IsProfile(const QString& logMessageLine, int line) const
 {
+	if (line > GetLinesToCheckForDetection()) return false;
 	const auto match = detectionRegex.match(logMessageLine);
 	return match.hasMatch();
 }
@@ -139,6 +140,15 @@ void LogProfile::Save() const
 	configWriter << config;
 
 	stream.close();
+}
+
+void LogProfile::Delete()
+{
+	SetReadOnly();
+	if (std::filesystem::exists(filePath))
+	{
+		std::filesystem::remove(filePath);
+	}
 }
 
 void LogProfile::HandleBackupFiles() const

@@ -70,6 +70,9 @@ private:
 
 	void HandleBackupFiles() const;
 
+	[[nodiscard]] int GetMaxLinesToCheckValue() const;
+
+private:
 	std::string filePath;
 
 	std::vector<std::shared_ptr<LogProfile>> profiles;

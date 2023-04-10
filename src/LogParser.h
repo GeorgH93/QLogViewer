@@ -24,10 +24,12 @@
 
 //TODO improve handling of multi line log messages
 
+class LogProfile;
+
 class LogParser final
 {
 	QFile* inputFile = nullptr;
-	QString* logMessage = nullptr;
+	QString logMessage = nullptr;
 	QString readAhead;
 
 	uint64_t entryCount = 0;
@@ -36,6 +38,8 @@ class LogParser final
 
 	QMap<QString, std::shared_ptr<LogLevel>> logLevelMap;
 
+	std::shared_ptr<LogProfile> logProfile;
+
 public:
 
 	QString version, device, os;
@@ -43,37 +47,24 @@ public:
 	LogParser(const std::string& filePath) : inputFile(new QFile(QString(filePath.c_str()))), ownsFile(true)
 	{}
 
-	LogParser(QFile* file) : inputFile(file)
+	explicit LogParser(QFile* file) : inputFile(file)
 	{}
 
-	LogParser(QString* log) : logMessage(log)
+	explicit LogParser(const QString& log) : logMessage(log)
 	{}
 
 	~LogParser();
 
-	QString GetNextMessage(QTextStream& inputStream);
-
 	std::vector<LogEntry> Parse();
+
+	[[nodiscard]] QString GetSystemInfo() const;
+
+private:
+	void TryExtractEnvironment(const QString& message);
+
+	QString GetNextMessage(QTextStream& inputStream);
 
 	LogEntry ParseMessage(const QString& message, uint64_t startLineNumber);
 
-	void TryExtractEnvironment(const QString& message);
-
-	[[nodiscard]] QString GetSystemInfo() const
-	{
-		QString systemInfo;
-		if (!version.isEmpty())
-		{
-			systemInfo += "Version: " + version;
-		}
-		if (!device.isEmpty())
-		{
-			systemInfo += "\tDevice: " + device;
-		}
-		if (!os.isEmpty())
-		{
-			systemInfo += "\tOS: " + os;
-		}
-		return systemInfo;
-	}
+	void FindLogProfile(QTextStream* inputStream);
 };

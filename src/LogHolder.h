@@ -17,10 +17,11 @@
 
 #pragma once
 
-#include "LogParser.h"
-#include "Profiler.hpp"
+#include "LogEntry.h"
 #include <QString>
 #include <QFile>
+
+class LogParser;
 
 class LogHolder final
 {
@@ -45,40 +46,13 @@ public:
 
     ~LogHolder() = default;
 
-    void Load(const std::string& filePath)
-    {
-        QFile f(QString(filePath.c_str()));
-        Load(&f);
-    }
+    void Load(const std::string& filePath);
 
-    void Load(QFile* file)
-    {
-        LogParser parser(file);
-        Load(parser);
-    }
+    void Load(QFile* file);
 
-    void Load(QString* log)
-    {
-        LogParser parser(log);
-        Load(parser);
-    }
+    void Load(const QString& log);
 
-    void Filter(const std::function<bool(const LogEntry&)>& filterFunction)
-    {
-        BlockProfiler parseProfiler("Filter log");
-        std::vector<const LogEntry*> newlyFilteredLog;
-        newlyFilteredLog.reserve(logEntries.size());
-
-        for (const LogEntry& entry : logEntries)
-        {
-            if (filterFunction(entry))
-            {
-                newlyFilteredLog.push_back(&entry);
-            }
-        }
-
-        filteredLogEntries = std::move(newlyFilteredLog);
-    }
+    void Filter(const std::function<bool(const LogEntry&)>& filterFunction);
 
     [[nodiscard]] size_t GetFilteredLineCount() const
     {
@@ -117,27 +91,7 @@ public:
     }
 
 private:
-    void Load(LogParser& parser)
-    {
-        {
-            BlockProfiler parseProfiler("Parse log");
-            logEntries = parser.Parse();
-            systemInfo = parser.GetSystemInfo();
-        }
-        PreprocessLogEntries();
-    }
+    void Load(LogParser& parser);
 
-    void PreprocessLogEntries()
-    {
-        if (logEntries.empty()) return;
-        const LogEntry* first = &logEntries[0];
-        const LogEntry* previous = &logEntries[0];
-        LogEntry* current = nullptr;
-        for (auto& logEntry : logEntries)
-        {
-            current = &logEntry;
-            logEntry.Process();
-            previous = current;
-        }
-    }
+    void PreprocessLogEntries();
 };

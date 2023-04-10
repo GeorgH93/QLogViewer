@@ -52,13 +52,15 @@ public:
 
 	[[nodiscard]] inline int GetLinesToCheckForDetection() const { return detectionLinesToCheck; }
 
-	[[nodiscard]] bool IsProfile(const QString& logMessageLine) const;
+	[[nodiscard]] bool IsProfile(const QString& logMessageLine, int line) const;
 
 	[[nodiscard]] inline const QString& GetProfileName() const { return profileName; }
 
 	[[nodiscard]] inline const std::vector<std::shared_ptr<LogFilter>>& GetFilterPresets() const { return filterPresets; }
 
 	void Save() const;
+
+	void Delete();
 
 	void AddFilterPreset(const std::shared_ptr<LogFilter>& filter);
 

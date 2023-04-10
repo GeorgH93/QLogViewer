@@ -16,6 +16,7 @@
  */
 
 #include "LogParser.h"
+#include "AppConfig.h"
 #include <QRegularExpression>
 
 LogParser::~LogParser()
@@ -24,6 +25,21 @@ LogParser::~LogParser()
 	{
 		delete inputFile;
 	}
+}
+
+void LogParser::FindLogProfile(QTextStream* inputStream)
+{
+	int line = 0;
+	while (!inputStream->atEnd())
+	{
+		logProfile = AppConfig::GetInstance()->FindProfile(inputStream->readLine(), ++line);
+		if (logProfile)
+		{
+			break;
+		}
+	}
+	if (!logProfile) logProfile = AppConfig::GetInstance()->GetDefaultProfile();
+	inputStream->seek(0);
 }
 
 std::vector<LogEntry> LogParser::Parse()
@@ -38,9 +54,11 @@ std::vector<LogEntry> LogParser::Parse()
 	}
 	else
 	{
-		inputStream = new QTextStream(logMessage);
+		inputStream = new QTextStream(&logMessage, QIODevice::ReadOnly);
 	}
 	inputStream->setCodec("UTF-8");
+
+	FindLogProfile(inputStream);
 
 	//TODO fill logType with known log types from profile
 
@@ -165,4 +183,22 @@ void LogParser::TryExtractEnvironment(const QString& message)
 			os = match.captured("os");
 		}
 	}
+}
+
+[[nodiscard]] QString LogParser::GetSystemInfo() const
+{
+	QString systemInfo;
+	if (!version.isEmpty())
+	{
+		systemInfo += "Version: " + version;
+	}
+	if (!device.isEmpty())
+	{
+		systemInfo += "\tDevice: " + device;
+	}
+	if (!os.isEmpty())
+	{
+		systemInfo += "\tOS: " + os;
+	}
+	return systemInfo;
 }

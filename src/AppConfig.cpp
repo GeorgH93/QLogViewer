@@ -119,16 +119,25 @@ void AppConfig::HandleBackupFiles() const
 	}
 }
 
-std::shared_ptr<LogProfile> AppConfig::FindProfile(const QString& logLine) const
+std::shared_ptr<LogProfile> AppConfig::FindProfile(const QString& logLine, int lineNumber) const
 {
 	for(const auto& profile : profiles)
 	{
-		if (profile->IsProfile(logLine))
+		if (profile->IsProfile(logLine, lineNumber))
 		{
 			return profile;
 		}
 	}
+	if (lineNumber >= GetMaxLinesToCheckValue())
+	{
+		return GetDefaultProfile();
+	}
 	return nullptr;
+}
+
+std::shared_ptr<LogProfile> AppConfig::GetDefaultProfile() const
+{
+	return std::make_shared<LogProfile>("Default", ".*", 0);
 }
 
 void AppConfig::AddProfile(const std::shared_ptr<LogProfile>& profile)
@@ -141,6 +150,19 @@ void AppConfig::SetCopyOnWrite(bool enableCOW)
 	if (copyOnWrite == enableCOW) return;
 	copyOnWrite = enableCOW;
 	Save();
+}
+
+int AppConfig::GetMaxLinesToCheckValue() const
+{
+	int max = 0;
+	for(const auto& profile : profiles)
+	{
+		if (max < profile->GetLinesToCheckForDetection())
+		{
+			max = profile->GetLinesToCheckForDetection();
+		}
+	}
+	return max;
 }
 
 void AppConfig::SetFilesToKeepInHistory(uint32_t count)
