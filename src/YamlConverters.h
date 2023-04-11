@@ -95,5 +95,77 @@ namespace YAML
             return false;
         }
     };
+
+	template<>
+	struct convert<QPixmap>
+	{
+		static Node encode(const QPixmap& pixmap)
+		{
+			QByteArray data;
+			QBuffer buffer(&data);
+			buffer.open(QIODevice::WriteOnly);
+			pixmap.save(&buffer, "PNG");
+
+			return Node(data.toBase64().data());
+		}
+
+		static bool decode(const Node& node, QPixmap& image)
+		{
+			if (node.IsScalar())
+			{
+				QByteArray data = QByteArray::fromBase64(QByteArray(node.Scalar().data()));
+				return image.loadFromData(data, "PNG");
+			}
+			return false;
+		}
+	};
+
+    template<>
+    struct convert<QIcon>
+    {
+        static Node encode(const QIcon& icon)
+        {
+			Node node;
+            for(const auto& size : icon.availableSizes())
+            {
+                const QPixmap pixmap = icon.pixmap(size);
+				node.push_back(pixmap);
+            }
+            return node;
+        }
+
+        static bool decode(const Node& node, QIcon& icon)
+        {
+            if (node.IsSequence())
+            {
+				for(const Node& n : node)
+				{
+					icon.addPixmap(n.as<QPixmap>());
+				}
+                return true;
+            }
+            return false;
+        }
+    };
+
+    template<>
+    struct convert<QImage>
+    {
+        static Node encode(const QImage& image)
+        {
+            QPixmap pixmap = QPixmap::fromImage(image);
+            return Node(pixmap);
+        }
+
+        static bool decode(const Node& node, QImage& image)
+        {
+            if (node.IsScalar())
+            {
+                QByteArray data = QByteArray::fromBase64(QByteArray(node.Scalar().data()));
+                return image.loadFromData(data, "PNG");
+            }
+            return false;
+        }
+    };
 #pragma endregion
 }
