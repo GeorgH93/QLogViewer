@@ -35,6 +35,12 @@ LogProfile::LogProfile(const std::string& path)
 	Load();
 }
 
+LogProfile::LogProfile(const QString &name, const QString &detectionRegex, int detectionLinesCount)
+		: detectionRegex(detectionRegex), detectionLinesToCheck(detectionLinesCount), readOnly(true)
+{
+	SetProfileName(name);
+}
+
 bool LogProfile::IsProfile(const QString& logMessageLine, int line) const
 {
 	if (line > GetLinesToCheckForDetection()) return false;
@@ -118,6 +124,7 @@ void LogProfile::Load()
 	detectionLinesToCheck = config["DetectionRange"].as<int>(10);
 	filterPresets = config["FilterPresets"].as<decltype(filterPresets)>(decltype(filterPresets)());
 	logLevels = config["LogLevels"].as<decltype(logLevels)>(decltype(logLevels)());
+	profileIcon = config["Icon"].as<decltype(profileIcon)>(decltype(profileIcon)());
 }
 
 void LogProfile::Save() const
@@ -135,7 +142,7 @@ void LogProfile::Save() const
 	config["DetectionRange"] = detectionLinesToCheck;
 	config["FilterPresets"] = filterPresets;
 	config["LogLevels"] = logLevels;
-    //config["Icon"] = profileIcon;
+    config["Icon"] = profileIcon;
 
 	configWriter << config;
 

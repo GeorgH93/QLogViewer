@@ -25,6 +25,7 @@ void LogHolder::Load(LogParser &parser)
 		BlockProfiler parseProfiler("Parse log");
 		logEntries = parser.Parse();
 		systemInfo = parser.GetSystemInfo();
+		logProfile = parser.GetUsedProfile();
 	}
 	PreprocessLogEntries();
 }

@@ -44,9 +44,7 @@ class LogProfile final
 	bool readOnly = false;
 
 public:
-	LogProfile(const QString& name, const QString& detectionRegex, int detectionLinesCount)
-		: profileName(name), detectionRegex(detectionRegex), detectionLinesToCheck(detectionLinesCount)
-	{}
+	LogProfile(const QString& name, const QString& detectionRegex, int detectionLinesCount);
 
 	LogProfile(const std::string& path);
 
@@ -82,7 +80,7 @@ public:
 
 	[[nodiscard]] bool IsReadOnly() const { return readOnly; }
 
-	void SetReadOnly() { readOnly = true; }
+	void SetReadOnly(bool rOnly = true) { readOnly = rOnly; }
 
 	static QString FilterName(QString name);
 

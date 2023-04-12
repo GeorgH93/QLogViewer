@@ -18,6 +18,7 @@
 #include "LogViewerTab.h"
 #include "LogViewer.h"
 #include "LogParser.h"
+#include "LogProfile.h"
 #include "AppConfig.h"
 #include "Profiler.hpp"
 #include <QFile>
@@ -102,6 +103,7 @@ void LogViewerTab::Load(QFile* file)
 	logHolder.Load(log);
 	logHolder.Filter([](auto) -> bool { return true; }); //TODO
 	systemInfo = logHolder.GetSystemInfo();
+	tabIcon = logHolder.GetLogProfile()->GetIcon();
 	
 	ui.logViewer->SetLogHolder(&logHolder);
 	

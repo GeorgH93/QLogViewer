@@ -22,6 +22,7 @@
 #include <QFile>
 
 class LogParser;
+class LogProfile;
 
 class LogHolder final
 {
@@ -30,6 +31,7 @@ class LogHolder final
     std::vector<LogEntry> logEntries;
     std::vector<const LogEntry*> filteredLogEntries;
     QString systemInfo;
+	std::shared_ptr<LogProfile> logProfile;
 
 public:
     LogHolder() = default;
@@ -89,6 +91,8 @@ public:
     {
 	    return systemInfo;
     }
+
+	[[nodiscard]] inline std::shared_ptr<LogProfile> GetLogProfile() const { return logProfile; }
 
 private:
     void Load(LogParser& parser);

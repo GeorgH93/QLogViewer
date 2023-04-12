@@ -73,10 +73,10 @@ void AppConfig::Save()
 void AppConfig::LoadProfiles()
 {
 	QDir profileDir(GetProfilesLocation());
-	QStringList profilePathList = profileDir.entryList(QStringList() << "*.yml", QDir::Files);
-	for(const QString& profilePath : profilePathList)
+	QStringList profileFileList = profileDir.entryList(QStringList() << "*.yml", QDir::Files);
+	for(const QString& profilePath : profileFileList)
 	{
-		profiles.push_back(std::make_shared<LogProfile>(profilePath.toStdString()));
+		profiles.push_back(std::make_shared<LogProfile>((GetProfilesLocation() + profilePath).toStdString()));
 	}
 	std::sort(profiles.begin(), profiles.end(), [](const std::shared_ptr<LogProfile>& left, const std::shared_ptr<LogProfile>& right) { return left->GetPriority() > right->GetPriority(); });
 }

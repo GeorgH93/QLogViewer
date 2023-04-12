@@ -59,6 +59,8 @@ public:
 
 	[[nodiscard]] QString GetSystemInfo() const;
 
+	[[nodiscard]] std::shared_ptr<LogProfile> GetUsedProfile() const { return logProfile; }
+
 private:
 	void TryExtractEnvironment(const QString& message);
 
