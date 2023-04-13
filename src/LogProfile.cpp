@@ -173,3 +173,10 @@ void LogProfile::HandleBackupFiles() const
 		}
 	}
 }
+
+std::shared_ptr<LogProfile> LogProfile::MakeDefault()
+{
+	auto profile = std::make_shared<LogProfile>("Default", ".*", 0);
+
+	return profile;
+}

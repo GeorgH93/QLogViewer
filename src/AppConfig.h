@@ -47,7 +47,7 @@ public:
 
 	[[nodiscard]] const std::vector<std::shared_ptr<LogProfile>>& GetProfiles() const { return profiles; }
 
-	[[nodiscard]] std::shared_ptr<LogProfile> GetDefaultProfile() const;
+	[[nodiscard]] std::shared_ptr<LogProfile> GetDefaultProfile() const { return defaultProfile; }
 
 	[[nodiscard]] bool UseCopyOnWriteEnabled() const { return copyOnWrite; }
 
@@ -76,6 +76,8 @@ private:
 	std::string filePath;
 
 	std::vector<std::shared_ptr<LogProfile>> profiles;
+
+	const std::shared_ptr<LogProfile> defaultProfile;
 
 	bool copyOnWrite = false;
 

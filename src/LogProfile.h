@@ -84,6 +84,8 @@ public:
 
 	static QString FilterName(QString name);
 
+	static std::shared_ptr<LogProfile> MakeDefault();
+
 private:
 	void Load();
 
