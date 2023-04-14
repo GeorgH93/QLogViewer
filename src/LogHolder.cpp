@@ -78,3 +78,29 @@ void LogHolder::Load(const std::string &filePath)
 	QFile f(QString(filePath.c_str()));
 	Load(&f);
 }
+
+std::vector<const LogEntry*> LogHolder::Find(const std::function<bool(const LogEntry&)>& searchFilter) const
+{
+	std::vector<const LogEntry*> result;
+	for(const auto& entry : logEntries)
+	{
+		if (searchFilter(entry))
+		{
+			result.push_back(&entry);
+		}
+	}
+	return result;
+}
+
+std::vector<const LogEntry*> LogHolder::FindFiltered(const std::function<bool(const LogEntry&)>& searchFilter) const
+{
+	std::vector<const LogEntry*> result;
+	for(const auto& entry : filteredLogEntries)
+	{
+		if (searchFilter(*entry))
+		{
+			result.push_back(entry);
+		}
+	}
+	return result;
+}

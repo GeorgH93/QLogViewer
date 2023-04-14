@@ -94,6 +94,10 @@ public:
 
 	[[nodiscard]] inline std::shared_ptr<LogProfile> GetLogProfile() const { return logProfile; }
 
+	[[nodiscard]] std::vector<const LogEntry*> Find(const std::function<bool(const LogEntry&)>& searchFilter) const;
+
+	[[nodiscard]] std::vector<const LogEntry*> FindFiltered(const std::function<bool(const LogEntry&)>& searchFilter) const;
+
 private:
     void Load(LogParser& parser);
 
