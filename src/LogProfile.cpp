@@ -125,6 +125,13 @@ void LogProfile::Load()
 	filterPresets = config["FilterPresets"].as<decltype(filterPresets)>(decltype(filterPresets)());
 	logLevels = config["LogLevels"].as<decltype(logLevels)>(decltype(logLevels)());
 	profileIcon = config["Icon"].as<decltype(profileIcon)>(decltype(profileIcon)());
+
+	auto defaultProfile = LogProfile::GetDefault();
+	logEntryRegex = config["Entries.Regex"].as<QString>(defaultProfile->GetLogEntryRegex());
+	logEntryRegex = config["Entries.NewEntryStartRegex"].as<QString>(defaultProfile->GetNewLogEntryStartRegex());
+	sysInfoVersionRegex = config["SystemInfo.VersionRegex"].as<QString>(defaultProfile->GetSystemInfoVersionRegex());
+	sysInfoDeviceRegex = config["SystemInfo.DeviceRegex"].as<QString>(defaultProfile->GetSystemInfoDeviceRegex());
+	sysInfoOsRegex = config["SystemInfo.OsRegex"].as<QString>(defaultProfile->GetSystemInfoOsRegex());
 }
 
 void LogProfile::Save() const
@@ -143,6 +150,12 @@ void LogProfile::Save() const
 	config["FilterPresets"] = filterPresets;
 	config["LogLevels"] = logLevels;
     config["Icon"] = profileIcon;
+
+	config["Entries.Regex"] = logEntryRegex;
+	config["Entries.NewEntryStartRegex"] = newlogEntryStartRegex;
+	config["SystemInfo.VersionRegex"] = sysInfoVersionRegex;
+	config["SystemInfo.DeviceRegex"] = sysInfoDeviceRegex;
+	config["SystemInfo.OsRegex"] = sysInfoOsRegex;
 
 	configWriter << config;
 
@@ -178,5 +191,47 @@ std::shared_ptr<LogProfile> LogProfile::MakeDefault()
 {
 	auto profile = std::make_shared<LogProfile>("Default", ".*", 0);
 
+	profile->SetLogEntryRegex(R"(^(?<date>\d\d-\d\d-\d\d(\d\d)?)\s+(?<time>\d\d:\d\d:\d\d(\.\d+)?):?\s+(?<level>\w+)\s*:?\s+((?<subsys>(\[\s*\w+\s*\]|\w+\s?:|UI\s*:\s*\w+\s*))\s*:)?\s*(?<message>.*)\s+(?<where>in\s+~?\w+(\([^\s]*\))*\s+function\s+at\s+line\s+\d+))");
+	profile->SetNewLogEntryStartRegex(R"(^(\d\d)?\d\d-\d\d-\d\d)");
+	profile->SetSystemInfoVersionRegex(R"(Version\s*(:|=)?\s*([vV]?(?<version>\d+(\.\d+)*)(?<tags>(-[^-\s]+)*))\s*(\((?<buildnr>\d+)\))?)");
+	profile->SetSystemInfoDeviceRegex(R"(Device\s*[:=]\s*(?<device>[\w ,-]+(\([\w ,]+\))?))");
+	profile->SetSystemInfoOsRegex(R"((OS|Operating\s*System)\s*[:=]\s*(?<os>(Windows|Android|iOS) [\d\.]+(\s*,\s*SDK\s*\d+)?))");
+
 	return profile;
+}
+
+std::shared_ptr<LogProfile> LogProfile::GetDefault()
+{
+	static std::shared_ptr<LogProfile> defaultProfile = MakeDefault();
+	return defaultProfile;
+}
+
+void LogProfile::SetLogEntryRegex(const QString &regex)
+{
+	logEntryRegex = regex;
+	Save();
+}
+
+void LogProfile::SetNewLogEntryStartRegex(const QString &regex)
+{
+	newlogEntryStartRegex = regex;
+	Save();
+}
+
+void LogProfile::SetSystemInfoVersionRegex(const QString &regex)
+{
+	sysInfoVersionRegex = regex;
+	Save();
+}
+
+void LogProfile::SetSystemInfoDeviceRegex(const QString &regex)
+{
+	sysInfoDeviceRegex = regex;
+	Save();
+}
+
+void LogProfile::SetSystemInfoOsRegex(const QString &regex)
+{
+	sysInfoOsRegex = regex;
+	Save();
 }

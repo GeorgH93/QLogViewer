@@ -43,6 +43,13 @@ class LogProfile final
 
 	bool readOnly = false;
 
+	// Regexes
+	QString logEntryRegex;
+	QString newlogEntryStartRegex;
+	QString sysInfoVersionRegex;
+	QString sysInfoDeviceRegex;
+	QString sysInfoOsRegex;
+
 public:
 	LogProfile(const QString& name, const QString& detectionRegex, int detectionLinesCount);
 
@@ -82,9 +89,23 @@ public:
 
 	void SetReadOnly(bool rOnly = true) { readOnly = rOnly; }
 
+	[[nodiscard]] inline const QString& GetLogEntryRegex() const { return logEntryRegex; };
+	[[nodiscard]] inline const QString& GetNewLogEntryStartRegex() const { return newlogEntryStartRegex; };
+	[[nodiscard]] inline const QString& GetSystemInfoVersionRegex() const { return sysInfoVersionRegex; };
+	[[nodiscard]] inline const QString& GetSystemInfoDeviceRegex() const { return sysInfoDeviceRegex; };
+	[[nodiscard]] inline const QString& GetSystemInfoOsRegex() const { return sysInfoOsRegex; };
+
+	void SetLogEntryRegex(const QString& regex);
+	void SetNewLogEntryStartRegex(const QString& regex);
+	void SetSystemInfoVersionRegex(const QString& regex);
+	void SetSystemInfoDeviceRegex(const QString& regex);
+	void SetSystemInfoOsRegex(const QString& regex);
+
 	static QString FilterName(QString name);
 
 	static std::shared_ptr<LogProfile> MakeDefault();
+
+	static std::shared_ptr<LogProfile> GetDefault();
 
 private:
 	void Load();

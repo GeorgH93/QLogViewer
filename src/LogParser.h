@@ -21,6 +21,7 @@
 #include <QFile>
 #include <QString>
 #include <QTextStream>
+#include <QRegularExpression>
 
 //TODO improve handling of multi line log messages
 
@@ -39,6 +40,13 @@ class LogParser final
 	QMap<QString, std::shared_ptr<LogLevel>> logLevelMap;
 
 	std::shared_ptr<LogProfile> logProfile;
+
+	// Regexes
+	QRegularExpression logEntryRegex;
+	QRegularExpression newLogEntryStart;
+	QRegularExpression versionRegex;
+	QRegularExpression deviceRegex;
+	QRegularExpression osRegex;
 
 public:
 
@@ -68,5 +76,9 @@ private:
 
 	LogEntry ParseMessage(const QString& message, uint64_t startLineNumber);
 
+	bool IsNewLogMessage(const QString& string);
+
 	void FindLogProfile(QTextStream* inputStream);
+
+	void LoadRegexesFromProfile();
 };

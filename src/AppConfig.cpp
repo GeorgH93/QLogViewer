@@ -29,7 +29,6 @@ AppConfig::AppConfig()
 	: filesToKeepInHistory(12)
 	, copyOnWrite(false)
 	, highlightedLineBackgroundColor(QColor(Qt::yellow).lighter(160))
-	, defaultProfile(LogProfile::MakeDefault())
 {
 	filePath = (GetAppDataLocation() + "config.yml").toStdString();
 	Load();
@@ -131,7 +130,7 @@ std::shared_ptr<LogProfile> AppConfig::FindProfile(const QString& logLine, int l
 	}
 	if (lineNumber >= GetMaxLinesToCheckValue())
 	{
-		return defaultProfile;
+		return LogProfile::GetDefault();
 	}
 	return nullptr;
 }

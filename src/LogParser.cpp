@@ -17,6 +17,7 @@
 
 #include "LogParser.h"
 #include "AppConfig.h"
+#include "LogProfile.h"
 #include <QRegularExpression>
 
 LogParser::~LogParser()
@@ -38,7 +39,7 @@ void LogParser::FindLogProfile(QTextStream* inputStream)
 			break;
 		}
 	}
-	if (!logProfile) logProfile = AppConfig::GetInstance()->GetDefaultProfile();
+	if (!logProfile) logProfile = LogProfile::GetDefault();
 	inputStream->seek(0);
 }
 
@@ -60,6 +61,8 @@ std::vector<LogEntry> LogParser::Parse()
 
 	FindLogProfile(inputStream);
 
+	LoadRegexesFromProfile();
+
 	//TODO fill logType with known log types from profile
 
 	QString msg;
@@ -77,9 +80,17 @@ std::vector<LogEntry> LogParser::Parse()
 	return entries;
 }
 
-bool IsNewLogMessage(const QString& string)
-{ //TODO move to log profile
-	static const QRegularExpression newLogEntryStart(R"(^\d\d-\d\d-\d\d)");
+void LogParser::LoadRegexesFromProfile()
+{
+	logEntryRegex = QRegularExpression(logProfile->GetLogEntryRegex());
+	newLogEntryStart = QRegularExpression(logProfile->GetNewLogEntryStartRegex());
+	versionRegex = QRegularExpression(logProfile->GetSystemInfoVersionRegex());
+	deviceRegex = QRegularExpression(logProfile->GetSystemInfoDeviceRegex());
+	osRegex = QRegularExpression(logProfile->GetSystemInfoOsRegex());
+}
+
+bool LogParser::IsNewLogMessage(const QString& string)
+{
 	if (string.isEmpty()) return false;
 	return newLogEntryStart.match(string).hasMatch();
 }
@@ -109,7 +120,6 @@ LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumbe
 	LogEntry e;
 	e.entryNumber = ++entryCount;
 	e.lineNumber = startLineNumber;
-	static QRegularExpression logEntryRegex{ R"(^(?<date>\d\d-\d\d-\d\d(\d\d)?)\s+(?<time>\d\d:\d\d:\d\d(\.\d+)?):?\s+(?<level>\w+)\s*:?\s+((?<subsys>(\[\s*\w+\s*\]|\w+\s?:|UI\s*:\s*\w+\s*))\s*:)?\s*(?<message>.*)\s+(?<where>in\s+~?\w+(\([^\s]*\))*\s+function\s+at\s+line\s+\d+))" };
 	const auto match = logEntryRegex.match(message);
 	TryExtractEnvironment(message);
 	if (match.hasMatch())
@@ -148,10 +158,6 @@ LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumbe
 
 void LogParser::TryExtractEnvironment(const QString& message)
 {
-	static QRegularExpression versionRegex{ R"(Version\s*(:|=)?\s*([vV]?(?<version>\d+(\.\d+)*)(?<tags>(-[^-\s]+)*))\s*(\((?<buildnr>\d+)\))?)" };
-	static QRegularExpression deviceRegex{ R"(Device\s*[:=]\s*(?<device>[\w ,-]+(\([\w ,]+\))?))" };
-	static QRegularExpression osRegex{ R"((OS|Operating\s*System)\s*[:=]\s*(?<os>(Windows|Android|iOS) [\d\.]+(\s*,\s*SDK\s*\d+)?))" };
-
 	if (entryCount > 100) return;
 
 	if (version.isEmpty())
