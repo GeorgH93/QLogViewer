@@ -156,6 +156,18 @@ LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumbe
 	return e;
 }
 
+inline void ExtractEnvironmentComponent(const QString& message, QString& targetVar, const QString& captureGroupName, const QRegularExpression& expression)
+{
+	if (targetVar.isEmpty())
+	{
+		const auto match = expression.match(message);
+		if (match.hasMatch())
+		{
+			targetVar = match.captured(captureGroupName);
+		}
+	}
+}
+
 void LogParser::TryExtractEnvironment(const QString& message)
 {
 	if (entryCount > 100) return;
@@ -173,22 +185,8 @@ void LogParser::TryExtractEnvironment(const QString& message)
 			}
 		}
 	}
-	if (device.isEmpty())
-	{
-		const auto match = deviceRegex.match(message);
-		if (match.hasMatch())
-		{
-			device = match.captured("device");
-		}
-	}
-	if (os.isEmpty())
-	{
-		const auto match = osRegex.match(message);
-		if (match.hasMatch())
-		{
-			os = match.captured("os");
-		}
-	}
+	ExtractEnvironmentComponent(message, device, "device", deviceRegex);
+	ExtractEnvironmentComponent(message, os, "os", osRegex);
 }
 
 [[nodiscard]] QString LogParser::GetSystemInfo() const
