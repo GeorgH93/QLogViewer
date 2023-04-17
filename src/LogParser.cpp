@@ -41,6 +41,10 @@ void LogParser::FindLogProfile(QTextStream* inputStream)
 	}
 	if (!logProfile) logProfile = LogProfile::GetDefault();
 	inputStream->seek(0);
+	for(const auto& level : logProfile->GetLogLevels())
+	{
+		logLevelMap.insert(level->GetLevelName(), level);
+	}
 }
 
 std::vector<LogEntry> LogParser::Parse()
@@ -170,7 +174,7 @@ inline void ExtractEnvironmentComponent(const QString& message, QString& targetV
 
 void LogParser::TryExtractEnvironment(const QString& message)
 {
-	if (entryCount > 100) return;
+	if (entryCount > logProfile->GetSystemInfoLinesToCheck()) return;
 
 	if (version.isEmpty())
 	{

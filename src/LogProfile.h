@@ -34,7 +34,7 @@ class LogProfile final
 {
 	QString profileName;
 	QRegularExpression detectionRegex;
-	int detectionLinesToCheck = 10, priority = 0;
+	uint32_t detectionLinesToCheck = 10, priority = 0, sysInfoLinesToCheck = 100;
 	QIcon profileIcon;
 
 	std::vector<std::shared_ptr<LogFilter>> filterPresets;
@@ -55,7 +55,7 @@ public:
 
 	LogProfile(const std::string& path);
 
-	[[nodiscard]] inline int GetLinesToCheckForDetection() const { return detectionLinesToCheck; }
+	[[nodiscard]] inline uint32_t GetLinesToCheckForDetection() const { return detectionLinesToCheck; }
 
 	[[nodiscard]] bool IsProfile(const QString& logMessageLine, int line) const;
 
@@ -81,7 +81,7 @@ public:
 
 	[[nodiscard]] const QIcon& GetIcon() const { return profileIcon; }
 
-	[[nodiscard]] int GetPriority() const { return priority; }
+	[[nodiscard]] uint32_t GetPriority() const { return priority; }
 
 	void SetPriority(int prio);
 
@@ -94,12 +94,16 @@ public:
 	[[nodiscard]] inline const QString& GetSystemInfoVersionRegex() const { return sysInfoVersionRegex; };
 	[[nodiscard]] inline const QString& GetSystemInfoDeviceRegex() const { return sysInfoDeviceRegex; };
 	[[nodiscard]] inline const QString& GetSystemInfoOsRegex() const { return sysInfoOsRegex; };
+	[[nodiscard]] inline const uint32_t GetSystemInfoLinesToCheck() const { return sysInfoLinesToCheck; };
 
 	void SetLogEntryRegex(const QString& regex);
 	void SetNewLogEntryStartRegex(const QString& regex);
 	void SetSystemInfoVersionRegex(const QString& regex);
 	void SetSystemInfoDeviceRegex(const QString& regex);
 	void SetSystemInfoOsRegex(const QString& regex);
+	void SetSystemInfoLinesToCheck(uint32_t linesToCheck);
+
+	const decltype(logLevels)& GetLogLevels() { return logLevels; }
 
 	static QString FilterName(QString name);
 

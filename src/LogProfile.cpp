@@ -132,6 +132,7 @@ void LogProfile::Load()
 	sysInfoVersionRegex = config["SystemInfo.VersionRegex"].as<QString>(defaultProfile->GetSystemInfoVersionRegex());
 	sysInfoDeviceRegex = config["SystemInfo.DeviceRegex"].as<QString>(defaultProfile->GetSystemInfoDeviceRegex());
 	sysInfoOsRegex = config["SystemInfo.OsRegex"].as<QString>(defaultProfile->GetSystemInfoOsRegex());
+	sysInfoLinesToCheck = config["SystemInfo.LinesToCheck"].as<uint32_t>(sysInfoLinesToCheck);
 }
 
 void LogProfile::Save() const
@@ -156,6 +157,7 @@ void LogProfile::Save() const
 	config["SystemInfo.VersionRegex"] = sysInfoVersionRegex;
 	config["SystemInfo.DeviceRegex"] = sysInfoDeviceRegex;
 	config["SystemInfo.OsRegex"] = sysInfoOsRegex;
+	config["SystemInfo.LinesToCheck"] = sysInfoLinesToCheck;
 
 	configWriter << config;
 
@@ -233,5 +235,11 @@ void LogProfile::SetSystemInfoDeviceRegex(const QString &regex)
 void LogProfile::SetSystemInfoOsRegex(const QString &regex)
 {
 	sysInfoOsRegex = regex;
+	Save();
+}
+
+void LogProfile::SetSystemInfoLinesToCheck(uint32_t linesToCheck)
+{
+	sysInfoLinesToCheck = linesToCheck;
 	Save();
 }
