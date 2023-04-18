@@ -128,7 +128,7 @@ void LogProfile::Load()
 
 	auto defaultProfile = LogProfile::GetDefault();
 	logEntryRegex = config["Entries.Regex"].as<QString>(defaultProfile->GetLogEntryRegex());
-	logEntryRegex = config["Entries.NewEntryStartRegex"].as<QString>(defaultProfile->GetNewLogEntryStartRegex());
+	newlogEntryStartRegex = config["Entries.NewEntryStartRegex"].as<QString>(defaultProfile->GetNewLogEntryStartRegex());
 	sysInfoVersionRegex = config["SystemInfo.VersionRegex"].as<QString>(defaultProfile->GetSystemInfoVersionRegex());
 	sysInfoDeviceRegex = config["SystemInfo.DeviceRegex"].as<QString>(defaultProfile->GetSystemInfoDeviceRegex());
 	sysInfoOsRegex = config["SystemInfo.OsRegex"].as<QString>(defaultProfile->GetSystemInfoOsRegex());
