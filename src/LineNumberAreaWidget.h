@@ -66,7 +66,7 @@ public:
         description.alignment = alignment;
     }
 
-    const EditInfoAreaWidgetMetaDescription& GetMetaDescriptionForLine(int lineNr)
+    EditInfoAreaWidgetMetaDescription GetMetaDescriptionForLine(int lineNr)
     {
         lineNumberString = QString::number(lineNr + 1);
         return description;

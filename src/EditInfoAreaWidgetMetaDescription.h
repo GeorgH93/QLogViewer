@@ -22,8 +22,8 @@
 
 struct EditInfoAreaWidgetMetaDescription
 {
-    QString& text;
-    QColor& fontColor;
-    QColor& fontBackgroundColor;
+    const QString& text;
+    const QColor& fontColor;
+    const QColor& fontBackgroundColor;
     int alignment = Qt::AlignLeft;
 };

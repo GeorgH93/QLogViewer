@@ -19,6 +19,7 @@
 #include "LogParser.h"
 #include "Profiler.hpp"
 #include "LineNumberAreaWidget.h"
+#include "LogLevelAreaWidget.h"
 #include "AppConfig.h"
 
 #include <QPainter>
@@ -30,6 +31,7 @@
 LogViewer::LogViewer(QWidget *parent) : InfoAreaEnabledPlainTextEdit(parent)
 {
     lineNumberArea = new LineNumberAreaWidget(this);
+	logLevelArea = new LogLevelAreaWidget(this);
 
     //connect(this, &LogViewer::blockCountChanged, this, &LogViewer::SetViewportMargins);
     connect(this, &LogViewer::cursorPositionChanged, this, &LogViewer::HighlightCurrentLine);
@@ -48,7 +50,9 @@ void LogViewer::SetLogHolder(LogHolder* holder)
 	logHolder = holder;
 	UpdateLogView();
     lineNumberArea->SetWidthForMaxNumber(logHolder->GetMaxLineNumber());
+	logLevelArea->SetLogHolder(&logHolder->GetFilteredEntries(), logHolder->GetUsedLogLevels());
     AddInfoAreaWidget(lineNumberArea);
+	AddInfoAreaWidget(logLevelArea);
 }
 
 void LogViewer::UpdateLogView()

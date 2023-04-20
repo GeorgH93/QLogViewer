@@ -213,3 +213,13 @@ std::shared_ptr<LogLevel> LogParser::GetLogLevel(const QString& type)
 	logLevelMap.insert(type, level);
 	return level;
 }
+
+std::vector<std::shared_ptr<LogLevel>> LogParser::GetUsedLogLevels() const
+{
+	std::vector<std::shared_ptr<LogLevel>> usedLevels;
+	for(const auto& level : logLevelMap)
+	{
+		usedLevels.push_back(level);
+	}
+	return usedLevels;
+}

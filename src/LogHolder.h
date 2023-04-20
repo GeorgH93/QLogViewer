@@ -32,6 +32,7 @@ class LogHolder final
     std::vector<const LogEntry*> filteredLogEntries;
     QString systemInfo;
 	std::shared_ptr<LogProfile> logProfile;
+	std::vector<std::shared_ptr<LogLevel>> usedLogProfiles;
 
 public:
     LogHolder() = default;
@@ -91,6 +92,11 @@ public:
     {
 	    return systemInfo;
     }
+
+	[[nodiscard]] inline const std::vector<std::shared_ptr<LogLevel>>& GetUsedLogLevels()
+	{
+		return usedLogProfiles;
+	}
 
 	[[nodiscard]] inline std::shared_ptr<LogProfile> GetLogProfile() const { return logProfile; }
 

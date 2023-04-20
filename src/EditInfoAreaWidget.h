@@ -31,7 +31,7 @@ class EditInfoAreaWidget : public QWidget
     std::function<void()> onAreaWidthChanged = [](){};
 
 public:
-    EditInfoAreaWidget(InfoAreaEnabledPlainTextEdit* editor, const std::function<const EditInfoAreaWidgetMetaDescription&(int)>& metaDescriptionProvider, int marginLeft = 3, int marginRight = 3) :
+    EditInfoAreaWidget(InfoAreaEnabledPlainTextEdit* editor, const std::function<EditInfoAreaWidgetMetaDescription(int)>& metaDescriptionProvider, int marginLeft = 3, int marginRight = 3) :
         QWidget(editor), editor(editor), areaWidth(0), areaMarginLeft(marginLeft), areaMarginRight(marginRight), metaDescriptionProvider(metaDescriptionProvider)
     {}
 
