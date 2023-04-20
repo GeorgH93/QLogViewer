@@ -136,16 +136,7 @@ LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumbe
 		e.where = match.captured("where");
 
 		// Read log level
-		const QString type = match.captured("level");
-		if (logLevelMap.contains(type))
-		{
-			e.level = logLevelMap[type];
-		}
-		else
-		{
-			e.level = std::make_shared<LogLevel>(type);
-			logLevelMap.insert(type, e.level);
-		}
+		e.level = GetLogLevel(match.captured("level"));
 
 		//TODO
 		e.timeStamp = QDateTime::fromString("20" + e.date + ' ' + e.time, Qt::ISODateWithMs);
@@ -153,6 +144,7 @@ LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumbe
 	else
 	{
 		e.message = message;
+		e.level = GetLogLevel("");
 	}
 	e.originalMessage = message;
 	e.Process();
@@ -209,4 +201,15 @@ void LogParser::TryExtractEnvironment(const QString& message)
 		systemInfo += "\tOS: " + os;
 	}
 	return systemInfo;
+}
+
+std::shared_ptr<LogLevel> LogParser::GetLogLevel(const QString& type)
+{
+	if (logLevelMap.contains(type))
+	{
+		return logLevelMap[type];
+	}
+	auto level = std::make_shared<LogLevel>(type);
+	logLevelMap.insert(type, level);
+	return level;
 }

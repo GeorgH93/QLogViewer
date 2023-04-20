@@ -81,4 +81,6 @@ private:
 	void FindLogProfile(QTextStream* inputStream);
 
 	void LoadRegexesFromProfile();
+
+	std::shared_ptr<LogLevel> GetLogLevel(const QString& levelName);
 };
