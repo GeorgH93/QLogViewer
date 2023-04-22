@@ -19,6 +19,7 @@
 #include "AppConfig.h"
 #include "LogProfile.h"
 #include <QRegularExpression>
+#include <memory>
 
 LogParser::~LogParser()
 {
@@ -51,19 +52,19 @@ std::vector<LogEntry> LogParser::Parse()
 {
 	std::vector<LogEntry> entries;
 	entries.reserve(100000);
-	QTextStream* inputStream;
+	std::unique_ptr<QTextStream> inputStream;
 	if (inputFile)
 	{
 		if (!inputFile->open(QIODevice::ReadOnly)) { return entries; }
-		inputStream = new QTextStream(inputFile);
+		inputStream = std::make_unique<QTextStream>(inputFile);
 	}
 	else
 	{
-		inputStream = new QTextStream(&logMessage, QIODevice::ReadOnly);
+		inputStream = std::make_unique<QTextStream>(&logMessage, QIODevice::ReadOnly);
 	}
 	inputStream->setCodec("UTF-8");
 
-	FindLogProfile(inputStream);
+	FindLogProfile(inputStream.get());
 
 	LoadRegexesFromProfile();
 
@@ -80,7 +81,6 @@ std::vector<LogEntry> LogParser::Parse()
 	{
 		inputFile->close();
 	}
-	delete inputStream;
 	return entries;
 }
 
