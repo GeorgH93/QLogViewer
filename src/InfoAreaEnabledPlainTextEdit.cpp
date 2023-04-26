@@ -20,58 +20,58 @@
 
 InfoAreaEnabledPlainTextEdit::InfoAreaEnabledPlainTextEdit(QWidget* parent)
 {
-    connect(this, &InfoAreaEnabledPlainTextEdit::updateRequest, this, &InfoAreaEnabledPlainTextEdit::UpdateMetaInfoSidebar);
+	connect(this, &InfoAreaEnabledPlainTextEdit::updateRequest, this, &InfoAreaEnabledPlainTextEdit::UpdateMetaInfoSidebar);
 }
 
 void InfoAreaEnabledPlainTextEdit::AddInfoAreaWidget(EditInfoAreaWidget* infoWidget)
 {
-    infoAreaWidgets.append(infoWidget);
-    infoWidget->SetOnWidthChangedEvent([this] { SetViewportMargins(0); });
-    SetViewportMargins();
+	infoAreaWidgets.append(infoWidget);
+	infoWidget->SetOnWidthChangedEvent([this] { SetViewportMargins(0); });
+	SetViewportMargins();
 }
 
 void InfoAreaEnabledPlainTextEdit::resizeEvent(QResizeEvent* event)
 {
-    QPlainTextEdit::resizeEvent(event);
+	QPlainTextEdit::resizeEvent(event);
 
-    QRect cr = contentsRect();
-    int left = cr.left();
-    for (EditInfoAreaWidget* widget : infoAreaWidgets)
-    {
-        widget->setGeometry(QRect(left, cr.top(), widget->GetAreaWidth(), cr.height()));
-        left += widget->GetAreaWidth();
-    }
+	QRect cr = contentsRect();
+	int left = cr.left();
+	for (EditInfoAreaWidget* widget : infoAreaWidgets)
+	{
+		widget->setGeometry(QRect(left, cr.top(), widget->GetAreaWidth(), cr.height()));
+		left += widget->GetAreaWidth();
+	}
 }
 
 void InfoAreaEnabledPlainTextEdit::SetViewportMargins(int)
 {
-    int margin = 0;
-    for (const EditInfoAreaWidget* widget : infoAreaWidgets)
-    {
-        margin += widget->GetAreaWidth();
-    }
-    setViewportMargins(margin, 0, 0, 0);
+	int margin = 0;
+	for (const EditInfoAreaWidget* widget : infoAreaWidgets)
+	{
+		margin += widget->GetAreaWidth();
+	}
+	setViewportMargins(margin, 0, 0, 0);
 }
 
 void InfoAreaEnabledPlainTextEdit::UpdateMetaInfoSidebar(const QRect& rect, int dy)
 {
-    int margin = 0;
-    for (EditInfoAreaWidget* widget : infoAreaWidgets)
-    {
-        if (dy)
-        {
-            widget->scroll(0, dy);
-        }
-        else
-        {
-            widget->update(0, rect.y(), widget->width(), rect.height());
-        }
+	int margin = 0;
+	for (EditInfoAreaWidget* widget : infoAreaWidgets)
+	{
+		if (dy)
+		{
+			widget->scroll(0, dy);
+		}
+		else
+		{
+			widget->update(0, rect.y(), widget->width(), rect.height());
+		}
 
-        margin += widget->GetAreaWidth();
-    }
+		margin += widget->GetAreaWidth();
+	}
 
-    if (rect.contains(viewport()->rect()))
-    {
-        setViewportMargins(margin, 0, 0, 0);
-    }
+	if (rect.contains(viewport()->rect()))
+	{
+		setViewportMargins(margin, 0, 0, 0);
+	}
 }

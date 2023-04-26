@@ -28,9 +28,9 @@ class InfoAreaEnabledPlainTextEdit : public QPlainTextEdit
 	Q_OBJECT;
 
 public:
-	InfoAreaEnabledPlainTextEdit(QWidget* parent = nullptr);
+	explicit InfoAreaEnabledPlainTextEdit(QWidget* parent = nullptr);
 
-	virtual ~InfoAreaEnabledPlainTextEdit() = default;
+	~InfoAreaEnabledPlainTextEdit() override = default;
 
 	void AddInfoAreaWidget(EditInfoAreaWidget* infoWidget);
 
