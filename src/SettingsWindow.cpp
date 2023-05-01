@@ -16,6 +16,9 @@
  */
 
 #include "SettingsWindow.h"
+#include "LogProfile.h"
+#include <QDebug>
+#include <vector>
 
 SettingsWindow::SettingsWindow(QWidget *parent)
 	: QMainWindow(parent), config(AppConfig::GetInstance())
@@ -25,6 +28,16 @@ SettingsWindow::SettingsWindow(QWidget *parent)
 	LoadTabProfiles();
 }
 
+void SettingsWindow::on_addProfileButton_clicked()
+{
+	qInfo() << "new profile created";
+}
+
+void SettingsWindow::on_removeProfileButton_clicked()
+{
+	qInfo() << "new profile deleted";
+}
+
 void SettingsWindow::LoadTabGeneral()
 {
 	ui.cbCOW->setCheckState(config->UseCopyOnWriteEnabled() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
@@ -32,7 +45,10 @@ void SettingsWindow::LoadTabGeneral()
 
 void SettingsWindow::LoadTabProfiles()
 {
-	//TODO
+	for (const auto& profile : AppConfig::GetInstance()->GetProfiles())
+	{
+		ui.profilesListWidget->addItem(profile->GetProfileName());
+	}
 }
 
 SettingsWindow::~SettingsWindow() = default;

@@ -21,7 +21,7 @@
 
 class BlockProfiler final
 {
-	std::chrono::time_point<std::chrono::system_clock> start;
+	std::chrono::time_point<std::chrono::high_resolution_clock> start;
 	const QString name;
 
 public:
@@ -32,7 +32,7 @@ public:
 
 	~BlockProfiler()
 	{
-		const std::chrono::time_point<std::chrono::system_clock> done = std::chrono::high_resolution_clock::now();
+		const std::chrono::time_point<std::chrono::high_resolution_clock> done = std::chrono::high_resolution_clock::now();
 		const auto time = std::chrono::duration_cast<std::chrono::milliseconds>(done - start);
 		qInfo() << name << " took " << time.count() << " ms";
 	}

@@ -31,6 +31,8 @@ public:
 
 private slots:
 	void on_cbCOW_stateChanged(int state);
+	void on_addProfileButton_clicked();
+	void on_removeProfileButton_clicked();
 
 private:
 	void LoadTabGeneral();
