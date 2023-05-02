@@ -197,9 +197,40 @@
          <number>0</number>
         </property>
        </widget>
+       <widget class="QLabel" name="profileNameLabel">
+        <property name="geometry">
+         <rect>
+          <x>180</x>
+          <y>40</y>
+          <width>31</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Name:</string>
+        </property>
+       </widget>
+       <widget class="QPlainTextEdit" name="profileNameBox">
+        <property name="geometry">
+         <rect>
+          <x>210</x>
+          <y>40</y>
+          <width>104</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+       </widget>
        <zorder>profilesListWidget</zorder>
        <zorder>addProfileButton</zorder>
        <zorder>removeProfileButton</zorder>
+       <zorder>profileNameLabel</zorder>
+       <zorder>profileNameBox</zorder>
       </widget>
      </widget>
     </item>

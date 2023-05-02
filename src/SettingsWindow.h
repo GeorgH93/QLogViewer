@@ -33,6 +33,8 @@ private slots:
 	void on_cbCOW_stateChanged(int state);
 	void on_addProfileButton_clicked();
 	void on_removeProfileButton_clicked();
+	void on_profilesListWidget_currentRowChanged(int currentRow);
+	void on_profilesListWidget_itemChanged(QListWidgetItem* item);
 
 private:
 	void LoadTabGeneral();

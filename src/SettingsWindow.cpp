@@ -38,6 +38,17 @@ void SettingsWindow::on_removeProfileButton_clicked()
 	qInfo() << "new profile deleted";
 }
 
+void SettingsWindow::on_profilesListWidget_itemChanged(QListWidgetItem* item)
+{
+	ui.profileNameBox->setPlainText(item->text());
+}
+
+void SettingsWindow::on_profilesListWidget_currentRowChanged(int currentRow)
+{
+	qDebug() << "Profile selection has changed";
+	on_profilesListWidget_itemChanged(ui.profilesListWidget->item(currentRow));
+}
+
 void SettingsWindow::LoadTabGeneral()
 {
 	ui.cbCOW->setCheckState(config->UseCopyOnWriteEnabled() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
@@ -47,7 +58,10 @@ void SettingsWindow::LoadTabProfiles()
 {
 	for (const auto& profile : AppConfig::GetInstance()->GetProfiles())
 	{
-		ui.profilesListWidget->addItem(profile->GetProfileName());
+		ui.profilesListWidget->addItem(profile->GetProfileName()); // make this use QWidgetItem
+		// sort here to assure alphabetical order
+		ui.profilesListWidget->setCurrentItem(ui.profilesListWidget->item(0));
+		on_profilesListWidget_currentRowChanged(ui.profilesListWidget->currentRow());
 	}
 }
 
