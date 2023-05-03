@@ -30,17 +30,20 @@ SettingsWindow::SettingsWindow(QWidget *parent)
 
 void SettingsWindow::on_addProfileButton_clicked()
 {
-	qInfo() << "new profile created";
+	qDebug() << "Creating new profile...";
+	ui.profilesListWidget->insertItem(0, new QListWidgetItem({}, "testing"));
 }
 
 void SettingsWindow::on_removeProfileButton_clicked()
 {
-	qInfo() << "new profile deleted";
+	qDebug() << "Removing profile at row " << ui.profilesListWidget->currentRow() << " ...";
+	ui.profilesListWidget->takeItem(ui.profilesListWidget->currentRow());
 }
 
 void SettingsWindow::on_profilesListWidget_itemChanged(QListWidgetItem* item)
 {
 	ui.profileNameBox->setPlainText(item->text());
+	ui.profilePriorityBox->setPlainText("-");
 }
 
 void SettingsWindow::on_profilesListWidget_currentRowChanged(int currentRow)
@@ -58,8 +61,8 @@ void SettingsWindow::LoadTabProfiles()
 {
 	for (const auto& profile : AppConfig::GetInstance()->GetProfiles())
 	{
-		ui.profilesListWidget->addItem(profile->GetProfileName()); // make this use QWidgetItem
-		// sort here to assure alphabetical order
+		ui.profilesListWidget->insertItem(0, new QListWidgetItem(profile->GetIcon(), profile->GetProfileName()));
+		ui.profilesListWidget->sortItems(Qt::AscendingOrder);
 		ui.profilesListWidget->setCurrentItem(ui.profilesListWidget->item(0));
 		on_profilesListWidget_currentRowChanged(ui.profilesListWidget->currentRow());
 	}
