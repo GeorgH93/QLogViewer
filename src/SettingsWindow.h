@@ -36,6 +36,8 @@ private slots:
 	void on_profilesListWidget_currentRowChanged(int currentRow);
 	void on_profilesListWidget_itemChanged(QListWidgetItem* item);
 
+	void on_profileNameBox_textChanged();
+
 private:
 	void LoadTabGeneral();
 	void LoadTabProfiles();

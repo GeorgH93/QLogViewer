@@ -38,6 +38,12 @@
     </property>
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
+      <property name="minimumSize">
+       <size>
+        <width>538</width>
+        <height>315</height>
+       </size>
+      </property>
       <property name="autoFillBackground">
        <bool>false</bool>
       </property>
@@ -229,8 +235,8 @@
        <widget class="QLabel" name="profilePriorityLabel">
         <property name="geometry">
          <rect>
-          <x>360</x>
-          <y>40</y>
+          <x>180</x>
+          <y>70</y>
           <width>41</width>
           <height>20</height>
          </rect>
@@ -248,8 +254,8 @@
        <widget class="QPlainTextEdit" name="profilePriorityBox">
         <property name="geometry">
          <rect>
-          <x>410</x>
-          <y>40</y>
+          <x>220</x>
+          <y>70</y>
           <width>41</width>
           <height>21</height>
          </rect>
@@ -261,6 +267,25 @@
          <enum>Qt::ScrollBarAlwaysOff</enum>
         </property>
        </widget>
+       <widget class="QLabel" name="proflileIconLabel">
+        <property name="geometry">
+         <rect>
+          <x>370</x>
+          <y>40</y>
+          <width>31</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>Icon:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
        <zorder>profilesListWidget</zorder>
        <zorder>addProfileButton</zorder>
        <zorder>removeProfileButton</zorder>
@@ -268,6 +293,7 @@
        <zorder>profileNameBox</zorder>
        <zorder>profilePriorityLabel</zorder>
        <zorder>profilePriorityBox</zorder>
+       <zorder>proflileIconLabel</zorder>
       </widget>
      </widget>
     </item>

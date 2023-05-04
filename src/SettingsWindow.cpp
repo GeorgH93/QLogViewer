@@ -28,22 +28,20 @@ SettingsWindow::SettingsWindow(QWidget *parent)
 	LoadTabProfiles();
 }
 
-void SettingsWindow::on_addProfileButton_clicked()
+void SettingsWindow::LoadTabGeneral()
 {
-	qDebug() << "Creating new profile...";
-	ui.profilesListWidget->insertItem(0, new QListWidgetItem({}, "testing"));
+	ui.cbCOW->setCheckState(config->UseCopyOnWriteEnabled() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
 }
 
-void SettingsWindow::on_removeProfileButton_clicked()
+void SettingsWindow::LoadTabProfiles()
 {
-	qDebug() << "Removing profile at row " << ui.profilesListWidget->currentRow() << " ...";
-	ui.profilesListWidget->takeItem(ui.profilesListWidget->currentRow());
-}
-
-void SettingsWindow::on_profilesListWidget_itemChanged(QListWidgetItem* item)
-{
-	ui.profileNameBox->setPlainText(item->text());
-	ui.profilePriorityBox->setPlainText("-");
+	for (const auto& profile : config->GetProfiles())
+	{
+		ui.profilesListWidget->insertItem(0, new QListWidgetItem(profile->GetIcon(), profile->GetProfileName()));
+		ui.profilesListWidget->sortItems(Qt::AscendingOrder);
+		ui.profilesListWidget->setCurrentItem(ui.profilesListWidget->item(0));
+		on_profilesListWidget_currentRowChanged(ui.profilesListWidget->currentRow());
+	}
 }
 
 void SettingsWindow::on_profilesListWidget_currentRowChanged(int currentRow)
@@ -52,20 +50,42 @@ void SettingsWindow::on_profilesListWidget_currentRowChanged(int currentRow)
 	on_profilesListWidget_itemChanged(ui.profilesListWidget->item(currentRow));
 }
 
-void SettingsWindow::LoadTabGeneral()
+void SettingsWindow::on_profilesListWidget_itemChanged(QListWidgetItem* item)
 {
-	ui.cbCOW->setCheckState(config->UseCopyOnWriteEnabled() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
+	ui.profileNameBox->setPlainText(item->text());
+	ui.profilePriorityBox->setPlainText("-");
 }
 
-void SettingsWindow::LoadTabProfiles()
+void SettingsWindow::on_addProfileButton_clicked()
 {
-	for (const auto& profile : AppConfig::GetInstance()->GetProfiles())
+	qDebug() << "Creating new profile...";
+	LogProfile* profile = new LogProfile("Placeholder Name", {}, 0);
+	ui.profilesListWidget->insertItem(0, new QListWidgetItem({}, profile->GetProfileName()));
+}
+
+void SettingsWindow::on_removeProfileButton_clicked()
+{
+	qDebug() << "Removing profile at row " << ui.profilesListWidget->currentRow() << " ...";
+	ui.profilesListWidget->takeItem(ui.profilesListWidget->currentRow());
+}
+
+void SettingsWindow::on_profileNameBox_textChanged()
+{
+	const QString& profileName = ui.profilesListWidget->item(ui.profilesListWidget->currentRow())->text();
+	for (const auto& profile : config->GetProfiles())
 	{
-		ui.profilesListWidget->insertItem(0, new QListWidgetItem(profile->GetIcon(), profile->GetProfileName()));
-		ui.profilesListWidget->sortItems(Qt::AscendingOrder);
-		ui.profilesListWidget->setCurrentItem(ui.profilesListWidget->item(0));
-		on_profilesListWidget_currentRowChanged(ui.profilesListWidget->currentRow());
+		if (profile->GetProfileName() == profileName)
+		{
+			const auto& position = ui.profileNameBox->textCursor();
+			profile->SetProfileName(ui.profileNameBox->toPlainText());
+			ui.profilesListWidget->item(ui.profilesListWidget->currentRow())->setText(profile->GetProfileName());
+			ui.profileNameBox->setTextCursor(position);
+			break;
+		}
 	}
+	// TODO: This works for now and saves the changes with every keystroke. Because the file then is directly persisted, it should be changed.
+	//		 There should be an exit event, so changes are only persisted when exiting the field.
+	// TODO: Extract profile finding into a method (possibly of LogProfile)
 }
 
 SettingsWindow::~SettingsWindow() = default;
