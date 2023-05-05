@@ -37,6 +37,7 @@ private slots:
 	void on_profilesListWidget_itemChanged(QListWidgetItem* item);
 
 	void on_profileNameBox_textChanged();
+	void on_profileNameBox_focusOutEvent(QFocusEvent* e);
 
 private:
 	void LoadTabGeneral();

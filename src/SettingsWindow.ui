@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>538</width>
+    <width>539</width>
     <height>347</height>
    </rect>
   </property>
@@ -148,25 +148,34 @@
          <rect>
           <x>10</x>
           <y>10</y>
-          <width>75</width>
+          <width>23</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>+ Add</string>
+         <string>+</string>
+        </property>
+        <property name="default">
+         <bool>false</bool>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QPushButton" name="removeProfileButton">
         <property name="geometry">
          <rect>
-          <x>90</x>
+          <x>40</x>
           <y>10</y>
-          <width>75</width>
+          <width>23</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>- Remove</string>
+         <string>-</string>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QListWidget" name="profilesListWidget">
@@ -174,7 +183,7 @@
          <rect>
           <x>10</x>
           <y>40</y>
-          <width>161</width>
+          <width>151</width>
           <height>231</height>
          </rect>
         </property>
@@ -203,97 +212,211 @@
          <number>0</number>
         </property>
        </widget>
-       <widget class="QLabel" name="profileNameLabel">
+       <widget class="QGroupBox" name="profilesGeneralGroup">
         <property name="geometry">
          <rect>
           <x>180</x>
           <y>40</y>
-          <width>31</width>
-          <height>20</height>
+          <width>281</width>
+          <height>81</height>
          </rect>
         </property>
-        <property name="text">
-         <string>Name:</string>
+        <property name="title">
+         <string>General</string>
         </property>
+        <widget class="QLabel" name="profileNameLabel">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>31</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Name:</string>
+         </property>
+        </widget>
+        <widget class="QPlainTextEdit" name="profileNameBox">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>20</y>
+           <width>131</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="tabChangesFocus">
+          <bool>false</bool>
+         </property>
+         <property name="lineWrapMode">
+          <enum>QPlainTextEdit::NoWrap</enum>
+         </property>
+        </widget>
+        <widget class="QLabel" name="proflileIconLabel">
+         <property name="geometry">
+          <rect>
+           <x>190</x>
+           <y>20</y>
+           <width>31</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>Icon:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="profilePriorityLabel">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>50</y>
+           <width>41</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>Priority:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QPlainTextEdit" name="profilePriorityBox">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>50</y>
+           <width>41</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="tabChangesFocus">
+          <bool>false</bool>
+         </property>
+         <property name="lineWrapMode">
+          <enum>QPlainTextEdit::NoWrap</enum>
+         </property>
+        </widget>
        </widget>
-       <widget class="QPlainTextEdit" name="profileNameBox">
-        <property name="geometry">
-         <rect>
-          <x>220</x>
-          <y>40</y>
-          <width>131</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="verticalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
-        </property>
-        <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
-        </property>
-       </widget>
-       <widget class="QLabel" name="profilePriorityLabel">
+       <widget class="QGroupBox" name="profilesPatternGroup">
         <property name="geometry">
          <rect>
           <x>180</x>
-          <y>70</y>
-          <width>41</width>
-          <height>20</height>
+          <y>130</y>
+          <width>281</width>
+          <height>141</height>
          </rect>
         </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="text">
-         <string>Priority:</string>
+        <property name="title">
+         <string>Patterns</string>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        <property name="flat">
+         <bool>false</bool>
         </property>
-       </widget>
-       <widget class="QPlainTextEdit" name="profilePriorityBox">
-        <property name="geometry">
-         <rect>
-          <x>220</x>
-          <y>70</y>
-          <width>41</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="verticalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
-        </property>
-        <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
-        </property>
-       </widget>
-       <widget class="QLabel" name="proflileIconLabel">
-        <property name="geometry">
-         <rect>
-          <x>370</x>
-          <y>40</y>
-          <width>31</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="text">
-         <string>Icon:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
+        <widget class="QLabel" name="profileLogEntryLabel">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>30</y>
+           <width>51</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Log Entry:</string>
+         </property>
+        </widget>
+        <widget class="QPlainTextEdit" name="profileLogEntryBox">
+         <property name="geometry">
+          <rect>
+           <x>70</x>
+           <y>30</y>
+           <width>201</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="tabChangesFocus">
+          <bool>false</bool>
+         </property>
+         <property name="lineWrapMode">
+          <enum>QPlainTextEdit::NoWrap</enum>
+         </property>
+        </widget>
+        <widget class="QPlainTextEdit" name="profileNewLogEntryEntryBox">
+         <property name="geometry">
+          <rect>
+           <x>120</x>
+           <y>60</y>
+           <width>151</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="tabChangesFocus">
+          <bool>false</bool>
+         </property>
+         <property name="lineWrapMode">
+          <enum>QPlainTextEdit::NoWrap</enum>
+         </property>
+        </widget>
+        <widget class="QLabel" name="profileNewLogEntryEntryLabel">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>60</y>
+           <width>101</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>New Log Entry Start:</string>
+         </property>
+        </widget>
        </widget>
        <zorder>profilesListWidget</zorder>
        <zorder>addProfileButton</zorder>
        <zorder>removeProfileButton</zorder>
-       <zorder>profileNameLabel</zorder>
-       <zorder>profileNameBox</zorder>
-       <zorder>profilePriorityLabel</zorder>
-       <zorder>profilePriorityBox</zorder>
-       <zorder>proflileIconLabel</zorder>
+       <zorder>profilesGeneralGroup</zorder>
+       <zorder>profilesPatternGroup</zorder>
       </widget>
      </widget>
     </item>

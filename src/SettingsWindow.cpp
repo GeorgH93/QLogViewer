@@ -52,8 +52,15 @@ void SettingsWindow::on_profilesListWidget_currentRowChanged(int currentRow)
 
 void SettingsWindow::on_profilesListWidget_itemChanged(QListWidgetItem* item)
 {
-	ui.profileNameBox->setPlainText(item->text());
-	ui.profilePriorityBox->setPlainText("-");
+	std::shared_ptr<LogProfile> profile = AppConfig::GetInstance()->GetProfileForName(item->text());
+	if (profile != nullptr)
+	{
+		ui.profileNameBox->setPlainText(profile->GetProfileName());
+		ui.profileLogEntryBox->setPlainText(profile->GetLogEntryRegex());
+		ui.profileNewLogEntryEntryBox->setPlainText(profile->GetNewLogEntryStartRegex());
+		// ui.profilePriorityBox->setPlainText(new QString(profile->GetPriority()));
+	}
+
 }
 
 void SettingsWindow::on_addProfileButton_clicked()
@@ -72,20 +79,26 @@ void SettingsWindow::on_removeProfileButton_clicked()
 void SettingsWindow::on_profileNameBox_textChanged()
 {
 	const QString& profileName = ui.profilesListWidget->item(ui.profilesListWidget->currentRow())->text();
-	for (const auto& profile : config->GetProfiles())
+	std::shared_ptr<LogProfile> profile = AppConfig::GetInstance()->GetProfileForName(profileName);
+	if (profile != nullptr)
 	{
-		if (profile->GetProfileName() == profileName)
-		{
-			const auto& position = ui.profileNameBox->textCursor();
-			profile->SetProfileName(ui.profileNameBox->toPlainText());
-			ui.profilesListWidget->item(ui.profilesListWidget->currentRow())->setText(profile->GetProfileName());
-			ui.profileNameBox->setTextCursor(position);
-			break;
-		}
+		const auto& position = ui.profileNameBox->textCursor();
+		profile->SetProfileName(ui.profileNameBox->toPlainText());
+		ui.profilesListWidget->item(ui.profilesListWidget->currentRow())->setText(profile->GetProfileName());
+		ui.profileNameBox->setTextCursor(position);
 	}
 	// TODO: This works for now and saves the changes with every keystroke. Because the file then is directly persisted, it should be changed.
 	//		 There should be an exit event, so changes are only persisted when exiting the field.
 	// TODO: Extract profile finding into a method (possibly of LogProfile)
+}
+
+void SettingsWindow::on_profileNameBox_focusOutEvent(QFocusEvent* e)
+{
+	qInfo() << "event triggered";
+	if (e->lostFocus())
+	{
+		qInfo() << "lost focus";
+	}
 }
 
 SettingsWindow::~SettingsWindow() = default;
