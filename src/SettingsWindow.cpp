@@ -20,7 +20,7 @@
 #include <QDebug>
 #include <vector>
 
-SettingsWindow::SettingsWindow(QWidget *parent)
+SettingsWindow::SettingsWindow(QWidget* parent)
 	: QMainWindow(parent), config(AppConfig::GetInstance())
 {
 	ui.setupUi(this);
@@ -38,67 +38,92 @@ void SettingsWindow::LoadTabProfiles()
 	for (const auto& profile : config->GetProfiles())
 	{
 		ui.profilesListWidget->insertItem(0, new QListWidgetItem(profile->GetIcon(), profile->GetProfileName()));
-		ui.profilesListWidget->sortItems(Qt::AscendingOrder);
-		ui.profilesListWidget->setCurrentItem(ui.profilesListWidget->item(0));
-		on_profilesListWidget_currentRowChanged(ui.profilesListWidget->currentRow());
 	}
+
+	ui.profilesListWidget->sortItems(Qt::AscendingOrder);
+	ui.profilesListWidget->setCurrentItem(ui.profilesListWidget->item(0));
+	on_profilesListWidget_currentRowChanged(ui.profilesListWidget->currentRow());
+
 }
 
 void SettingsWindow::on_profilesListWidget_currentRowChanged(int currentRow)
 {
 	qDebug() << "Profile selection has changed";
-	on_profilesListWidget_itemChanged(ui.profilesListWidget->item(currentRow));
+	QListWidgetItem* item = ui.profilesListWidget->item(currentRow);
+	const std::shared_ptr<LogProfile> profile = AppConfig::GetInstance()->GetProfileForName(item->text());
+
+	if (profile->GetProfileName() == item->text())
+	{
+		SetAllTextBoxes(profile);
+	}
+	else
+	{
+		ClearAllFields();
+		ui.profileNameBox->setPlainText(item->text());
+	}
 }
 
-void SettingsWindow::on_profilesListWidget_itemChanged(QListWidgetItem* item)
+void SettingsWindow::SetAllTextBoxes(const std::shared_ptr<LogProfile>& profile)
 {
-	std::shared_ptr<LogProfile> profile = AppConfig::GetInstance()->GetProfileForName(item->text());
-	if (profile != nullptr)
-	{
-		ui.profileNameBox->setPlainText(profile->GetProfileName());
-		ui.profileLogEntryBox->setPlainText(profile->GetLogEntryRegex());
-		ui.profileNewLogEntryEntryBox->setPlainText(profile->GetNewLogEntryStartRegex());
-		// ui.profilePriorityBox->setPlainText(new QString(profile->GetPriority()));
-	}
+	// General
+	ui.profileNameBox->setPlainText(profile->GetProfileName());
+	ui.profilePriorityBox->setPlainText(QString::number(profile->GetPriority()));
+	// Patterns
+	ui.profileLogEntryBox->setPlainText(profile->GetLogEntryRegex());
+	ui.profileNewLogEntryEntryBox->setPlainText(profile->GetNewLogEntryStartRegex());
+	ui.profileSystemInfoVersionBox->setPlainText(profile->GetSystemInfoVersionRegex());
+	ui.profileSystemInfoDeviceBox->setPlainText(profile->GetSystemInfoDeviceRegex());
+	ui.profileSystemInfoOsBox->setPlainText(profile->GetSystemInfoOsRegex());
+}
 
+void SettingsWindow::ClearAllFields()
+{
+	// General
+	ui.profileNameBox->clear();
+	ui.profilePriorityBox->clear();
+	// Patterns
+	ui.profileLogEntryBox->clear();
+	ui.profileNewLogEntryEntryBox->clear();
+	ui.profileSystemInfoVersionBox->clear();
+	ui.profileSystemInfoDeviceBox->clear();
+	ui.profileSystemInfoOsBox->clear();
 }
 
 void SettingsWindow::on_addProfileButton_clicked()
 {
 	qDebug() << "Creating new profile...";
-	LogProfile* profile = new LogProfile("Placeholder Name", {}, 0);
-	ui.profilesListWidget->insertItem(0, new QListWidgetItem({}, profile->GetProfileName()));
+	ui.profilesListWidget->insertItem(0, new QListWidgetItem({}, "Placeholder profile name"));
+	ui.profilesListWidget->setCurrentItem(ui.profilesListWidget->item(0));
 }
 
 void SettingsWindow::on_removeProfileButton_clicked()
 {
 	qDebug() << "Removing profile at row " << ui.profilesListWidget->currentRow() << " ...";
+	// TODO: implement profile deletion, it's  only removed from the list in the UI
 	ui.profilesListWidget->takeItem(ui.profilesListWidget->currentRow());
 }
 
-void SettingsWindow::on_profileNameBox_textChanged()
+void SettingsWindow::on_profileSaveButton_clicked()
 {
 	const QString& profileName = ui.profilesListWidget->item(ui.profilesListWidget->currentRow())->text();
 	std::shared_ptr<LogProfile> profile = AppConfig::GetInstance()->GetProfileForName(profileName);
-	if (profile != nullptr)
-	{
-		const auto& position = ui.profileNameBox->textCursor();
-		profile->SetProfileName(ui.profileNameBox->toPlainText());
-		ui.profilesListWidget->item(ui.profilesListWidget->currentRow())->setText(profile->GetProfileName());
-		ui.profileNameBox->setTextCursor(position);
-	}
-	// TODO: This works for now and saves the changes with every keystroke. Because the file then is directly persisted, it should be changed.
-	//		 There should be an exit event, so changes are only persisted when exiting the field.
-	// TODO: Extract profile finding into a method (possibly of LogProfile)
-}
 
-void SettingsWindow::on_profileNameBox_focusOutEvent(QFocusEvent* e)
-{
-	qInfo() << "event triggered";
-	if (e->lostFocus())
+	if (profile == nullptr)
 	{
-		qInfo() << "lost focus";
+		profile = std::shared_ptr<LogProfile>();
 	}
+
+	profile->SetProfileName(ui.profileNameBox->toPlainText());
+	profile->SetPriority(ui.profilePriorityBox->toPlainText().toUInt());
+
+	profile->SetLogEntryRegex(ui.profileLogEntryBox->toPlainText());
+	profile->SetNewLogEntryStartRegex(ui.profileNewLogEntryEntryBox->toPlainText());
+	profile->SetSystemInfoVersionRegex(ui.profileSystemInfoVersionBox->toPlainText());
+	profile->SetSystemInfoDeviceRegex(ui.profileSystemInfoDeviceBox->toPlainText());
+	profile->SetSystemInfoOsRegex(ui.profileSystemInfoOsBox->toPlainText());
+
+	ui.profilesListWidget->item(ui.profilesListWidget->currentRow())->setText(profile->GetProfileName());
+	ui.profilesListWidget->sortItems(Qt::AscendingOrder);
 }
 
 SettingsWindow::~SettingsWindow() = default;

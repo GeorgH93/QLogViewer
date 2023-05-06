@@ -31,17 +31,20 @@ public:
 
 private slots:
 	void on_cbCOW_stateChanged(int state);
+
 	void on_addProfileButton_clicked();
 	void on_removeProfileButton_clicked();
-	void on_profilesListWidget_currentRowChanged(int currentRow);
-	void on_profilesListWidget_itemChanged(QListWidgetItem* item);
+	void on_profileSaveButton_clicked();
 
-	void on_profileNameBox_textChanged();
-	void on_profileNameBox_focusOutEvent(QFocusEvent* e);
+	void on_profilesListWidget_currentRowChanged(int currentRow);
+
 
 private:
 	void LoadTabGeneral();
 	void LoadTabProfiles();
+
+	void SetAllTextBoxes(const std::shared_ptr<LogProfile>& profile);
+	void ClearAllFields();
 
 	Ui::SettingsWindowClass ui;
 	AppConfig* config;
