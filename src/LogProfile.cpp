@@ -243,3 +243,15 @@ void LogProfile::SetSystemInfoLinesToCheck(uint32_t linesToCheck)
 	sysInfoLinesToCheck = linesToCheck;
 	Save();
 }
+
+void LogProfile::SetLinesToCheckForDetection(const uint32_t lines)
+{
+	detectionLinesToCheck = lines;
+	Save();
+}
+
+void LogProfile::SetLinesToCheckForSystemInformation(const uint32_t lines)
+{
+	sysInfoLinesToCheck = lines;
+	Save();
+}

@@ -68,12 +68,16 @@ void SettingsWindow::SetAllTextBoxes(const std::shared_ptr<LogProfile>& profile)
 	// General
 	ui.profileNameBox->setPlainText(profile->GetProfileName());
 	ui.profilePriorityBox->setPlainText(QString::number(profile->GetPriority()));
+	ui.profileFilepathLabel->setText(QString::fromStdString(profile->GetFilepath()));
+
 	// Patterns
 	ui.profileLogEntryBox->setPlainText(profile->GetLogEntryRegex());
 	ui.profileNewLogEntryEntryBox->setPlainText(profile->GetNewLogEntryStartRegex());
+	ui.detectionLinesBox->setPlainText(QString::number(profile->GetLinesToCheckForDetection()));
 	ui.profileSystemInfoVersionBox->setPlainText(profile->GetSystemInfoVersionRegex());
 	ui.profileSystemInfoDeviceBox->setPlainText(profile->GetSystemInfoDeviceRegex());
 	ui.profileSystemInfoOsBox->setPlainText(profile->GetSystemInfoOsRegex());
+	ui.systemInfoLinesBox->setPlainText(QString::number(profile->GetSystemInfoLinesToCheck()));
 }
 
 void SettingsWindow::ClearAllFields()
@@ -81,12 +85,15 @@ void SettingsWindow::ClearAllFields()
 	// General
 	ui.profileNameBox->clear();
 	ui.profilePriorityBox->clear();
+	ui.profileFilepathLabel->clear();
 	// Patterns
 	ui.profileLogEntryBox->clear();
 	ui.profileNewLogEntryEntryBox->clear();
+	ui.detectionLinesBox->clear();
 	ui.profileSystemInfoVersionBox->clear();
 	ui.profileSystemInfoDeviceBox->clear();
 	ui.profileSystemInfoOsBox->clear();
+	ui.systemInfoLinesBox->clear();
 }
 
 void SettingsWindow::on_addProfileButton_clicked()
@@ -113,14 +120,18 @@ void SettingsWindow::on_profileSaveButton_clicked()
 		profile = std::shared_ptr<LogProfile>();
 	}
 
+	// General
 	profile->SetProfileName(ui.profileNameBox->toPlainText());
 	profile->SetPriority(ui.profilePriorityBox->toPlainText().toUInt());
 
+	// Patterns
 	profile->SetLogEntryRegex(ui.profileLogEntryBox->toPlainText());
 	profile->SetNewLogEntryStartRegex(ui.profileNewLogEntryEntryBox->toPlainText());
+	profile->SetLinesToCheckForDetection(ui.detectionLinesBox->toPlainText().toUInt());
 	profile->SetSystemInfoVersionRegex(ui.profileSystemInfoVersionBox->toPlainText());
 	profile->SetSystemInfoDeviceRegex(ui.profileSystemInfoDeviceBox->toPlainText());
 	profile->SetSystemInfoOsRegex(ui.profileSystemInfoOsBox->toPlainText());
+	profile->SetLinesToCheckForSystemInformation(ui.systemInfoLinesBox->toPlainText().toUInt());
 
 	ui.profilesListWidget->item(ui.profilesListWidget->currentRow())->setText(profile->GetProfileName());
 	ui.profilesListWidget->sortItems(Qt::AscendingOrder);
