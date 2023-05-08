@@ -18,6 +18,7 @@
 #include "SettingsWindow.h"
 #include "LogProfile.h"
 #include <QDebug>
+#include <QMessageBox>
 #include <vector>
 
 SettingsWindow::SettingsWindow(QWidget* parent)
@@ -86,6 +87,7 @@ void SettingsWindow::ClearAllFields()
 	ui.profileNameBox->clear();
 	ui.profilePriorityBox->clear();
 	ui.profileFilepathLabel->clear();
+
 	// Patterns
 	ui.profileLogEntryBox->clear();
 	ui.profileNewLogEntryEntryBox->clear();
@@ -94,6 +96,22 @@ void SettingsWindow::ClearAllFields()
 	ui.profileSystemInfoDeviceBox->clear();
 	ui.profileSystemInfoOsBox->clear();
 	ui.systemInfoLinesBox->clear();
+}
+
+void SettingsWindow::SaveToProfile(const std::shared_ptr<LogProfile>& profile)
+{
+	// General
+	profile->SetProfileName(ui.profileNameBox->toPlainText());
+	profile->SetPriority(ui.profilePriorityBox->toPlainText().toUInt());
+
+	// Patterns
+	profile->SetLogEntryRegex(ui.profileLogEntryBox->toPlainText());
+	profile->SetNewLogEntryStartRegex(ui.profileNewLogEntryEntryBox->toPlainText());
+	profile->SetLinesToCheckForDetection(ui.detectionLinesBox->toPlainText().toUInt());
+	profile->SetSystemInfoVersionRegex(ui.profileSystemInfoVersionBox->toPlainText());
+	profile->SetSystemInfoDeviceRegex(ui.profileSystemInfoDeviceBox->toPlainText());
+	profile->SetSystemInfoOsRegex(ui.profileSystemInfoOsBox->toPlainText());
+	profile->SetLinesToCheckForSystemInformation(ui.systemInfoLinesBox->toPlainText().toUInt());
 }
 
 void SettingsWindow::on_addProfileButton_clicked()
@@ -107,7 +125,11 @@ void SettingsWindow::on_removeProfileButton_clicked()
 {
 	qDebug() << "Removing profile at row " << ui.profilesListWidget->currentRow() << " ...";
 	// TODO: implement profile deletion, it's  only removed from the list in the UI
-	ui.profilesListWidget->takeItem(ui.profilesListWidget->currentRow());
+	const int result = QMessageBox::question(this, "Confirm deletion", "Do you really want to delete this profile?", QMessageBox::Ok, QMessageBox::Cancel);
+	if (result == QMessageBox::Ok)
+	{
+		ui.profilesListWidget->takeItem(ui.profilesListWidget->currentRow());
+	}
 }
 
 void SettingsWindow::on_profileSaveButton_clicked()
@@ -120,21 +142,15 @@ void SettingsWindow::on_profileSaveButton_clicked()
 		profile = std::shared_ptr<LogProfile>();
 	}
 
-	// General
-	profile->SetProfileName(ui.profileNameBox->toPlainText());
-	profile->SetPriority(ui.profilePriorityBox->toPlainText().toUInt());
-
-	// Patterns
-	profile->SetLogEntryRegex(ui.profileLogEntryBox->toPlainText());
-	profile->SetNewLogEntryStartRegex(ui.profileNewLogEntryEntryBox->toPlainText());
-	profile->SetLinesToCheckForDetection(ui.detectionLinesBox->toPlainText().toUInt());
-	profile->SetSystemInfoVersionRegex(ui.profileSystemInfoVersionBox->toPlainText());
-	profile->SetSystemInfoDeviceRegex(ui.profileSystemInfoDeviceBox->toPlainText());
-	profile->SetSystemInfoOsRegex(ui.profileSystemInfoOsBox->toPlainText());
-	profile->SetLinesToCheckForSystemInformation(ui.systemInfoLinesBox->toPlainText().toUInt());
+	SaveToProfile(profile);
 
 	ui.profilesListWidget->item(ui.profilesListWidget->currentRow())->setText(profile->GetProfileName());
 	ui.profilesListWidget->sortItems(Qt::AscendingOrder);
+}
+
+void SettingsWindow::on_addLogLevelButton_clicked()
+{
+	qDebug() << "Adding new log level... (wip)";
 }
 
 SettingsWindow::~SettingsWindow() = default;
