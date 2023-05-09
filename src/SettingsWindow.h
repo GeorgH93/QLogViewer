@@ -36,6 +36,7 @@ private slots:
 	void on_removeProfileButton_clicked();
 	void on_profileSaveButton_clicked();
 	void on_addLogLevelButton_clicked();
+	void on_removeLogLevelButton_clicked();
 
 	void on_profilesListWidget_currentRowChanged(int currentRow);
 
@@ -47,6 +48,10 @@ private:
 	void SetAllTextBoxes(const std::shared_ptr<LogProfile>& profile);
 	void ClearAllFields();
 	void SaveToProfile(const std::shared_ptr<LogProfile>& profile);
+
+	bool IsProfileNameUnique();
+	bool IsProfileNameEqualToCurrentListItem();
+
 
 	Ui::SettingsWindowClass ui;
 	AppConfig* config;

@@ -100,6 +100,7 @@ void SettingsWindow::ClearAllFields()
 
 void SettingsWindow::SaveToProfile(const std::shared_ptr<LogProfile>& profile)
 {
+	// TODO: When new profile was created trying to save it leads into a questionable error. The encoded name is nothing like the original
 	// General
 	profile->SetProfileName(ui.profileNameBox->toPlainText());
 	profile->SetPriority(ui.profilePriorityBox->toPlainText().toUInt());
@@ -134,8 +135,15 @@ void SettingsWindow::on_removeProfileButton_clicked()
 
 void SettingsWindow::on_profileSaveButton_clicked()
 {
+	if (!IsProfileNameUnique() && !IsProfileNameEqualToCurrentListItem())
+	{
+		qWarning() << "Profile name '" << ui.profileNameBox->toPlainText() << "' is not unique and can't be saved.";
+		QMessageBox::warning(this, "Profile exists", "There already exists a profile with this name. Please choose a different one.", QMessageBox::Ok);
+		return;
+	}
+
 	const QString& profileName = ui.profilesListWidget->item(ui.profilesListWidget->currentRow())->text();
-	std::shared_ptr<LogProfile> profile = AppConfig::GetInstance()->GetProfileForName(profileName);
+	std::shared_ptr<LogProfile> profile = config->GetProfileForName(profileName);
 
 	if (profile == nullptr)
 	{
@@ -148,9 +156,26 @@ void SettingsWindow::on_profileSaveButton_clicked()
 	ui.profilesListWidget->sortItems(Qt::AscendingOrder);
 }
 
+bool SettingsWindow::IsProfileNameUnique()
+{
+
+	return !AppConfig::GetInstance()->GetProfileForName(ui.profileNameBox->toPlainText());
+}
+
+bool SettingsWindow::IsProfileNameEqualToCurrentListItem()
+{
+	return ui.profilesListWidget->item(ui.profilesListWidget->currentRow())->text() == ui.profileNameBox->toPlainText();
+}
+
+
 void SettingsWindow::on_addLogLevelButton_clicked()
 {
 	qDebug() << "Adding new log level... (wip)";
+}
+
+void SettingsWindow::on_removeLogLevelButton_clicked()
+{
+	qDebug() << "Removing log level... (wip)";
 }
 
 SettingsWindow::~SettingsWindow() = default;
