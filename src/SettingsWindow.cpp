@@ -20,6 +20,9 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <vector>
+#include <QListWidgetItem>
+
+#include "LogLevel.h"
 
 SettingsWindow::SettingsWindow(QWidget* parent)
 	: QMainWindow(parent), config(AppConfig::GetInstance())
@@ -79,6 +82,17 @@ void SettingsWindow::SetAllTextBoxes(const std::shared_ptr<LogProfile>& profile)
 	ui.profileSystemInfoDeviceBox->setPlainText(profile->GetSystemInfoDeviceRegex());
 	ui.profileSystemInfoOsBox->setPlainText(profile->GetSystemInfoOsRegex());
 	ui.systemInfoLinesBox->setPlainText(QString::number(profile->GetSystemInfoLinesToCheck()));
+
+    // Log Levels
+	ui.logLevelTable->setRowCount(profile->GetLogLevels().size());
+	int row = 0;
+	for (const std::shared_ptr<LogLevel>& level : profile->GetLogLevels())
+	{
+		ui.logLevelTable->setItem(row, LOG_LEVEL_COLUMN, new QTableWidgetItem(level->GetLevelName()));
+		// ui.logLevelTable->setItem(row, FONT_COLOR_COLUMN, new QTableWidgetItem(level->GetFontColor().name()));
+		// ui.logLevelTable->setItem(row, BACKGROUND_COLOR_COLUMN, new QTableWidgetItem(level->GetFontColor().name()));
+		row++;
+	}
 }
 
 void SettingsWindow::ClearAllFields()
@@ -96,6 +110,9 @@ void SettingsWindow::ClearAllFields()
 	ui.profileSystemInfoDeviceBox->clear();
 	ui.profileSystemInfoOsBox->clear();
 	ui.systemInfoLinesBox->clear();
+
+	// Log Levels
+	ui.logLevelTable->clearContents();
 }
 
 void SettingsWindow::SaveToProfile(const std::shared_ptr<LogProfile>& profile)
@@ -113,6 +130,10 @@ void SettingsWindow::SaveToProfile(const std::shared_ptr<LogProfile>& profile)
 	profile->SetSystemInfoDeviceRegex(ui.profileSystemInfoDeviceBox->toPlainText());
 	profile->SetSystemInfoOsRegex(ui.profileSystemInfoOsBox->toPlainText());
 	profile->SetLinesToCheckForSystemInformation(ui.systemInfoLinesBox->toPlainText().toUInt());
+
+	// Log Levels
+	const std::shared_ptr<LogLevel> levelp(new LogLevel(ui.logLevelTable->item(0, LOG_LEVEL_COLUMN)->text()));
+	profile->AddLogLevel(levelp);
 }
 
 void SettingsWindow::on_addProfileButton_clicked()
@@ -171,6 +192,8 @@ bool SettingsWindow::IsProfileNameEqualToCurrentListItem()
 void SettingsWindow::on_addLogLevelButton_clicked()
 {
 	qDebug() << "Adding new log level... (wip)";
+	ui.logLevelTable->setRowCount(ui.logLevelTable->rowCount() + 1);
+
 }
 
 void SettingsWindow::on_removeLogLevelButton_clicked()

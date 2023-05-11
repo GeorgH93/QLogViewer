@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>678</width>
+    <width>817</width>
     <height>675</height>
    </rect>
   </property>
@@ -957,9 +957,15 @@
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>310</width>
+                      <height>0</height>
+                     </size>
+                    </property>
                     <property name="maximumSize">
                      <size>
-                      <width>200</width>
+                      <width>310</width>
                       <height>16777215</height>
                      </size>
                     </property>
@@ -981,31 +987,6 @@
                     <attribute name="verticalHeaderVisible">
                      <bool>false</bool>
                     </attribute>
-                    <row>
-                     <property name="text">
-                      <string>1</string>
-                     </property>
-                    </row>
-                    <row>
-                     <property name="text">
-                      <string>Neue Zeile</string>
-                     </property>
-                    </row>
-                    <row>
-                     <property name="text">
-                      <string>Neue Zeile</string>
-                     </property>
-                    </row>
-                    <row>
-                     <property name="text">
-                      <string>Neue Zeile</string>
-                     </property>
-                    </row>
-                    <row>
-                     <property name="text">
-                      <string>Neue Zeile</string>
-                     </property>
-                    </row>
                     <column>
                      <property name="text">
                       <string>Log Level</string>
@@ -1013,59 +994,14 @@
                     </column>
                     <column>
                      <property name="text">
-                      <string>Farbe</string>
+                      <string>Font color</string>
                      </property>
                     </column>
-                    <item row="0" column="0">
+                    <column>
                      <property name="text">
-                      <string>INFO</string>
+                      <string>Background color</string>
                      </property>
-                    </item>
-                    <item row="0" column="1">
-                     <property name="text">
-                      <string>Green</string>
-                     </property>
-                    </item>
-                    <item row="1" column="0">
-                     <property name="text">
-                      <string>WARN</string>
-                     </property>
-                    </item>
-                    <item row="1" column="1">
-                     <property name="text">
-                      <string>Yellow</string>
-                     </property>
-                    </item>
-                    <item row="2" column="0">
-                     <property name="text">
-                      <string>ERROR</string>
-                     </property>
-                    </item>
-                    <item row="2" column="1">
-                     <property name="text">
-                      <string>Red</string>
-                     </property>
-                    </item>
-                    <item row="3" column="0">
-                     <property name="text">
-                      <string>TRACE</string>
-                     </property>
-                    </item>
-                    <item row="3" column="1">
-                     <property name="text">
-                      <string>Blue</string>
-                     </property>
-                    </item>
-                    <item row="4" column="0">
-                     <property name="text">
-                      <string>DEBUG</string>
-                     </property>
-                    </item>
-                    <item row="4" column="1">
-                     <property name="text">
-                      <string>GREY</string>
-                     </property>
-                    </item>
+                    </column>
                    </widget>
                   </item>
                   <item row="1" column="1">

@@ -63,6 +63,8 @@ public:
 	void Delete();
 
 	void AddFilterPreset(const std::shared_ptr<LogFilter>& filter);
+	void AddLogLevel(const std::shared_ptr<LogLevel>& level);
+
 
 	[[nodiscard]] bool IsReadOnly() const { return readOnly; }
 

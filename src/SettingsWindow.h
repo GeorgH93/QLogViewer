@@ -42,6 +42,10 @@ private slots:
 
 
 private:
+	int LOG_LEVEL_COLUMN = 0;
+	int FONT_COLOR_COLUMN = 1;
+	int BACKGROUND_COLOR_COLUMN = 2;
+
 	void LoadTabGeneral();
 	void LoadTabProfiles();
 

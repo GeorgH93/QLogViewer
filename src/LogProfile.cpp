@@ -54,6 +54,12 @@ void LogProfile::AddFilterPreset(const std::shared_ptr<LogFilter>& filter)
 	Save();
 }
 
+void LogProfile::AddLogLevel(const std::shared_ptr<LogLevel>& level)
+{
+	logLevels.push_back(level);
+	Save();
+}
+
 QString LogProfile::FilterName(QString name)
 {
 	if (name.length() > 40)
