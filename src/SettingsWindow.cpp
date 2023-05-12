@@ -17,12 +17,15 @@
 
 #include "SettingsWindow.h"
 #include "LogProfile.h"
+#include "LogLevel.h"
+
 #include <QDebug>
 #include <QMessageBox>
-#include <vector>
 #include <QListWidgetItem>
+#include <QColorDialog>
 
-#include "LogLevel.h"
+#include <vector>
+
 
 SettingsWindow::SettingsWindow(QWidget* parent)
 	: QMainWindow(parent), config(AppConfig::GetInstance())
@@ -47,7 +50,6 @@ void SettingsWindow::LoadTabProfiles()
 	ui.profilesListWidget->sortItems(Qt::AscendingOrder);
 	ui.profilesListWidget->setCurrentItem(ui.profilesListWidget->item(0));
 	on_profilesListWidget_currentRowChanged(ui.profilesListWidget->currentRow());
-
 }
 
 void SettingsWindow::on_profilesListWidget_currentRowChanged(int currentRow)
@@ -64,6 +66,21 @@ void SettingsWindow::on_profilesListWidget_currentRowChanged(int currentRow)
 	{
 		ClearAllFields();
 		ui.profileNameBox->setPlainText(item->text());
+	}
+}
+
+void SettingsWindow::on_logLevelTable_cellClicked(int row, int column)
+{
+	if (column == LOG_LEVEL_COLUMN)
+	{
+		return;
+	}
+
+	QColor color = QColorDialog::getColor(Qt::green, this);
+	if (color.isValid())
+	{
+		ui.logLevelTable->setItem(row, column, new  QTableWidgetItem(color.name()));
+		ui.logLevelTable->item(row, column)->setBackgroundColor(color);
 	}
 }
 
@@ -89,10 +106,17 @@ void SettingsWindow::SetAllTextBoxes(const std::shared_ptr<LogProfile>& profile)
 	for (const std::shared_ptr<LogLevel>& level : profile->GetLogLevels())
 	{
 		ui.logLevelTable->setItem(row, LOG_LEVEL_COLUMN, new QTableWidgetItem(level->GetLevelName()));
-		// ui.logLevelTable->setItem(row, FONT_COLOR_COLUMN, new QTableWidgetItem(level->GetFontColor().name()));
-		// ui.logLevelTable->setItem(row, BACKGROUND_COLOR_COLUMN, new QTableWidgetItem(level->GetFontColor().name()));
+		FillColorCell(row, FONT_COLOR_COLUMN, level->GetFontColor());
+		FillColorCell(row, BACKGROUND_COLOR_COLUMN, level->GetBackgroundColor());
 		row++;
 	}
+}
+
+void SettingsWindow::FillColorCell(const int row, const int column, const QColor& color)
+{
+	ui.logLevelTable->setItem(row, column, new QTableWidgetItem(color.name()));
+	ui.logLevelTable->item(row, column)->setBackground(color);
+	ui.logLevelTable->item(row, column)->setFlags(ui.logLevelTable->item(row, column)->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
 }
 
 void SettingsWindow::ClearAllFields()
@@ -132,8 +156,15 @@ void SettingsWindow::SaveToProfile(const std::shared_ptr<LogProfile>& profile)
 	profile->SetLinesToCheckForSystemInformation(ui.systemInfoLinesBox->toPlainText().toUInt());
 
 	// Log Levels
-	const std::shared_ptr<LogLevel> levelp(new LogLevel(ui.logLevelTable->item(0, LOG_LEVEL_COLUMN)->text()));
-	profile->AddLogLevel(levelp);
+	for (int row = 0; row < ui.logLevelTable->rowCount(); row++)
+	{
+		const std::shared_ptr<LogLevel> level(new LogLevel(
+			ui.logLevelTable->item(row, LOG_LEVEL_COLUMN)->text(),
+			QColor(ui.logLevelTable->item(row, FONT_COLOR_COLUMN)->text()),
+			QColor(ui.logLevelTable->item(row, BACKGROUND_COLOR_COLUMN)->text())
+		));
+		profile->AddLogLevel(level);
+	}
 }
 
 void SettingsWindow::on_addProfileButton_clicked()
@@ -192,8 +223,10 @@ bool SettingsWindow::IsProfileNameEqualToCurrentListItem()
 void SettingsWindow::on_addLogLevelButton_clicked()
 {
 	qDebug() << "Adding new log level... (wip)";
-	ui.logLevelTable->setRowCount(ui.logLevelTable->rowCount() + 1);
-
+	const int rowCount = ui.logLevelTable->rowCount() + 1;
+	ui.logLevelTable->setRowCount(rowCount);
+	FillColorCell(rowCount - 1, FONT_COLOR_COLUMN, Qt::black);
+	FillColorCell(rowCount - 1, BACKGROUND_COLOR_COLUMN, Qt::transparent);
 }
 
 void SettingsWindow::on_removeLogLevelButton_clicked()

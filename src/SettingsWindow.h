@@ -39,6 +39,7 @@ private slots:
 	void on_removeLogLevelButton_clicked();
 
 	void on_profilesListWidget_currentRowChanged(int currentRow);
+	void on_logLevelTable_cellClicked(int row, int column);
 
 
 private:
@@ -50,8 +51,10 @@ private:
 	void LoadTabProfiles();
 
 	void SetAllTextBoxes(const std::shared_ptr<LogProfile>& profile);
+	void FillColorCell(const int row, const int column, const QColor& color);
 	void ClearAllFields();
 	void SaveToProfile(const std::shared_ptr<LogProfile>& profile);
+
 
 	bool IsProfileNameUnique();
 	bool IsProfileNameEqualToCurrentListItem();
