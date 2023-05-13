@@ -149,7 +149,6 @@ void SettingsWindow::ClearAllFields()
 void SettingsWindow::SaveToProfile(std::shared_ptr<LogProfile>& profile)
 {
 	profile->SetReadOnly(true);
-	// TODO: When new profile was created trying to save it leads into a questionable error. The encoded name is nothing like the original
 	// General
 	profile->SetProfileName(ui.profileNameBox->toPlainText());
 	profile->SetPriority(ui.profilePriorityBox->toPlainText().toUInt());
@@ -189,10 +188,14 @@ void SettingsWindow::on_addProfileButton_clicked()
 void SettingsWindow::on_removeProfileButton_clicked()
 {
 	qDebug() << "Removing profile at row " << ui.profilesListWidget->currentRow() << " ...";
-	// TODO: implement profile deletion, it's  only removed from the list in the UI
 	const int result = QMessageBox::question(this, "Confirm deletion", "Do you really want to delete this profile?", QMessageBox::Ok, QMessageBox::Cancel);
 	if (result == QMessageBox::Ok)
 	{
+		QListWidgetItem* item = ui.profilesListWidget->item(ui.profilesListWidget->currentRow());
+		const std::shared_ptr<LogProfile> profile = config->GetProfileForName(item->text());
+		profile->Delete();
+		std::vector<std::shared_ptr<LogProfile>>& profiles = config->GetProfiles();
+		profiles.erase(std::remove(profiles.begin(), profiles.end(), profile), profiles.end());
 		ui.profilesListWidget->takeItem(ui.profilesListWidget->currentRow());
 	}
 }
@@ -234,7 +237,7 @@ bool SettingsWindow::IsProfileNameEqualToCurrentListItem()
 
 void SettingsWindow::on_addLogLevelButton_clicked()
 {
-	qDebug() << "Adding new log level... (wip)";
+	qDebug() << "Adding new log level...";
 	const int rowCount = ui.logLevelTable->rowCount() + 1;
 	ui.logLevelTable->setRowCount(rowCount);
 	FillColorCell(rowCount - 1, FONT_COLOR_COLUMN, Qt::black);
@@ -243,7 +246,11 @@ void SettingsWindow::on_addLogLevelButton_clicked()
 
 void SettingsWindow::on_removeLogLevelButton_clicked()
 {
-	qDebug() << "Removing log level... (wip)";
+	if (ui.logLevelTable->currentRow() >= 0)
+	{
+		qDebug() << "Removing log level '" << ui.logLevelTable->item(ui.logLevelTable->currentRow(), LOG_LEVEL_COLUMN)->text() << "'... ";
+		ui.logLevelTable->removeRow(ui.logLevelTable->currentRow());
+	}
 }
 
 SettingsWindow::~SettingsWindow() = default;
