@@ -29,6 +29,9 @@
 
 // TODO cache yaml config tree??
 
+LogProfile::LogProfile() : readOnly(true)
+{}
+
 LogProfile::LogProfile(const std::string& path)
 	: filePath(path)
 {
@@ -123,16 +126,16 @@ void LogProfile::SetIcon(const QString& iconFilePath)
 
 void LogProfile::Load()
 {
+	auto defaultProfile = LogProfile::GetDefault();
 	YAML::Node config = YAML::LoadFile(filePath);
 	profileName = config["Name"].as<QString>();
 	priority = config["Priority"].as<int>(1);
-	detectionRegex = QRegularExpression(config["DetectionRegex"].as<QString>());
+	detectionRegex = QRegularExpression(config["DetectionRegex"].as<QString>(defaultProfile->detectionRegex.pattern()));
 	detectionLinesToCheck = config["DetectionRange"].as<int>(10);
 	filterPresets = config["FilterPresets"].as<decltype(filterPresets)>(decltype(filterPresets)());
 	logLevels = config["LogLevels"].as<decltype(logLevels)>(decltype(logLevels)());
 	profileIcon = config["Icon"].as<decltype(profileIcon)>(decltype(profileIcon)());
 
-	auto defaultProfile = LogProfile::GetDefault();
 	logEntryRegex = config["Entries.Regex"].as<QString>(defaultProfile->GetLogEntryRegex());
 	newlogEntryStartRegex = config["Entries.NewEntryStartRegex"].as<QString>(defaultProfile->GetNewLogEntryStartRegex());
 	sysInfoVersionRegex = config["SystemInfo.VersionRegex"].as<QString>(defaultProfile->GetSystemInfoVersionRegex());

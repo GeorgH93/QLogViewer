@@ -47,7 +47,7 @@ public:
 
 	[[nodiscard]] std::vector<std::shared_ptr<LogProfile>>& GetProfiles() { return profiles; }
 
-	const std::shared_ptr<LogProfile>& GetProfileForName(const QString& name);
+	std::shared_ptr<LogProfile> GetProfileForName(const QString& name);
 
 	[[nodiscard]] bool UseCopyOnWriteEnabled() const { return copyOnWrite; }
 

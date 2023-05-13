@@ -51,10 +51,11 @@ class LogProfile final
 	QString sysInfoOsRegex;
 
 public:
+	LogProfile();
+
 	LogProfile(const QString& name, const QString& detectionRegex, int detectionLinesCount);
 
 	LogProfile(const std::string& path);
-
 
 	[[nodiscard]] bool IsProfile(const QString& logMessageLine, int line) const;
 

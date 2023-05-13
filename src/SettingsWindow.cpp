@@ -55,17 +55,24 @@ void SettingsWindow::LoadTabProfiles()
 void SettingsWindow::on_profilesListWidget_currentRowChanged(int currentRow)
 {
 	qDebug() << "Profile selection has changed";
-	QListWidgetItem* item = ui.profilesListWidget->item(currentRow);
-	const std::shared_ptr<LogProfile> profile = AppConfig::GetInstance()->GetProfileForName(item->text());
-
-	if (profile->GetProfileName() == item->text())
+	if (currentRow >= 0)
 	{
-		SetAllTextBoxes(profile);
+		QListWidgetItem *item = ui.profilesListWidget->item(currentRow);
+		const std::shared_ptr<LogProfile> profile = AppConfig::GetInstance()->GetProfileForName(item->text());
+
+		if (profile && profile->GetProfileName() == item->text())
+		{
+			SetAllTextBoxes(profile);
+		}
+		else
+		{
+			ClearAllFields();
+			ui.profileNameBox->setPlainText(item->text());
+		}
 	}
 	else
 	{
 		ClearAllFields();
-		ui.profileNameBox->setPlainText(item->text());
 	}
 }
 
@@ -141,6 +148,7 @@ void SettingsWindow::ClearAllFields()
 
 void SettingsWindow::SaveToProfile(const std::shared_ptr<LogProfile>& profile)
 {
+	profile->SetReadOnly(true);
 	// TODO: When new profile was created trying to save it leads into a questionable error. The encoded name is nothing like the original
 	// General
 	profile->SetProfileName(ui.profileNameBox->toPlainText());
@@ -165,6 +173,9 @@ void SettingsWindow::SaveToProfile(const std::shared_ptr<LogProfile>& profile)
 		));
 		profile->AddLogLevel(level);
 	}
+
+	profile->SetReadOnly(false);
+	profile->Save();
 }
 
 void SettingsWindow::on_addProfileButton_clicked()
@@ -197,9 +208,9 @@ void SettingsWindow::on_profileSaveButton_clicked()
 	const QString& profileName = ui.profilesListWidget->item(ui.profilesListWidget->currentRow())->text();
 	std::shared_ptr<LogProfile> profile = config->GetProfileForName(profileName);
 
-	if (profile == nullptr)
+	if (!profile)
 	{
-		profile = std::shared_ptr<LogProfile>();
+		profile = std::make_shared<LogProfile>();
 	}
 
 	SaveToProfile(profile);
