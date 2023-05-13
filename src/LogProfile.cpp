@@ -57,12 +57,6 @@ void LogProfile::AddFilterPreset(const std::shared_ptr<LogFilter>& filter)
 	Save();
 }
 
-void LogProfile::AddLogLevel(const std::shared_ptr<LogLevel>& level)
-{
-	logLevels.push_back(level);
-	Save();
-}
-
 QString LogProfile::FilterName(QString name)
 {
 	if (name.length() > 40)
@@ -250,6 +244,12 @@ void LogProfile::SetSystemInfoOsRegex(const QString &regex)
 void LogProfile::SetSystemInfoLinesToCheck(uint32_t linesToCheck)
 {
 	sysInfoLinesToCheck = linesToCheck;
+	Save();
+}
+
+void LogProfile::SetLogLevels(const std::vector<std::shared_ptr<LogLevel>> levels)
+{
+	logLevels = levels;
 	Save();
 }
 

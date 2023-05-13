@@ -146,7 +146,7 @@ void SettingsWindow::ClearAllFields()
 	ui.logLevelTable->clearContents();
 }
 
-void SettingsWindow::SaveToProfile(const std::shared_ptr<LogProfile>& profile)
+void SettingsWindow::SaveToProfile(std::shared_ptr<LogProfile>& profile)
 {
 	profile->SetReadOnly(true);
 	// TODO: When new profile was created trying to save it leads into a questionable error. The encoded name is nothing like the original
@@ -164,6 +164,7 @@ void SettingsWindow::SaveToProfile(const std::shared_ptr<LogProfile>& profile)
 	profile->SetLinesToCheckForSystemInformation(ui.systemInfoLinesBox->toPlainText().toUInt());
 
 	// Log Levels
+	std::vector<std::shared_ptr<LogLevel>> levels;
 	for (int row = 0; row < ui.logLevelTable->rowCount(); row++)
 	{
 		const std::shared_ptr<LogLevel> level(new LogLevel(
@@ -171,9 +172,9 @@ void SettingsWindow::SaveToProfile(const std::shared_ptr<LogProfile>& profile)
 			QColor(ui.logLevelTable->item(row, FONT_COLOR_COLUMN)->text()),
 			QColor(ui.logLevelTable->item(row, BACKGROUND_COLOR_COLUMN)->text())
 		));
-		profile->AddLogLevel(level);
+		levels.push_back(level);
 	}
-
+	profile->SetLogLevels(levels);
 	profile->SetReadOnly(false);
 	profile->Save();
 }

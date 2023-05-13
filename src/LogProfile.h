@@ -83,8 +83,8 @@ public:
 	void SetFilePath(const std::string& newPath);
 
 
-	[[nodiscard]] inline uint32_t GetLinesToCheckForDetection() const { return detectionLinesToCheck; }
-	[[nodiscard]] inline uint32_t GetLinesToCheckForSystemInformation() const { return sysInfoLinesToCheck; }
+	[[nodiscard]] inline const uint32_t GetLinesToCheckForDetection() const { return detectionLinesToCheck; }
+	[[nodiscard]] inline const uint32_t GetLinesToCheckForSystemInformation() const { return sysInfoLinesToCheck; }
 	[[nodiscard]] inline const uint32_t GetSystemInfoLinesToCheck() const { return sysInfoLinesToCheck; }
 
 	void SetLinesToCheckForDetection(const uint32_t lines);
@@ -93,6 +93,8 @@ public:
 
 	[[nodiscard]] inline const decltype(logLevels)& GetLogLevels() { return logLevels; }
 	[[nodiscard]] inline const std::vector<std::shared_ptr<LogFilter>>& GetFilterPresets() const { return filterPresets; }
+
+	void SetLogLevels(const std::vector<std::shared_ptr<LogLevel>> levels);
 
 	[[nodiscard]] inline const QString& GetLogEntryRegex() const { return logEntryRegex; }
 	[[nodiscard]] inline const QString& GetNewLogEntryStartRegex() const { return newlogEntryStartRegex; }

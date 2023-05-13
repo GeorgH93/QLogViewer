@@ -53,7 +53,7 @@ private:
 	void SetAllTextBoxes(const std::shared_ptr<LogProfile>& profile);
 	void FillColorCell(const int row, const int column, const QColor& color);
 	void ClearAllFields();
-	void SaveToProfile(const std::shared_ptr<LogProfile>& profile);
+	void SaveToProfile(std::shared_ptr<LogProfile>& profile);
 
 
 	bool IsProfileNameUnique();
