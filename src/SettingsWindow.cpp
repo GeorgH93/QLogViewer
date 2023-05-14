@@ -83,7 +83,16 @@ void SettingsWindow::on_logLevelTable_cellClicked(int row, int column)
 		return;
 	}
 
-	QColor color = QColorDialog::getColor(Qt::green, this);
+	QColor color;
+	if (column == BACKGROUND_COLOR_COLUMN)
+	{
+		color = QColorDialog::getColor(ui.logLevelTable->item(row, column)->background().color(), this, "Please choose a color", QColorDialog::ShowAlphaChannel);
+	}
+	else if (column == FONT_COLOR_COLUMN)
+	{
+		color = QColorDialog::getColor(ui.logLevelTable->item(row, column)->background().color(), this, "Please choose a color");
+	}
+
 	if (color.isValid())
 	{
 		ui.logLevelTable->setItem(row, column, new  QTableWidgetItem(color.name()));
@@ -122,6 +131,7 @@ void SettingsWindow::SetAllTextBoxes(const std::shared_ptr<LogProfile>& profile)
 void SettingsWindow::FillColorCell(const int row, const int column, const QColor& color)
 {
 	ui.logLevelTable->setItem(row, column, new QTableWidgetItem(color.name()));
+	ui.logLevelTable->item(row, column)->setForeground(QColor(color.alpha() -  color.red(), color.alpha() - color.green(), color.alpha() - color.blue()));
 	ui.logLevelTable->item(row, column)->setBackground(color);
 	ui.logLevelTable->item(row, column)->setFlags(ui.logLevelTable->item(row, column)->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
 }
@@ -166,6 +176,11 @@ void SettingsWindow::SaveToProfile(std::shared_ptr<LogProfile>& profile)
 	std::vector<std::shared_ptr<LogLevel>> levels;
 	for (int row = 0; row < ui.logLevelTable->rowCount(); row++)
 	{
+		if (!ui.logLevelTable->item(row, LOG_LEVEL_COLUMN) || ui.logLevelTable->item(row, LOG_LEVEL_COLUMN)->text().isEmpty())
+		{
+			continue;
+		}
+
 		const std::shared_ptr<LogLevel> level(new LogLevel(
 			ui.logLevelTable->item(row, LOG_LEVEL_COLUMN)->text(),
 			QColor(ui.logLevelTable->item(row, FONT_COLOR_COLUMN)->text()),
@@ -233,7 +248,6 @@ bool SettingsWindow::IsProfileNameEqualToCurrentListItem()
 {
 	return ui.profilesListWidget->item(ui.profilesListWidget->currentRow())->text() == ui.profileNameBox->toPlainText();
 }
-
 
 void SettingsWindow::on_addLogLevelButton_clicked()
 {

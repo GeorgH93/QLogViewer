@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>874</width>
-    <height>707</height>
+    <width>678</width>
+    <height>708</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -15,6 +15,12 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>708</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>SettingsWindow</string>
@@ -54,7 +60,7 @@
        <bool>false</bool>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabGeneral">
        <attribute name="icon">
@@ -166,7 +172,7 @@
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
-            <layout class="QGridLayout" name="profilesListGridLayout" rowstretch="0,0,0,0,1,0">
+            <layout class="QGridLayout" name="profilesListGridLayout" rowstretch="0,0,0,0,1">
              <property name="leftMargin">
               <number>0</number>
              </property>
@@ -282,13 +288,19 @@
           </item>
           <item>
            <widget class="QFrame" name="profileSettingsLayout_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout">
+            <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,1">
              <property name="leftMargin">
               <number>0</number>
              </property>
@@ -370,7 +382,7 @@
                      <enum>Qt::ScrollBarAlwaysOff</enum>
                     </property>
                     <property name="tabChangesFocus">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                     <property name="lineWrapMode">
                      <enum>QPlainTextEdit::NoWrap</enum>
@@ -407,7 +419,7 @@
                      <enum>Qt::ScrollBarAlwaysOff</enum>
                     </property>
                     <property name="tabChangesFocus">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                     <property name="lineWrapMode">
                      <enum>QPlainTextEdit::NoWrap</enum>
@@ -506,15 +518,27 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="title">
                 <string>Patterns</string>
-               </property>
-               <property name="flat">
-                <bool>false</bool>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_2">
                 <item>
                  <layout class="QGridLayout" name="gridLayout_5">
+                  <property name="sizeConstraint">
+                   <enum>QLayout::SetDefaultConstraint</enum>
+                  </property>
                   <property name="rightMargin">
                    <number>5</number>
                   </property>
@@ -551,6 +575,24 @@
                   </item>
                   <item row="5" column="0">
                    <widget class="QLabel" name="profileSystemInfoDeviceLabel">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>23</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>23</height>
+                     </size>
+                    </property>
                     <property name="text">
                      <string>System Info Device:</string>
                     </property>
@@ -601,6 +643,9 @@
                       <height>23</height>
                      </size>
                     </property>
+                    <property name="inputMethodHints">
+                     <set>Qt::ImhNone</set>
+                    </property>
                     <property name="verticalScrollBarPolicy">
                      <enum>Qt::ScrollBarAlwaysOff</enum>
                     </property>
@@ -608,7 +653,7 @@
                      <enum>Qt::ScrollBarAlwaysOff</enum>
                     </property>
                     <property name="tabChangesFocus">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                     <property name="lineWrapMode">
                      <enum>QPlainTextEdit::NoWrap</enum>
@@ -637,11 +682,17 @@
                         <height>23</height>
                        </size>
                       </property>
+                      <property name="inputMethodHints">
+                       <set>Qt::ImhDigitsOnly</set>
+                      </property>
                       <property name="verticalScrollBarPolicy">
                        <enum>Qt::ScrollBarAlwaysOff</enum>
                       </property>
                       <property name="horizontalScrollBarPolicy">
                        <enum>Qt::ScrollBarAlwaysOff</enum>
+                      </property>
+                      <property name="tabChangesFocus">
+                       <bool>true</bool>
                       </property>
                      </widget>
                     </item>
@@ -682,11 +733,17 @@
                         <height>23</height>
                        </size>
                       </property>
+                      <property name="inputMethodHints">
+                       <set>Qt::ImhDigitsOnly</set>
+                      </property>
                       <property name="verticalScrollBarPolicy">
                        <enum>Qt::ScrollBarAlwaysOff</enum>
                       </property>
                       <property name="horizontalScrollBarPolicy">
                        <enum>Qt::ScrollBarAlwaysOff</enum>
+                      </property>
+                      <property name="tabChangesFocus">
+                       <bool>true</bool>
                       </property>
                      </widget>
                     </item>
@@ -725,6 +782,9 @@
                       <height>23</height>
                      </size>
                     </property>
+                    <property name="inputMethodHints">
+                     <set>Qt::ImhNone</set>
+                    </property>
                     <property name="verticalScrollBarPolicy">
                      <enum>Qt::ScrollBarAlwaysOff</enum>
                     </property>
@@ -732,7 +792,7 @@
                      <enum>Qt::ScrollBarAlwaysOff</enum>
                     </property>
                     <property name="tabChangesFocus">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                     <property name="lineWrapMode">
                      <enum>QPlainTextEdit::NoWrap</enum>
@@ -759,6 +819,9 @@
                       <height>23</height>
                      </size>
                     </property>
+                    <property name="inputMethodHints">
+                     <set>Qt::ImhNone</set>
+                    </property>
                     <property name="verticalScrollBarPolicy">
                      <enum>Qt::ScrollBarAlwaysOff</enum>
                     </property>
@@ -766,7 +829,7 @@
                      <enum>Qt::ScrollBarAlwaysOff</enum>
                     </property>
                     <property name="tabChangesFocus">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                     <property name="lineWrapMode">
                      <enum>QPlainTextEdit::NoWrap</enum>
@@ -793,6 +856,9 @@
                       <height>23</height>
                      </size>
                     </property>
+                    <property name="inputMethodHints">
+                     <set>Qt::ImhNone</set>
+                    </property>
                     <property name="verticalScrollBarPolicy">
                      <enum>Qt::ScrollBarAlwaysOff</enum>
                     </property>
@@ -800,7 +866,7 @@
                      <enum>Qt::ScrollBarAlwaysOff</enum>
                     </property>
                     <property name="tabChangesFocus">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                     <property name="lineWrapMode">
                      <enum>QPlainTextEdit::NoWrap</enum>
@@ -834,6 +900,24 @@
                   </item>
                   <item row="4" column="0">
                    <widget class="QLabel" name="profileSystemInfoVersionLabel">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>23</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>23</height>
+                     </size>
+                    </property>
                     <property name="text">
                      <string>System Info Version:</string>
                     </property>
@@ -841,6 +925,24 @@
                   </item>
                   <item row="7" column="2">
                    <widget class="QLabel" name="systemInfoLinesLabel">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>23</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>23</height>
+                     </size>
+                    </property>
                     <property name="text">
                      <string>System Info Lines to check:</string>
                     </property>
@@ -848,6 +950,30 @@
                   </item>
                   <item row="6" column="0">
                    <widget class="QLabel" name="profileSystemInfoOsLabel">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>23</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>23</height>
+                     </size>
+                    </property>
+                    <property name="sizeIncrement">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
                     <property name="text">
                      <string>System Info OS:</string>
                     </property>
@@ -873,6 +999,9 @@
                       <height>23</height>
                      </size>
                     </property>
+                    <property name="inputMethodHints">
+                     <set>Qt::ImhNone</set>
+                    </property>
                     <property name="verticalScrollBarPolicy">
                      <enum>Qt::ScrollBarAlwaysOff</enum>
                     </property>
@@ -880,7 +1009,7 @@
                      <enum>Qt::ScrollBarAlwaysOff</enum>
                     </property>
                     <property name="tabChangesFocus">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                     <property name="lineWrapMode">
                      <enum>QPlainTextEdit::NoWrap</enum>
@@ -1119,6 +1248,29 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>cbCOW</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>profilesListWidget</tabstop>
+  <tabstop>addProfileButton</tabstop>
+  <tabstop>removeProfileButton</tabstop>
+  <tabstop>profileNameBox</tabstop>
+  <tabstop>profilePriorityBox</tabstop>
+  <tabstop>profileLogEntryBox</tabstop>
+  <tabstop>profileNewLogEntryEntryBox</tabstop>
+  <tabstop>detectionLinesBox</tabstop>
+  <tabstop>profileSystemInfoVersionBox</tabstop>
+  <tabstop>profileSystemInfoDeviceBox</tabstop>
+  <tabstop>profileSystemInfoOsBox</tabstop>
+  <tabstop>systemInfoLinesBox</tabstop>
+  <tabstop>logLevelTable</tabstop>
+  <tabstop>addLogLevelButton</tabstop>
+  <tabstop>removeLogLevelButton</tabstop>
+  <tabstop>profileSaveButton</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>pushButton_2</tabstop>
+  <tabstop>pushButton_3</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
