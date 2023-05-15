@@ -247,7 +247,7 @@ void LogProfile::SetSystemInfoLinesToCheck(uint32_t linesToCheck)
 	Save();
 }
 
-void LogProfile::SetLogLevels(const std::vector<std::shared_ptr<LogLevel>> levels)
+void LogProfile::SetLogLevels(const std::vector<std::shared_ptr<LogLevel>>& levels)
 {
 	logLevels = levels;
 	Save();
