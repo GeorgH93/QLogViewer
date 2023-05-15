@@ -135,6 +135,19 @@ std::shared_ptr<LogProfile> AppConfig::FindProfile(const QString& logLine, int l
 	return nullptr;
 }
 
+std::shared_ptr<LogProfile> AppConfig::GetProfileForName(const QString& name)
+{
+	for (const auto& profile : profiles)
+	{
+		if (profile->GetProfileName() == name)
+		{
+			return profile;
+		}
+	}
+
+	return nullptr;
+}
+
 void AppConfig::AddProfile(const std::shared_ptr<LogProfile>& profile)
 {
 	profiles.push_back(profile);

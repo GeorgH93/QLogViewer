@@ -77,24 +77,34 @@ namespace YAML
 		}
 	};
 
-    template<>
-    struct convert<QColor>
-    {
-        static Node encode(const QColor& color)
-        {
-            return convert<QString>::encode(color.name());
-        }
+	template <>
+	struct convert<QColor>
+	{
+		static Node encode(const QColor& color)
+		{
+			return convert<QString>::encode(color.name(QColor::HexArgb));
+		}
 
-        static bool decode(const Node& node, QColor& color)
-        {
-            if (node.IsScalar())
-            {
-                color = QColor(node.Scalar().c_str());
-                return true;
-            }
-            return false;
-        }
-    };
+		static bool decode(const Node& node, QColor& color)
+		{
+			if (node.IsScalar())
+			{
+				if (node.Scalar().length() == 9)
+				{
+					int r, g, b, a;
+					std::sscanf(node.Scalar().c_str(), "#%02x%02x%02x%02x", &a, &r, &g, &b);
+					color = QColor(r, g, b, a);
+				}
+				else
+				{
+					color = QColor(node.Scalar().c_str());
+				}
+
+				return true;
+			}
+			return false;
+		}
+	};
 
 	template<>
 	struct convert<QPixmap>

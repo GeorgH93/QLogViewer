@@ -32,9 +32,33 @@ public:
 private slots:
 	void on_cbCOW_stateChanged(int state);
 
+	void on_addProfileButton_clicked();
+	void on_removeProfileButton_clicked();
+	void on_profileSaveButton_clicked();
+	void on_addLogLevelButton_clicked();
+	void on_removeLogLevelButton_clicked();
+
+	void on_profilesListWidget_currentRowChanged(int currentRow);
+	void on_logLevelTable_cellClicked(int row, int column);
+
+
 private:
+	static constexpr int LOG_LEVEL_COLUMN = 0;
+	static constexpr int FONT_COLOR_COLUMN = 1;
+	static constexpr int BACKGROUND_COLOR_COLUMN = 2;
+
 	void LoadTabGeneral();
 	void LoadTabProfiles();
+
+	void SetAllTextBoxes(const std::shared_ptr<LogProfile>& profile);
+	void FillColorCell(const int row, const int column, const QColor& color);
+	void ClearAllFields();
+	void SaveToProfile(std::shared_ptr<LogProfile>& profile);
+
+
+	bool IsProfileNameUnique();
+	bool IsProfileNameEqualToCurrentListItem();
+
 
 	Ui::SettingsWindowClass ui;
 	AppConfig* config;

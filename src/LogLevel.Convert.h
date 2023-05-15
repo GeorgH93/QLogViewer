@@ -40,7 +40,7 @@ namespace YAML
             static const LogLevel defaults;
             if (node.IsMap())
             {
-                if (const auto levelNameNode = node["LevelNode"])
+                if (const auto levelNameNode = node["LevelName"])
                 {
                     if (levelNameNode.IsScalar())
                     {
@@ -48,6 +48,7 @@ namespace YAML
                         level.SetFontColor(node["FontColor"].as<QColor>(defaults.GetFontColor()));
                         level.SetBackgroundColor(node["BackgroundColor"].as<QColor>(defaults.GetBackgroundColor()));
                         level.SetAlignment(node["Alignment"].as<int>(defaults.GetAlignment()));
+						return true;
                     }
                 }
 
@@ -69,7 +70,7 @@ namespace YAML
             static const LogLevel defaults;
             if (node.IsMap())
             {
-                if (const auto levelNameNode = node["LevelNode"])
+                if (const auto levelNameNode = node["LevelName"])
                 {
                     if (levelNameNode.IsScalar())
                     {
@@ -79,6 +80,7 @@ namespace YAML
                             node["BackgroundColor"].as<QColor>(defaults.GetBackgroundColor()),
                             node["Alignment"].as<int>(defaults.GetAlignment())
                             );
+						return true;
                     }
                 }
 

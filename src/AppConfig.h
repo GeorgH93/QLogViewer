@@ -45,7 +45,9 @@ public:
 
 	[[nodiscard]] std::shared_ptr<LogProfile> FindProfile(const QString& logLine, int lineNumber) const;
 
-	[[nodiscard]] const std::vector<std::shared_ptr<LogProfile>>& GetProfiles() const { return profiles; }
+	[[nodiscard]] std::vector<std::shared_ptr<LogProfile>>& GetProfiles() { return profiles; }
+
+	std::shared_ptr<LogProfile> GetProfileForName(const QString& name);
 
 	[[nodiscard]] bool UseCopyOnWriteEnabled() const { return copyOnWrite; }
 
