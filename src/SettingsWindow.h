@@ -35,6 +35,7 @@ private slots:
 	void on_addProfileButton_clicked();
 	void on_removeProfileButton_clicked();
 	void on_profileSaveButton_clicked();
+	void on_profileDiscardButton_clicked();
 	void on_addLogLevelButton_clicked();
 	void on_removeLogLevelButton_clicked();
 
