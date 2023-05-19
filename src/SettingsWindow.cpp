@@ -238,6 +238,21 @@ void SettingsWindow::on_profileSaveButton_clicked()
 	ui.profilesListWidget->sortItems(Qt::AscendingOrder);
 }
 
+void SettingsWindow::on_profileDiscardButton_clicked()
+{
+	const QString& profileName = ui.profilesListWidget->item(ui.profilesListWidget->currentRow())->text();
+	std::shared_ptr<LogProfile> profile = config->GetProfileForName(profileName);
+
+	if (!profile)
+	{
+		qDebug() << "Discarding newly created profile by deleting it...";
+		ui.profilesListWidget->takeItem(ui.profilesListWidget->currentRow());
+		return;
+	}
+
+	SetAllTextBoxes(profile);
+}
+
 bool SettingsWindow::IsProfileNameUnique()
 {
 
