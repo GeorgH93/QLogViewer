@@ -35,6 +35,15 @@ LogProfile::LogProfile() : readOnly(true)
 LogProfile::LogProfile(const std::string& path)
 	: filePath(path)
 {
+	if (!path.empty() && !path._Starts_with(AppConfig::GetProfilesLocation().toStdString()))
+	{
+		const std::string& targetPath = AppConfig::GetProfilesLocation().toStdString() + filePath.substr(filePath.find_last_of("/"), filePath.size() - 1);
+
+		std::filesystem::copy_file(filePath, targetPath);
+		
+		filePath = targetPath;
+	}
+
 	Load();
 }
 

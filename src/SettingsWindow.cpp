@@ -23,6 +23,7 @@
 #include <QMessageBox>
 #include <QListWidgetItem>
 #include <QColorDialog>
+#include <QFileDialog>
 
 #include <vector>
 
@@ -57,7 +58,7 @@ void SettingsWindow::on_profilesListWidget_currentRowChanged(int currentRow)
 	qDebug() << "Profile selection has changed";
 	if (currentRow >= 0)
 	{
-		QListWidgetItem *item = ui.profilesListWidget->item(currentRow);
+		QListWidgetItem* item = ui.profilesListWidget->item(currentRow);
 		const std::shared_ptr<LogProfile> profile = AppConfig::GetInstance()->GetProfileForName(item->text());
 
 		if (profile && profile->GetProfileName() == item->text())
@@ -86,16 +87,18 @@ void SettingsWindow::on_logLevelTable_cellClicked(int row, int column)
 	QColor color;
 	if (column == BACKGROUND_COLOR_COLUMN)
 	{
-		color = QColorDialog::getColor(ui.logLevelTable->item(row, column)->background().color(), this, "Please choose a color", QColorDialog::ShowAlphaChannel);
+		color = QColorDialog::getColor(ui.logLevelTable->item(row, column)->background().color(), this,
+		                               "Please choose a color", QColorDialog::ShowAlphaChannel);
 	}
 	else if (column == FONT_COLOR_COLUMN)
 	{
-		color = QColorDialog::getColor(ui.logLevelTable->item(row, column)->background().color(), this, "Please choose a color");
+		color = QColorDialog::getColor(ui.logLevelTable->item(row, column)->background().color(), this,
+		                               "Please choose a color");
 	}
 
 	if (color.isValid())
 	{
-		ui.logLevelTable->setItem(row, column, new  QTableWidgetItem(color.name()));
+		ui.logLevelTable->setItem(row, column, new QTableWidgetItem(color.name()));
 		ui.logLevelTable->item(row, column)->setBackgroundColor(color);
 	}
 }
@@ -116,7 +119,7 @@ void SettingsWindow::SetAllTextBoxes(const std::shared_ptr<LogProfile>& profile)
 	ui.profileSystemInfoOsBox->setPlainText(profile->GetSystemInfoOsRegex());
 	ui.systemInfoLinesBox->setPlainText(QString::number(profile->GetSystemInfoLinesToCheck()));
 
-    // Log Levels
+	// Log Levels
 	ui.logLevelTable->setRowCount(profile->GetLogLevels().size());
 	int row = 0;
 	for (const std::shared_ptr<LogLevel>& level : profile->GetLogLevels())
@@ -131,9 +134,12 @@ void SettingsWindow::SetAllTextBoxes(const std::shared_ptr<LogProfile>& profile)
 void SettingsWindow::FillColorCell(const int row, const int column, const QColor& color)
 {
 	ui.logLevelTable->setItem(row, column, new QTableWidgetItem(color.name()));
-	ui.logLevelTable->item(row, column)->setForeground(QColor(color.alpha() -  color.red(), color.alpha() - color.green(), color.alpha() - color.blue()));
+	ui.logLevelTable->item(row, column)->setForeground(QColor(color.alpha() - color.red(),
+	                                                          color.alpha() - color.green(),
+	                                                          color.alpha() - color.blue()));
 	ui.logLevelTable->item(row, column)->setBackground(color);
-	ui.logLevelTable->item(row, column)->setFlags(ui.logLevelTable->item(row, column)->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
+	ui.logLevelTable->item(row, column)->setFlags(
+		ui.logLevelTable->item(row, column)->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
 }
 
 void SettingsWindow::ClearAllFields()
@@ -176,7 +182,8 @@ void SettingsWindow::SaveToProfile(std::shared_ptr<LogProfile>& profile)
 	std::vector<std::shared_ptr<LogLevel>> levels;
 	for (int row = 0; row < ui.logLevelTable->rowCount(); row++)
 	{
-		if (!ui.logLevelTable->item(row, LOG_LEVEL_COLUMN) || ui.logLevelTable->item(row, LOG_LEVEL_COLUMN)->text().isEmpty())
+		if (!ui.logLevelTable->item(row, LOG_LEVEL_COLUMN) || ui.logLevelTable->item(row, LOG_LEVEL_COLUMN)->text().
+		                                                         isEmpty())
 		{
 			continue;
 		}
@@ -203,7 +210,8 @@ void SettingsWindow::on_addProfileButton_clicked()
 void SettingsWindow::on_removeProfileButton_clicked()
 {
 	qDebug() << "Removing profile at row " << ui.profilesListWidget->currentRow() << " ...";
-	const int result = QMessageBox::question(this, "Confirm deletion", "Do you really want to delete this profile?", QMessageBox::Ok, QMessageBox::Cancel);
+	const int result = QMessageBox::question(this, "Confirm deletion", "Do you really want to delete this profile?",
+	                                         QMessageBox::Ok, QMessageBox::Cancel);
 	if (result == QMessageBox::Ok)
 	{
 		QListWidgetItem* item = ui.profilesListWidget->item(ui.profilesListWidget->currentRow());
@@ -215,12 +223,27 @@ void SettingsWindow::on_removeProfileButton_clicked()
 	}
 }
 
+void SettingsWindow::on_importProfileButton_clicked()
+{
+	QList<QUrl> selectedFiles = QFileDialog::getOpenFileUrls(this, tr("Open profile configuration"), {}, tr("YAML Files (*.yml)"));
+	if (!selectedFiles.isEmpty())
+	{
+		for (QUrl path: selectedFiles)
+		{
+			std::string pathStr = path.toString().toStdString();
+			ui.profilesListWidget->checkAndImportProfile(pathStr);
+		}
+	}
+}
+
 void SettingsWindow::on_profileSaveButton_clicked()
 {
 	if (!IsProfileNameUnique() && !IsProfileNameEqualToCurrentListItem())
 	{
 		qWarning() << "Profile name '" << ui.profileNameBox->toPlainText() << "' is not unique and can't be saved.";
-		QMessageBox::warning(this, "Profile exists", "There already exists a profile with this name. Please choose a different one.", QMessageBox::Ok);
+		QMessageBox::warning(this, "Profile exists",
+		                     "There already exists a profile with this name. Please choose a different one.",
+		                     QMessageBox::Ok);
 		return;
 	}
 
@@ -255,7 +278,6 @@ void SettingsWindow::on_profileDiscardButton_clicked()
 
 bool SettingsWindow::IsProfileNameUnique()
 {
-
 	return !AppConfig::GetInstance()->GetProfileForName(ui.profileNameBox->toPlainText());
 }
 
@@ -277,7 +299,8 @@ void SettingsWindow::on_removeLogLevelButton_clicked()
 {
 	if (ui.logLevelTable->currentRow() >= 0)
 	{
-		qDebug() << "Removing log level '" << ui.logLevelTable->item(ui.logLevelTable->currentRow(), LOG_LEVEL_COLUMN)->text() << "'... ";
+		qDebug() << "Removing log level '" << ui.logLevelTable->item(ui.logLevelTable->currentRow(), LOG_LEVEL_COLUMN)->
+		                                         text() << "'... ";
 		ui.logLevelTable->removeRow(ui.logLevelTable->currentRow());
 	}
 }
