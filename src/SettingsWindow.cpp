@@ -236,6 +236,16 @@ void SettingsWindow::on_importProfileButton_clicked()
 	}
 }
 
+void SettingsWindow::on_exportProfileButton_clicked()
+{
+	QUrl directory = QFileDialog::getExistingDirectoryUrl(this, tr("Export profile configuration"), {});
+	if (!directory.isEmpty())
+	{
+		std::string path = directory.toString().toStdString();
+		ui.profilesListWidget->exportProfile(path);
+	}
+}
+
 void SettingsWindow::on_profileSaveButton_clicked()
 {
 	if (!IsProfileNameUnique() && !IsProfileNameEqualToCurrentListItem())

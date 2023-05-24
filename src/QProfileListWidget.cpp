@@ -17,6 +17,7 @@
 
 #include "QProfileListWidget.h"
 
+#include <filesystem>
 #include <qDebug>
 #include <qevent.h>
 #include <QMimeData>
@@ -70,6 +71,13 @@ bool QProfileListWidget::checkAndImportProfile(std::string& path)
 	setCurrentItem(listItem);
 
 	return true;
+}
+
+bool QProfileListWidget::exportProfile(std::string& path)
+{
+	std::shared_ptr<LogProfile> profile = AppConfig::GetInstance()->GetProfileForName(item(currentRow())->text());
+	path = path + "/" + profile->GetProfileName().toStdString() + ".yml";
+	return std::filesystem::copy_file(profile->GetFilepath(), path);
 }
 
 bool QProfileListWidget::checkImportFile(std::string& path)

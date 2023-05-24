@@ -34,6 +34,7 @@ public:
 	void dragMoveEvent(QDragMoveEvent* event) override;
 
 	bool checkAndImportProfile(std::string& path);
+	bool exportProfile(std::string& path);
 
 private:
 	bool checkImportFile(std::string& path);
