@@ -77,6 +77,12 @@ QString LogProfile::FilterName(QString name)
 	return name;
 }
 
+const std::string LogProfile::GetFileName()
+{
+	std::string filepath = filePath.substr(filePath.find_last_of("/") + 1, filePath.length() - 1);
+	return filepath;
+}
+
 void LogProfile::SetProfileName(const QString& name)
 {
 	profileName = FilterName(name);

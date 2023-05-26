@@ -75,9 +75,9 @@ bool QProfileListWidget::checkAndImportProfile(std::string& path)
 
 bool QProfileListWidget::exportProfile(std::string& path)
 {
+	// TOOD: Implement check if file already exists and ask user if he wants to overwrite it
 	std::shared_ptr<LogProfile> profile = AppConfig::GetInstance()->GetProfileForName(item(currentRow())->text());
-	path = path + "/" + profile->GetProfileName().toStdString() + ".yml";
-	return std::filesystem::copy_file(profile->GetFilepath(), path);
+	return std::filesystem::copy_file(profile->GetFilepath(), path + "/" + profile->GetFileName());
 }
 
 bool QProfileListWidget::checkImportFile(std::string& path)

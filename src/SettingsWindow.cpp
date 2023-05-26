@@ -241,7 +241,7 @@ void SettingsWindow::on_exportProfileButton_clicked()
 	QUrl directory = QFileDialog::getExistingDirectoryUrl(this, tr("Export profile configuration"), {});
 	if (!directory.isEmpty())
 	{
-		std::string path = directory.toString().toStdString();
+		std::string path = directory.toLocalFile().toStdString();
 		ui.profilesListWidget->exportProfile(path);
 	}
 }
