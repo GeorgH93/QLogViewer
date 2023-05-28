@@ -187,8 +187,8 @@ void SettingsWindow::SaveToProfile(std::shared_ptr<LogProfile>& profile)
 	std::vector<std::shared_ptr<LogLevel>> levels;
 	for (int row = 0; row < ui.logLevelTable->rowCount(); row++)
 	{
-		if (!ui.logLevelTable->item(row, LOG_LEVEL_COLUMN) || ui.logLevelTable->item(row, LOG_LEVEL_COLUMN)->text().
-		                                                         isEmpty())
+		if (!ui.logLevelTable->item(row, LOG_LEVEL_COLUMN) 
+			|| ui.logLevelTable->item(row, LOG_LEVEL_COLUMN)->text().isEmpty())
 		{
 			continue;
 		}
