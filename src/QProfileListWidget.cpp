@@ -20,6 +20,7 @@
 #include <filesystem>
 #include <qDebug>
 #include <qevent.h>
+#include <QMessageBox>
 #include <QMimeData>
 
 #include "AppConfig.h"
@@ -40,8 +41,8 @@ void QProfileListWidget::dropEvent(QDropEvent* event)
 
 		for (int i = 0; i < urlList.size() && i < 32; ++i)
 		{
-			std::string path = urlList.at(i).toLocalFile().toStdString();
-			checkAndImportProfile(path);
+			// std::string path = urlList.at(i).toLocalFile().toStdString();
+			checkAndImportProfile(urlList.at(i));
 		}
 	}
 }
@@ -55,14 +56,15 @@ void QProfileListWidget::dragMoveEvent(QDragMoveEvent* event)
 {
 }
 
-bool QProfileListWidget::checkAndImportProfile(std::string& path)
+bool QProfileListWidget::checkAndImportProfile(const QUrl& path)
 {
-	if (checkImportFile(path))
+	if (!isImportable(path))
 	{
 		return false;
 	}
 
-	const std::shared_ptr<LogProfile> profile = std::make_shared<LogProfile>(path);
+
+	const std::shared_ptr<LogProfile> profile = std::make_shared<LogProfile>(path.toLocalFile().toStdString());
 	AppConfig::GetInstance()->GetProfiles().push_back(profile);
 
 	auto* listItem = new QListWidgetItem(profile->GetIcon(), profile->GetProfileName());
@@ -75,17 +77,46 @@ bool QProfileListWidget::checkAndImportProfile(std::string& path)
 
 bool QProfileListWidget::exportProfile(std::string& path)
 {
-	// TOOD: Implement check if file already exists and ask user if he wants to overwrite it
 	std::shared_ptr<LogProfile> profile = AppConfig::GetInstance()->GetProfileForName(item(currentRow())->text());
-	return std::filesystem::copy_file(profile->GetFilepath(), path + "/" + profile->GetFileName());
+	path = path + "/" + profile->GetFileName();
+
+	if (std::filesystem::exists(path))
+	{
+		const int result = QMessageBox::question(this, "File already exists",
+			"A file already exists to where you want to export the profile.\nDo you want to overwrite it?",
+			QMessageBox::Yes, QMessageBox::No);
+		if (result == QMessageBox::Yes)
+		{
+			return copy_file(profile->GetFilepath(), path, std::filesystem::copy_options::overwrite_existing);
+		}
+		return false;
+	}
+
+	return std::filesystem::copy_file(profile->GetFilepath(), path);
 }
 
-bool QProfileListWidget::checkImportFile(std::string& path)
+bool QProfileListWidget::isImportable(const QUrl& path)
 {
-	if (path.find_last_not_of(".yml"))
+	if (!path.toLocalFile().endsWith(".yml"))
 	{
 		return false;
 	}
+	const QString profileName = path.fileName().remove(".yml");
+	auto profile = AppConfig::GetInstance()->GetProfileForName(profileName);
+	if (profile)
+	{
+		const int result = QMessageBox::question(this, "Profile already exists", 
+			"\"" + profile->GetProfileName() + "\" already exists. Do you want to replace the exiting profile?",
+			QMessageBox::Yes, QMessageBox::No);
+		if (result == QMessageBox::Yes)
+		{
+			takeItem(row(findItems(profileName, Qt::MatchExactly)[0]));
+			AppConfig::GetInstance()->DeleteProfile(profile);
+			return true;
+		}
+		return false;
+	}
+
 	return true;
 }
 

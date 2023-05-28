@@ -69,6 +69,7 @@ void SettingsWindow::on_profilesListWidget_currentRowChanged(int currentRow)
 		{
 			ClearAllFields();
 			ui.profileNameBox->setPlainText(item->text());
+			ui.exportProfileButton->setEnabled(false);
 		}
 	}
 	else
@@ -129,6 +130,10 @@ void SettingsWindow::SetAllTextBoxes(const std::shared_ptr<LogProfile>& profile)
 		FillColorCell(row, BACKGROUND_COLOR_COLUMN, level->GetBackgroundColor());
 		row++;
 	}
+
+	// Set available buttons
+	const bool isProfileSaved = config->GetProfileForName(profile->GetProfileName()) != nullptr;
+	ui.exportProfileButton->setEnabled(isProfileSaved);
 }
 
 void SettingsWindow::FillColorCell(const int row, const int column, const QColor& color)
@@ -198,6 +203,7 @@ void SettingsWindow::SaveToProfile(std::shared_ptr<LogProfile>& profile)
 	profile->SetLogLevels(levels);
 	profile->SetReadOnly(false);
 	profile->Save();
+	SetAllTextBoxes(profile);
 }
 
 void SettingsWindow::on_addProfileButton_clicked()
@@ -216,22 +222,27 @@ void SettingsWindow::on_removeProfileButton_clicked()
 	{
 		QListWidgetItem* item = ui.profilesListWidget->item(ui.profilesListWidget->currentRow());
 		const std::shared_ptr<LogProfile> profile = config->GetProfileForName(item->text());
-		profile->Delete();
-		std::vector<std::shared_ptr<LogProfile>>& profiles = config->GetProfiles();
-		profiles.erase(std::remove(profiles.begin(), profiles.end(), profile), profiles.end());
+		config->DeleteProfile(profile);
 		ui.profilesListWidget->takeItem(ui.profilesListWidget->currentRow());
 	}
 }
 
 void SettingsWindow::on_importProfileButton_clicked()
 {
-	QList<QUrl> selectedFiles = QFileDialog::getOpenFileUrls(this, tr("Open profile configuration"), {}, tr("YAML Files (*.yml)"));
+	const QList<QUrl> selectedFiles = QFileDialog::getOpenFileUrls(this, tr("Open profile configuration"), {}, tr("YAML Files (*.yml)"));
 	if (!selectedFiles.isEmpty())
 	{
-		for (QUrl path: selectedFiles)
+		for (const QUrl path: selectedFiles)
 		{
-			std::string pathStr = path.toString().toStdString();
-			ui.profilesListWidget->checkAndImportProfile(pathStr);
+			// auto profile = config->GetProfileForName(path.fileName());
+			//
+			// if (profile)
+			// {
+			// 	
+			// }
+
+			// std::string pathStr = path.toLocalFile().toStdString();
+			ui.profilesListWidget->checkAndImportProfile(path);
 		}
 	}
 }
@@ -263,6 +274,7 @@ void SettingsWindow::on_profileSaveButton_clicked()
 	if (!profile)
 	{
 		profile = std::make_shared<LogProfile>();
+		config->GetProfiles().push_back(profile);
 	}
 
 	SaveToProfile(profile);

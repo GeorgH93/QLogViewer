@@ -33,10 +33,10 @@ public:
 	void dragEnterEvent(QDragEnterEvent* event) override;
 	void dragMoveEvent(QDragMoveEvent* event) override;
 
-	bool checkAndImportProfile(std::string& path);
+	bool checkAndImportProfile(const QUrl& path);
 	bool exportProfile(std::string& path);
 
 private:
-	bool checkImportFile(std::string& path);
+	bool isImportable(const QUrl& path);
 
 };

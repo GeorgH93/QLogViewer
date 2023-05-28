@@ -135,6 +135,15 @@ std::shared_ptr<LogProfile> AppConfig::FindProfile(const QString& logLine, int l
 	return nullptr;
 }
 
+bool AppConfig::DeleteProfile(const std::shared_ptr<LogProfile>& profile)
+{
+	std::vector<std::shared_ptr<LogProfile>>& profiles = GetInstance()->GetProfiles();
+	profiles.erase(std::remove(profiles.begin(), profiles.end(), profile), profiles.end());
+	profile->Delete();
+
+	return false;
+}
+
 std::shared_ptr<LogProfile> AppConfig::GetProfileForName(const QString& name)
 {
 	for (const auto& profile : profiles)
