@@ -41,7 +41,6 @@ void QProfileListWidget::dropEvent(QDropEvent* event)
 
 		for (int i = 0; i < urlList.size() && i < 32; ++i)
 		{
-			// std::string path = urlList.at(i).toLocalFile().toStdString();
 			checkAndImportProfile(urlList.at(i));
 		}
 	}
@@ -62,7 +61,6 @@ bool QProfileListWidget::checkAndImportProfile(const QUrl& path)
 	{
 		return false;
 	}
-
 
 	const std::shared_ptr<LogProfile> profile = std::make_shared<LogProfile>(path.toLocalFile().toStdString());
 	AppConfig::GetInstance()->GetProfiles().push_back(profile);

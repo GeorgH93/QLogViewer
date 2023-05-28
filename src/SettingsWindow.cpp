@@ -234,14 +234,6 @@ void SettingsWindow::on_importProfileButton_clicked()
 	{
 		for (const QUrl path: selectedFiles)
 		{
-			// auto profile = config->GetProfileForName(path.fileName());
-			//
-			// if (profile)
-			// {
-			// 	
-			// }
-
-			// std::string pathStr = path.toLocalFile().toStdString();
 			ui.profilesListWidget->checkAndImportProfile(path);
 		}
 	}
@@ -321,8 +313,9 @@ void SettingsWindow::on_removeLogLevelButton_clicked()
 {
 	if (ui.logLevelTable->currentRow() >= 0)
 	{
-		qDebug() << "Removing log level '" << ui.logLevelTable->item(ui.logLevelTable->currentRow(), LOG_LEVEL_COLUMN)->
-		                                         text() << "'... ";
+		qDebug() << "Removing log level '"
+			<< ui.logLevelTable->item(ui.logLevelTable->currentRow(), LOG_LEVEL_COLUMN)->text()
+			<< "'... ";
 		ui.logLevelTable->removeRow(ui.logLevelTable->currentRow());
 	}
 }
