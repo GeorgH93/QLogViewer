@@ -20,6 +20,17 @@
 #include "LogProfile.h"
 #include <QRegularExpression>
 
+namespace
+{
+	const QString MATCH_GROUP_DATE = "date";
+	const QString MATCH_GROUP_TIME = "time";
+	const QString MATCH_GROUP_THREAD = "thread";
+	const QString MATCH_GROUP_SUBSYS = "subsys";
+	const QString MATCH_GROUP_MESSAGE = "message";
+	const QString MATCH_GROUP_WHERE = "where";
+	const QString MATCH_GROUP_LEVEL = "level";
+}
+
 LogParser::~LogParser()
 {
 	if (ownsFile)
@@ -119,6 +130,12 @@ QString LogParser::GetNextMessage(QTextStream& inputStream)
 	return message;
 }
 
+QString GetMatchFromRawData(const QRegularExpressionMatch& match, const QString& group)
+{
+	QStringView view = match.capturedView(group);
+	return QString::fromRawData((QChar*)view.utf16(), view.length());
+}
+
 LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumber)
 {
 	LogEntry e;
@@ -126,17 +143,20 @@ LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumbe
 	e.lineNumber = startLineNumber;
 	const auto match = logEntryRegex.match(message);
 	TryExtractEnvironment(message);
+
+	e.originalMessage = message;
+
 	if (match.hasMatch())
 	{
-		e.date = match.captured("date");
-		e.time = match.captured("time");
-		e.thread = match.captured("thread");
-		e.subSystem = match.captured("subsys");
-		e.message = match.captured("message");
-		e.where = match.captured("where");
+		e.date = GetMatchFromRawData(match, MATCH_GROUP_DATE);
+		e.time = GetMatchFromRawData(match, MATCH_GROUP_TIME);
+		e.thread = GetMatchFromRawData(match, MATCH_GROUP_THREAD);
+		e.subSystem = GetMatchFromRawData(match, MATCH_GROUP_SUBSYS);
+		e.message = GetMatchFromRawData(match, MATCH_GROUP_MESSAGE);
+		e.where = GetMatchFromRawData(match, MATCH_GROUP_WHERE);
 
 		// Read log level
-		const QString type = match.captured("level");
+		const QString type = GetMatchFromRawData(match, MATCH_GROUP_LEVEL);
 		if (logLevelMap.contains(type))
 		{
 			e.level = logLevelMap[type];
@@ -154,7 +174,6 @@ LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumbe
 	{
 		e.message = message;
 	}
-	e.originalMessage = message;
 	e.Process();
 
 	return e;
