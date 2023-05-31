@@ -39,9 +39,9 @@ void QProfileListWidget::dropEvent(QDropEvent* event)
 	{
 		const QList<QUrl> urlList = mimeData->urls();
 
-		for (int i = 0; i < urlList.size() && i < 32; ++i)
+		for (const QUrl url: urlList) 
 		{
-			checkAndImportProfile(urlList.at(i));
+			checkAndImportProfile(url);
 		}
 	}
 }

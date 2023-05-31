@@ -36,7 +36,7 @@ LogProfile::LogProfile(const std::string& path)
 	: filePath(path)
 {
 	// Allow easy usage of this constructor by handling external profile file locations
-	if (!path.empty() && !path._Starts_with(AppConfig::GetProfilesLocation().toStdString()))
+	if (!path.empty() && path.rfind(AppConfig::GetProfilesLocation().toStdString(), 0) != 0)
 	{
 		const std::string& targetPath = AppConfig::GetProfilesLocation().toStdString() + filePath.substr(filePath.find_last_of("/"), filePath.size() - 1);
 
