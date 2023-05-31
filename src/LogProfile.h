@@ -75,6 +75,7 @@ public:
 	[[nodiscard]] const QIcon& GetIcon() const { return profileIcon; }
 	[[nodiscard]] uint32_t GetPriority() const { return priority; }
 	[[nodiscard]] inline const std::string& GetFilepath() const { return filePath; }
+	const std::string GetFileName();
 
 	void SetProfileName(const QString& name);
 	void SetIcon(const QString& iconFilePath);

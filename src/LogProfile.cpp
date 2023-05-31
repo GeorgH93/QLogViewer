@@ -35,6 +35,16 @@ LogProfile::LogProfile() : readOnly(true)
 LogProfile::LogProfile(const std::string& path)
 	: filePath(path)
 {
+	// Allow easy usage of this constructor by handling external profile file locations
+	if (!path.empty() && path.rfind(AppConfig::GetProfilesLocation().toStdString(), 0) != 0)
+	{
+		const std::string& targetPath = AppConfig::GetProfilesLocation().toStdString() + filePath.substr(filePath.find_last_of("/"), filePath.size() - 1);
+
+		std::filesystem::copy_file(filePath, targetPath);
+		
+		filePath = targetPath;
+	}
+
 	Load();
 }
 
@@ -66,6 +76,12 @@ QString LogProfile::FilterName(QString name)
 	// Remove special chars
 	name.remove(QRegExp("[¥/\\.?*|<>:]"));
 	return name;
+}
+
+const std::string LogProfile::GetFileName()
+{
+	std::string filepath = filePath.substr(filePath.find_last_of("/") + 1, filePath.length() - 1);
+	return filepath;
 }
 
 void LogProfile::SetProfileName(const QString& name)

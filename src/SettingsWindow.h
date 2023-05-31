@@ -34,14 +34,17 @@ private slots:
 
 	void on_addProfileButton_clicked();
 	void on_removeProfileButton_clicked();
+	void on_importProfileButton_clicked();
+	void on_exportProfileButton_clicked();
+
 	void on_profileSaveButton_clicked();
 	void on_profileDiscardButton_clicked();
+
 	void on_addLogLevelButton_clicked();
 	void on_removeLogLevelButton_clicked();
 
 	void on_profilesListWidget_currentRowChanged(int currentRow);
 	void on_logLevelTable_cellClicked(int row, int column);
-
 
 private:
 	static constexpr int LOG_LEVEL_COLUMN = 0;
