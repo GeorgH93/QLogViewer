@@ -41,6 +41,9 @@ LogViewer::LogViewer(QWidget *parent) : InfoAreaEnabledPlainTextEdit(parent)
     QFont font("Monospace");
     font.setStyleHint(QFont::TypeWriter);
     setFont(font);
+
+    setUndoRedoEnabled(false);
+    setUpdatesEnabled(false);
 }
 
 void LogViewer::SetLogHolder(LogHolder* holder)
@@ -68,6 +71,7 @@ void LogViewer::UpdateLogView()
     }
     {
         BlockProfiler setProfiler("Set log view");
+        // Based on application_621.log: The method call below causes a memory consumption of 54MB
         setPlainText(string);
     }
 }
