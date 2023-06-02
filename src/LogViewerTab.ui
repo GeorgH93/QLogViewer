@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1272</width>
-    <height>758</height>
+    <width>1323</width>
+    <height>1046</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -95,58 +95,242 @@
        <x>0</x>
        <y>0</y>
        <width>148</width>
-       <height>651</height>
+       <height>733</height>
       </rect>
      </property>
     </widget>
    </widget>
   </widget>
-  <widget class="LineNumberPlainTextEdit" name="fullLogView">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="currentIndex">
+    <number>1</number>
    </property>
-   <property name="maximumSize">
-    <size>
-     <width>16777215</width>
-     <height>100</height>
-    </size>
-   </property>
-   <property name="baseSize">
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="acceptDrops">
-    <bool>false</bool>
-   </property>
-   <property name="frameShape">
-    <enum>QFrame::Panel</enum>
-   </property>
-   <property name="verticalScrollBarPolicy">
-    <enum>Qt::ScrollBarAlwaysOn</enum>
-   </property>
-   <property name="horizontalScrollBarPolicy">
-    <enum>Qt::ScrollBarAlwaysOn</enum>
-   </property>
-   <property name="tabChangesFocus">
-    <bool>true</bool>
-   </property>
-   <property name="undoRedoEnabled">
-    <bool>false</bool>
-   </property>
-   <property name="lineWrapMode">
-    <enum>QPlainTextEdit::NoWrap</enum>
-   </property>
-   <property name="readOnly">
-    <bool>true</bool>
-   </property>
-   <property name="textInteractionFlags">
-    <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-   </property>
+   <widget class="QWidget" name="fullLogViewTab">
+    <attribute name="title">
+     <string>Full Log View</string>
+    </attribute>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="LineNumberPlainTextEdit" name="fullLogView">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Panel</enum>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOn</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOn</enum>
+       </property>
+       <property name="tabChangesFocus">
+        <bool>true</bool>
+       </property>
+       <property name="undoRedoEnabled">
+        <bool>false</bool>
+       </property>
+       <property name="lineWrapMode">
+        <enum>QPlainTextEdit::NoWrap</enum>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="searchResultsTab">
+    <attribute name="title">
+     <string>Search Results</string>
+    </attribute>
+    <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="leftMargin">
+        <number>9</number>
+       </property>
+       <property name="topMargin">
+        <number>9</number>
+       </property>
+       <property name="rightMargin">
+        <number>9</number>
+       </property>
+       <property name="bottomMargin">
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="searchLabel">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>23</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Search for:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPlainTextEdit" name="searchTextEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>23</height>
+          </size>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>23</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Find Next</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_3">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>23</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Find Previous</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_2">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>23</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Find All</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="LineNumberPlainTextEdit" name="searchResultsTextEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Panel</enum>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOn</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOn</enum>
+       </property>
+       <property name="tabChangesFocus">
+        <bool>true</bool>
+       </property>
+       <property name="undoRedoEnabled">
+        <bool>false</bool>
+       </property>
+       <property name="lineWrapMode">
+        <enum>QPlainTextEdit::NoWrap</enum>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
