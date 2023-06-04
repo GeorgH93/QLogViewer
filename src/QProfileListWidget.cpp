@@ -18,10 +18,10 @@
 #include "QProfileListWidget.h"
 
 #include <filesystem>
-#include <qDebug>
-#include <qevent.h>
+#include <QDebug>
 #include <QMessageBox>
 #include <QMimeData>
+#include <QDropEvent>
 
 #include "AppConfig.h"
 #include "LogProfile.h"

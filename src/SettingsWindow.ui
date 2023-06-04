@@ -1358,7 +1358,7 @@
   <customwidget>
    <class>QProfileListWidget</class>
    <extends>QListWidget</extends>
-   <header>qprofilelistwidget.h</header>
+   <header>QProfileListWidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
