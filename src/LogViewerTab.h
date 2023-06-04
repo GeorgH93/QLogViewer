@@ -42,6 +42,8 @@ public:
 
 	[[nodiscard]] inline const QString& GetSystemInfo() const { return systemInfo; }
 
+	void on_searchTextEdit_textChanged();
+
 private slots:
 	void OnSelectedLineChange() const;
 

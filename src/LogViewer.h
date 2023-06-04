@@ -43,6 +43,7 @@ public:
     LogViewer(QWidget *parent = nullptr);
     
     void SetLogHolder(LogHolder* holder);
+    const LogHolder* GetLogHolder() const { return logHolder; };
         
 private slots:
     void HighlightCurrentLine();
