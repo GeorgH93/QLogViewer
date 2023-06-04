@@ -26,6 +26,7 @@ void LogHolder::Load(LogParser &parser)
 		logEntries = parser.Parse();
 		systemInfo = parser.GetSystemInfo();
 		logProfile = parser.GetUsedProfile();
+		usedLogProfiles = parser.GetUsedLogLevels();
 	}
 	PreprocessLogEntries();
 }
@@ -39,7 +40,6 @@ void LogHolder::PreprocessLogEntries()
 	for (auto& logEntry : logEntries)
 	{
 		current = &logEntry;
-		logEntry.Process();
 		previous = current;
 	}
 }

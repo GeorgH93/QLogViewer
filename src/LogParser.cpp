@@ -19,6 +19,7 @@
 #include "AppConfig.h"
 #include "LogProfile.h"
 #include <QRegularExpression>
+#include <memory>
 
 namespace
 {
@@ -62,19 +63,19 @@ std::vector<LogEntry> LogParser::Parse()
 {
 	std::vector<LogEntry> entries;
 	entries.reserve(100000);
-	QTextStream* inputStream;
+	std::unique_ptr<QTextStream> inputStream;
 	if (inputFile)
 	{
 		if (!inputFile->open(QIODevice::ReadOnly)) { return entries; }
-		inputStream = new QTextStream(inputFile);
+		inputStream = std::make_unique<QTextStream>(inputFile);
 	}
 	else
 	{
-		inputStream = new QTextStream(&logMessage, QIODevice::ReadOnly);
+		inputStream = std::make_unique<QTextStream>(&logMessage, QIODevice::ReadOnly);
 	}
 	inputStream->setCodec("UTF-8");
 
-	FindLogProfile(inputStream);
+	FindLogProfile(inputStream.get());
 
 	LoadRegexesFromProfile();
 
@@ -91,7 +92,6 @@ std::vector<LogEntry> LogParser::Parse()
 	{
 		inputFile->close();
 	}
-	delete inputStream;
 	return entries;
 }
 
@@ -144,37 +144,29 @@ LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumbe
 	const auto match = logEntryRegex.match(message);
 	TryExtractEnvironment(message);
 
-	e.originalMessage = message;
+	e.components[LogComponent::ORIGINAL_MESSAGE] = message;
 
 	if (match.hasMatch())
 	{
-		e.date = GetMatchFromRawData(match, MATCH_GROUP_DATE);
-		e.time = GetMatchFromRawData(match, MATCH_GROUP_TIME);
-		e.thread = GetMatchFromRawData(match, MATCH_GROUP_THREAD);
-		e.subSystem = GetMatchFromRawData(match, MATCH_GROUP_SUBSYS);
-		e.message = GetMatchFromRawData(match, MATCH_GROUP_MESSAGE);
-		e.where = GetMatchFromRawData(match, MATCH_GROUP_WHERE);
+		e.components[LogComponent::DATE] = GetMatchFromRawData(match, MATCH_GROUP_DATE);
+		e.components[LogComponent::TIME] = GetMatchFromRawData(match, MATCH_GROUP_TIME);
+		e.components[LogComponent::THREAD] = GetMatchFromRawData(match, MATCH_GROUP_THREAD);
+		e.components[LogComponent::SUB_SYS] = GetMatchFromRawData(match, MATCH_GROUP_SUBSYS);
+		e.components[LogComponent::MESSAGE] = GetMatchFromRawData(match, MATCH_GROUP_MESSAGE);
+		e.components[LogComponent::WHERE] = GetMatchFromRawData(match, MATCH_GROUP_WHERE);
 
 		// Read log level
 		const QString type = GetMatchFromRawData(match, MATCH_GROUP_LEVEL);
-		if (logLevelMap.contains(type))
-		{
-			e.level = logLevelMap[type];
-		}
-		else
-		{
-			e.level = std::make_shared<LogLevel>(type);
-			logLevelMap.insert(type, e.level);
-		}
+		e.level = GetLogLevel(type);
 
 		//TODO
-		e.timeStamp = QDateTime::fromString("20" + e.date + ' ' + e.time, Qt::ISODateWithMs);
+		e.timeStamp = QDateTime::fromString("20" + e.components[LogComponent::DATE] + ' ' + e.components[LogComponent::TIME], Qt::ISODateWithMs);
 	}
 	else
 	{
-		e.message = message;
+		e.components[LogComponent::MESSAGE] = message;
+		e.level = GetLogLevel("");
 	}
-	e.Process();
 
 	return e;
 }
@@ -228,4 +220,25 @@ void LogParser::TryExtractEnvironment(const QString& message)
 		systemInfo += "\tOS: " + os;
 	}
 	return systemInfo;
+}
+
+std::shared_ptr<LogLevel> LogParser::GetLogLevel(const QString& type)
+{
+	if (logLevelMap.contains(type))
+	{
+		return logLevelMap[type];
+	}
+	auto level = std::make_shared<LogLevel>(type);
+	logLevelMap.insert(type, level);
+	return level;
+}
+
+std::vector<std::shared_ptr<LogLevel>> LogParser::GetUsedLogLevels() const
+{
+	std::vector<std::shared_ptr<LogLevel>> usedLevels;
+	for(const auto& level : logLevelMap)
+	{
+		usedLevels.push_back(level);
+	}
+	return usedLevels;
 }

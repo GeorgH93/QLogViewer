@@ -32,6 +32,7 @@ class QWidget;
 QT_END_NAMESPACE
 
 class LineNumberAreaWidget;
+class LogLevelAreaWidget;
 class MetaDataArea;
 
 class LogViewer : public InfoAreaEnabledPlainTextEdit
@@ -50,6 +51,7 @@ private slots:
     
 private:
     LineNumberAreaWidget* lineNumberArea;
+	LogLevelAreaWidget* logLevelArea;
 
     LogHolder* logHolder;
 };

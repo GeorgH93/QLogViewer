@@ -69,6 +69,8 @@ public:
 
 	[[nodiscard]] std::shared_ptr<LogProfile> GetUsedProfile() const { return logProfile; }
 
+	[[nodiscard]] std::vector<std::shared_ptr<LogLevel>> GetUsedLogLevels() const;
+
 private:
 	void TryExtractEnvironment(const QString& message);
 
@@ -81,4 +83,6 @@ private:
 	void FindLogProfile(QTextStream* inputStream);
 
 	void LoadRegexesFromProfile();
+
+	std::shared_ptr<LogLevel> GetLogLevel(const QString& levelName);
 };

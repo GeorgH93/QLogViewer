@@ -45,7 +45,7 @@ public:
 
 	[[nodiscard]] std::shared_ptr<LogProfile> FindProfile(const QString& logLine, int lineNumber) const;
 
-	bool DeleteProfile(const std::shared_ptr<LogProfile>& profile);
+	void DeleteProfile(const std::shared_ptr<LogProfile>& profile);
 
 	[[nodiscard]] std::vector<std::shared_ptr<LogProfile>>& GetProfiles() { return profiles; }
 

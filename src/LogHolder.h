@@ -18,6 +18,7 @@
 #pragma once
 
 #include "LogEntry.h"
+#include "FormatedStringCache.h"
 #include <QString>
 #include <QFile>
 
@@ -32,6 +33,7 @@ class LogHolder final
     std::vector<const LogEntry*> filteredLogEntries;
     QString systemInfo;
 	std::shared_ptr<LogProfile> logProfile;
+	std::vector<std::shared_ptr<LogLevel>> usedLogProfiles;
 
 public:
     LogHolder() = default;
@@ -66,14 +68,14 @@ public:
     {
         //TODO handle multi line messages
         if (editorLineNumber >= filteredLogEntries.size()) return EMPTY_MESSAGE;
-        return filteredLogEntries[editorLineNumber]->lineNumberString;
+        return FormattedStringCache::NumberAsString(filteredLogEntries[editorLineNumber]->lineNumber);
     }
 
     [[nodiscard]] QStringView GetFilteredEntryNumber(int editorLineNumber) const
     {
         //TODO handle multi line messages
         if (editorLineNumber >= filteredLogEntries.size()) return EMPTY_MESSAGE;
-        return filteredLogEntries[editorLineNumber]->entryNumberString;
+        return FormattedStringCache::NumberAsString(filteredLogEntries[editorLineNumber]->entryNumber);
     }
 
     [[nodiscard]] inline uint64_t GetMaxLineNumber() const
@@ -91,6 +93,11 @@ public:
     {
 	    return systemInfo;
     }
+
+	[[nodiscard]] inline const std::vector<std::shared_ptr<LogLevel>>& GetUsedLogLevels()
+	{
+		return usedLogProfiles;
+	}
 
 	[[nodiscard]] inline std::shared_ptr<LogProfile> GetLogProfile() const { return logProfile; }
 

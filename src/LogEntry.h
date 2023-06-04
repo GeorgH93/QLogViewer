@@ -22,32 +22,24 @@
 #include "LogLevel.h"
 #include <memory>
 #include <chrono>
+#include <array>
+
+class LogComponent
+{
+public:
+	enum Component {
+		ORIGINAL_MESSAGE, DATE, TIME, THREAD, SUB_SYS, MESSAGE, WHERE
+	};
+};
 
 struct LogEntry
 {
 	uint64_t entryNumber;
 	uint64_t lineNumber;
 	QDateTime timeStamp;
-	QString date, time;
 	std::shared_ptr<LogLevel> level;
-	QString thread;
-	QString subSystem;
-	QString where;
-
-	QString message;
-
-	QString originalMessage;
-
-
-	QString entryNumberString;
-	QString lineNumberString;
+	std::array<QString, 8> components;
 
 	std::chrono::microseconds sinceStart, sincePrevious;
 	QString sinceStartString, sincePreviousString;
-
-	void Process()
-	{
-		entryNumberString = QString::number(entryNumber);
-		lineNumberString = QString::number(lineNumber);
-	}
 };

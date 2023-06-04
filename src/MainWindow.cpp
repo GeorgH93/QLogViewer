@@ -90,7 +90,7 @@ void MainWindow::Open(const QString& filePath)
     QFile file(filePath);
 	if (file.exists())
 	{ //TODO run async
-		LogViewerTab* viewerTab = new LogViewerTab(&file, this);
+		LogViewerTab* viewerTab = new LogViewerTab(&file, ui->tabWidget);
 		AddTab(viewerTab);
 		RecentFiles::GetInstance().Add(filePath);
 	}
@@ -125,6 +125,7 @@ void MainWindow::OnTabCurrentChanged(int index)
 
 void MainWindow::OnTabCloseRequested(int index)
 {
+	logTabs[index]->deleteLater();
     logTabs.removeAt(index);
     ui->tabWidget->removeTab(index);
     if(!ui->tabWidget->count())
