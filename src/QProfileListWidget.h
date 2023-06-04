@@ -17,23 +17,26 @@
 
 #pragma once
 
-#include <QDebug>
+#include <QListWidget>
 
-class BlockProfiler final
+class QProfileListWidget final : public QListWidget
 {
-	std::chrono::time_point<std::chrono::high_resolution_clock> start;
-	const QString name;
+
+	Q_OBJECT
 
 public:
-	BlockProfiler(const QString& name) : name(name)
-	{
-		start = std::chrono::high_resolution_clock::now();
-	}
+	QProfileListWidget(QWidget* parent = nullptr);
+	~QProfileListWidget() override;
 
-	~BlockProfiler()
-	{
-		const std::chrono::time_point<std::chrono::high_resolution_clock> done = std::chrono::high_resolution_clock::now();
-		const auto time = std::chrono::duration_cast<std::chrono::milliseconds>(done - start);
-		qInfo() << name << " took " << time.count() << " ms";
-	}
+public:
+	void dropEvent(QDropEvent* event) override;
+	void dragEnterEvent(QDragEnterEvent* event) override;
+	void dragMoveEvent(QDragMoveEvent* event) override;
+
+	bool checkAndImportProfile(const QUrl& path);
+	bool exportProfile(std::string& path);
+
+private:
+	bool isImportable(const QUrl& path);
+
 };
