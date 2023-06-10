@@ -39,6 +39,9 @@ LogViewerTab::LogViewerTab(QFile* file, QWidget *parent)
 	setCollapsible(this->indexOf(mainView), false);
 	mainView->setCollapsible(mainView->indexOf(ui.logViewer), false);
 
+	// Init search
+	search = new LogSearch(ui.logViewer->GetLogHolder(), ui.searchResultsTextEdit);
+
 	connect(ui.logViewer, &LogViewer::cursorPositionChanged, this, &LogViewerTab::OnSelectedLineChange);
 	connect(ui.searchTextEdit, &LogViewer::textChanged, this, &LogViewerTab::on_searchTextEdit_textChanged);
 }
@@ -46,6 +49,7 @@ LogViewerTab::LogViewerTab(QFile* file, QWidget *parent)
 LogViewerTab::~LogViewerTab()
 {
 	ui.logViewer = nullptr;
+	*search;
 }
 
 void LogViewerTab::OnSelectedLineChange() const
@@ -85,37 +89,7 @@ void LogViewerTab::HighlightCurrentLineInFullView() const
 
 void LogViewerTab::on_searchTextEdit_textChanged()
 {
-	const QString& searchTokens = ui.searchTextEdit->toPlainText();
-
-	if (searchTokens == nullptr || searchTokens.length() <= 3)
-	{
-		qDebug() << "Search length too short, not filling results yet...";
-		return;
-	}
-
-	BlockProfiler profiler("Update search results");
-	const LogHolder* logHolder = ui.logViewer->GetLogHolder();
-	QString string;
-	{
-		BlockProfiler buildProfiler("Filter entries");
-		for (const LogEntry* entry : logHolder->GetFilteredEntries())
-		{
-			if (!entry->originalMessage.contains(searchTokens))
-			{
-				continue;
-			}
-
-			if (!string.isEmpty())
-			{
-				string.append('\n');
-			}
-			string.append(entry->message);
-		}
-	}
-	{
-		BlockProfiler setProfiler("Set search results");
-		ui.searchResultsTextEdit->setPlainText(string);
-	}
+	search->search(ui.searchTextEdit->toPlainText());
 }
 
 void LogViewerTab::Load(QFile* file)

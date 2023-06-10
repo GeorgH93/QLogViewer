@@ -20,6 +20,7 @@
 #include "ui_LogViewerTab.h"
 #include "LogHolder.h"
 #include <QIcon>
+#include "LogSearch.h"
 
 class LogViewer;
 
@@ -59,4 +60,6 @@ private:
 	QIcon tabIcon;
 
 	LogHolder logHolder;
+
+	LogSearch* search;
 };
