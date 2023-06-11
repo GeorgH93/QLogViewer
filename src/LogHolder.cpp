@@ -40,7 +40,6 @@ void LogHolder::PreprocessLogEntries()
 	for (auto& logEntry : logEntries)
 	{
 		current = &logEntry;
-		logEntry.Process();
 		previous = current;
 	}
 }

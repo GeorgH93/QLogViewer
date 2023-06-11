@@ -18,57 +18,58 @@
 #pragma once
 
 #include "EditInfoAreaWidget.h"
+#include "FormatedStringCache.h"
 
 class LineNumberAreaWidget : public EditInfoAreaWidget
 {
-    QString lineNumberString;
-    QColor fontColor;
-    QColor fontBackgroundColor;
-    EditInfoAreaWidgetMetaDescription description;
+	QString lineNumberString;
+	QColor fontColor;
+	QColor fontBackgroundColor;
+	EditInfoAreaWidgetMetaDescription description;
 
 public:
-    LineNumberAreaWidget(InfoAreaEnabledPlainTextEdit* editor, int marginLeft = 3, int marginRight = 3, int alignment = Qt::AlignRight)
-        : EditInfoAreaWidget(editor, std::bind(&LineNumberAreaWidget::GetMetaDescriptionForLine, this, std::placeholders::_1), marginLeft, marginRight)
-        , description({ lineNumberString, fontColor, fontBackgroundColor, alignment })
-    {
-        SetBackgroundColor(Qt::lightGray);
-    }
+	LineNumberAreaWidget(InfoAreaEnabledPlainTextEdit* editor, int marginLeft = 3, int marginRight = 3, int alignment = Qt::AlignRight)
+		: EditInfoAreaWidget(editor, std::bind(&LineNumberAreaWidget::GetMetaDescriptionForLine, this, std::placeholders::_1), marginLeft, marginRight)
+		, description({ lineNumberString, fontColor, fontBackgroundColor, alignment })
+	{
+		SetBackgroundColor(Qt::lightGray);
+	}
 
-    virtual char GetWidthCalculationChar() override
-    {
-        return '9';
-    }
+	char GetWidthCalculationChar() override
+	{
+		return '9';
+	}
 
-    void SetWidthForMaxNumber(const uint64_t maxLineNumber)
-    {
-        int digits = 1;
-        uint64_t max = qMax(static_cast<uint64_t>(1), maxLineNumber);
-        while (max >= 10)
-        {
-            max /= 10;
-            ++digits;
-        }
-        SetWidthForCharCount(digits);
-    }
+	void SetWidthForMaxNumber(const uint64_t maxLineNumber)
+	{
+		int digits = 1;
+		uint64_t max = qMax(static_cast<uint64_t>(1), maxLineNumber);
+		while (max >= 10)
+		{
+			max /= 10;
+			++digits;
+		}
+		SetWidthForCharCount(digits);
+	}
 
-    inline void SetFontColor(const QColor& color = Qt::black)
-    {
-        fontColor = color;
-    }
+	inline void SetFontColor(const QColor& color = Qt::black)
+	{
+		fontColor = color;
+	}
 
-    inline void SetFontBackgroundColor(const QColor& color = Qt::transparent)
-    {
-        fontBackgroundColor = color;
-    }
+	inline void SetFontBackgroundColor(const QColor& color = Qt::transparent)
+	{
+		fontBackgroundColor = color;
+	}
 
-    inline void SetAlignment(int alignment = Qt::AlignRight)
-    {
-        description.alignment = alignment;
-    }
+	inline void SetAlignment(int alignment = Qt::AlignRight)
+	{
+		description.alignment = alignment;
+	}
 
-    EditInfoAreaWidgetMetaDescription GetMetaDescriptionForLine(int lineNr)
-    {
-        lineNumberString = QString::number(lineNr + 1);
-        return description;
-    }
+	EditInfoAreaWidgetMetaDescription GetMetaDescriptionForLine(int lineNr)
+	{
+		lineNumberString = FormattedStringCache::NumberAsString(lineNr + 1);
+		return description;
+	}
 };

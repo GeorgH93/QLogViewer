@@ -19,6 +19,7 @@
 #include "AppConfig.h"
 #include "LogProfile.h"
 #include <QRegularExpression>
+#include <memory>
 
 LogParser::~LogParser()
 {
@@ -51,19 +52,19 @@ std::vector<LogEntry> LogParser::Parse()
 {
 	std::vector<LogEntry> entries;
 	entries.reserve(100000);
-	QTextStream* inputStream;
+	std::unique_ptr<QTextStream> inputStream;
 	if (inputFile)
 	{
 		if (!inputFile->open(QIODevice::ReadOnly)) { return entries; }
-		inputStream = new QTextStream(inputFile);
+		inputStream = std::make_unique<QTextStream>(inputFile);
 	}
 	else
 	{
-		inputStream = new QTextStream(&logMessage, QIODevice::ReadOnly);
+		inputStream = std::make_unique<QTextStream>(&logMessage, QIODevice::ReadOnly);
 	}
 	inputStream->setCodec("UTF-8");
 
-	FindLogProfile(inputStream);
+	FindLogProfile(inputStream.get());
 
 	LoadRegexesFromProfile();
 
@@ -80,7 +81,6 @@ std::vector<LogEntry> LogParser::Parse()
 	{
 		inputFile->close();
 	}
-	delete inputStream;
 	return entries;
 }
 
@@ -128,26 +128,25 @@ LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumbe
 	TryExtractEnvironment(message);
 	if (match.hasMatch())
 	{
-		e.date = match.captured("date");
-		e.time = match.captured("time");
-		e.thread = match.captured("thread");
-		e.subSystem = match.captured("subsys");
-		e.message = match.captured("message");
-		e.where = match.captured("where");
+		e.components[LogComponent::DATE] = match.captured("date");
+		e.components[LogComponent::TIME] = match.captured("time");
+		e.components[LogComponent::THREAD] = match.captured("thread");
+		e.components[LogComponent::SUB_SYS] = match.captured("subsys");
+		e.components[LogComponent::MESSAGE] = match.captured("message");
+		e.components[LogComponent::WHERE] = match.captured("where");
 
 		// Read log level
 		e.level = GetLogLevel(match.captured("level"));
 
 		//TODO
-		e.timeStamp = QDateTime::fromString("20" + e.date + ' ' + e.time, Qt::ISODateWithMs);
+		e.timeStamp = QDateTime::fromString("20" + e.components[LogComponent::DATE] + ' ' + e.components[LogComponent::TIME], Qt::ISODateWithMs);
 	}
 	else
 	{
-		e.message = message;
+		e.components[LogComponent::MESSAGE] = message;
 		e.level = GetLogLevel("");
 	}
-	e.originalMessage = message;
-	e.Process();
+	e.components[LogComponent::ORIGINAL_MESSAGE] = message;
 
 	return e;
 }

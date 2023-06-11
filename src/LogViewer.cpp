@@ -67,7 +67,7 @@ void LogViewer::UpdateLogView()
 			{
 				string.append('\n');
 			}
-            string.append(entry->message);
+            string.append(entry->components[LogComponent::MESSAGE]);
         }
     }
     {

@@ -15,33 +15,15 @@
  *   along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include "FormatedStringCache.h"
 
-#include <QPlainTextEdit>
+std::vector<QString> FormattedStringCache::numberStrings;
 
-class EditInfoAreaWidget;
-
-class InfoAreaEnabledPlainTextEdit : public QPlainTextEdit
+const QString& FormattedStringCache::NumberAsString(uint64_t number)
 {
-	friend EditInfoAreaWidget;
-
-	Q_OBJECT;
-
-public:
-	explicit InfoAreaEnabledPlainTextEdit(QWidget* parent = nullptr);
-
-	~InfoAreaEnabledPlainTextEdit() override = default;
-
-	void AddInfoAreaWidget(EditInfoAreaWidget* infoWidget);
-
-protected:
-	void resizeEvent(QResizeEvent* event) override;
-
-protected slots:
-	void SetViewportMargins(int = 0);
-
-	void UpdateMetaInfoSidebar(const QRect& rect, int dy);
-
-private:
-	QList<EditInfoAreaWidget*> infoAreaWidgets;
-};
+	for(uint64_t i = numberStrings.size(); i <= number; i++)
+	{
+		numberStrings.push_back(QString::number(i));
+	}
+	return numberStrings[number];
+}

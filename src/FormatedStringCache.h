@@ -17,31 +17,13 @@
 
 #pragma once
 
-#include <QPlainTextEdit>
+#include <vector>
+#include <QString>
 
-class EditInfoAreaWidget;
-
-class InfoAreaEnabledPlainTextEdit : public QPlainTextEdit
+class FormattedStringCache
 {
-	friend EditInfoAreaWidget;
-
-	Q_OBJECT;
+	static std::vector<QString> numberStrings;
 
 public:
-	explicit InfoAreaEnabledPlainTextEdit(QWidget* parent = nullptr);
-
-	~InfoAreaEnabledPlainTextEdit() override = default;
-
-	void AddInfoAreaWidget(EditInfoAreaWidget* infoWidget);
-
-protected:
-	void resizeEvent(QResizeEvent* event) override;
-
-protected slots:
-	void SetViewportMargins(int = 0);
-
-	void UpdateMetaInfoSidebar(const QRect& rect, int dy);
-
-private:
-	QList<EditInfoAreaWidget*> infoAreaWidgets;
+	static const QString& NumberAsString(uint64_t number);
 };

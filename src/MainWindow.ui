@@ -163,7 +163,13 @@
     <addaction name="actionAbout"/>
     <addaction name="actionAboutQT"/>
    </widget>
+   <widget class="QMenu" name="menuSearch">
+    <property name="title">
+     <string>Search</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuSearch"/>
    <addaction name="menuEdit"/>
    <addaction name="menuHelp"/>
   </widget>

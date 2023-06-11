@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.15.0)
 
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+
 project(QLogViewer VERSION 0.0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -34,7 +36,7 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
         GIT_TAG 0579ae3d976091d7d664aa9d2527e0d0cff25763
 )
-
+set(YAML_CPP_BUILD_TOOLS OFF)
 set(YAML_CPP_BUILD_TESTS OFF)
 FetchContent_MakeAvailable(yaml-cpp)
 target_link_libraries(QLogViewer yaml-cpp)
