@@ -1,7 +1,3 @@
-#include "LogSearch.h"
-
-#include "LogHolder.h"
-#include "Profiler.hpp"
 /*
  *   Copyright (C) 2023 GeorgH93
  *
@@ -19,7 +15,10 @@
  *   along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include "LogSearch.h"
+
+#include "LogHolder.h"
+#include "Profiler.hpp"
 
 LogSearch::LogSearch(const LogHolder* logHolderr, QPlainTextEdit* resultTextBox)
 {
@@ -49,7 +48,7 @@ void LogSearch::search(const QString& tokens, bool regex)
 		BlockProfiler buildProfiler("Filter entries");
 		for (const LogEntry* entry : logHolder->GetFilteredEntries())
 		{
-			if (!entry->originalMessage.contains(tokens))
+			if (!entry->components[LogComponent::MESSAGE].contains(tokens))
 			{
 				continue;
 			}
@@ -58,7 +57,7 @@ void LogSearch::search(const QString& tokens, bool regex)
 			{
 				string.append('\n');
 			}
-			string.append(entry->message);
+			string.append(entry->components[LogComponent::MESSAGE]);
 		}
 	}
 
