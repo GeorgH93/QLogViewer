@@ -45,6 +45,8 @@ public:
 
 	void on_searchTextEdit_textChanged();
 
+	void OpenSearchTab();
+
 private slots:
 	void OnSelectedLineChange() const;
 

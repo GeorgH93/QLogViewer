@@ -87,9 +87,16 @@ void LogViewerTab::HighlightCurrentLineInFullView() const
 	ui.fullLogView->setExtraSelections(extraSelections);
 }
 
+
 void LogViewerTab::on_searchTextEdit_textChanged()
 {
 	search->search(ui.searchTextEdit->toPlainText());
+}
+
+void LogViewerTab::OpenSearchTab()
+{
+	ui.tabWidget->setCurrentWidget(ui.searchResultsTab);
+	ui.searchTextEdit->setFocus();
 }
 
 void LogViewerTab::Load(QFile* file)
