@@ -55,6 +55,8 @@ private slots:
 
     void dragEnterEvent(QDragEnterEvent* event) override;
 
+    void OpenSearchTab();
+
 private:
     Ui::MainWindow *ui;
     QList<LogViewerTab*> logTabs;

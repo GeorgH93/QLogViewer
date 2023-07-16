@@ -17,42 +17,24 @@
 
 #pragma once
 
+#include <QString>
+
 #include "InfoAreaEnabledPlainTextEdit.h"
-#include <QStatusBar>
-#include <QPainter>
-#include <QStringBuilder>
-#include "LogParser.h"
 #include "LogHolder.h"
 
-QT_BEGIN_NAMESPACE
-class QPaintEvent;
-class QResizeEvent;
-class QSize;
-class QWidget;
-QT_END_NAMESPACE
-
-class LineNumberAreaWidget;
-class LogLevelAreaWidget;
-class MetaDataArea;
-
-class LogViewer : public InfoAreaEnabledPlainTextEdit
+class LogSearch
 {
-    Q_OBJECT
 
 public:
-    LogViewer(QWidget *parent = nullptr);
-    
-    void SetLogHolder(LogHolder* holder);
-    const LogHolder* GetLogHolder() const { return logHolder; };
-        
-private slots:
-    void HighlightCurrentLine();
+	LogSearch(const LogHolder* logHolderr, QPlainTextEdit* resultTextBox);
 
-    void UpdateLogView();
-    
+	~LogSearch();
+
+	void search(const QString& tokens, bool regex = true);
+
 private:
-    LineNumberAreaWidget* lineNumberArea;
-	LogLevelAreaWidget* logLevelArea;
+	const LogHolder* logHolder;
+	QPlainTextEdit* resultText;
 
-    LogHolder* logHolder;
+	static constexpr int SEARCH_LIMIT = 3;
 };

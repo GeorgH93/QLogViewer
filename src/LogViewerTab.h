@@ -20,6 +20,7 @@
 #include "ui_LogViewerTab.h"
 #include "LogHolder.h"
 #include <QIcon>
+#include "LogSearch.h"
 
 class LogViewer;
 
@@ -42,6 +43,10 @@ public:
 
 	[[nodiscard]] inline const QString& GetSystemInfo() const { return systemInfo; }
 
+	void on_searchTextEdit_textChanged();
+
+	void OpenSearchTab();
+
 private slots:
 	void OnSelectedLineChange() const;
 
@@ -57,4 +62,6 @@ private:
 	QIcon tabIcon;
 
 	LogHolder logHolder;
+
+	LogSearch* search;
 };

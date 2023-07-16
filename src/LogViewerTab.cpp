@@ -39,12 +39,17 @@ LogViewerTab::LogViewerTab(QFile* file, QWidget *parent)
 	setCollapsible(this->indexOf(mainView), false);
 	mainView->setCollapsible(mainView->indexOf(ui.logViewer), false);
 
+	// Init search
+	search = new LogSearch(ui.logViewer->GetLogHolder(), ui.searchResultsTextEdit);
+
 	connect(ui.logViewer, &LogViewer::cursorPositionChanged, this, &LogViewerTab::OnSelectedLineChange);
+	connect(ui.searchTextEdit, &LogViewer::textChanged, this, &LogViewerTab::on_searchTextEdit_textChanged);
 }
 
 LogViewerTab::~LogViewerTab()
 {
 	ui.logViewer = nullptr;
+	*search;
 }
 
 void LogViewerTab::OnSelectedLineChange() const
@@ -80,6 +85,18 @@ void LogViewerTab::HighlightCurrentLineInFullView() const
 	extraSelections.append(selection);
 
 	ui.fullLogView->setExtraSelections(extraSelections);
+}
+
+
+void LogViewerTab::on_searchTextEdit_textChanged()
+{
+	search->search(ui.searchTextEdit->toPlainText());
+}
+
+void LogViewerTab::OpenSearchTab()
+{
+	ui.tabWidget->setCurrentWidget(ui.searchResultsTab);
+	ui.searchTextEdit->setFocus();
 }
 
 void LogViewerTab::Load(QFile* file)

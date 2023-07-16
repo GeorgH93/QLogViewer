@@ -25,6 +25,9 @@
 #include <QCoreApplication>
 #include <QMimeData>
 #include <QMessageBox>
+#include <QShortcut>
+#include <QAction>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -35,6 +38,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->stackedWidget->setCurrentIndex(0);
     setAcceptDrops(true);
 
+    // Init keyboard shortcuts
+    QAction* openSearch = new QAction(this);
+    openSearch->setShortcut(Qt::CTRL | Qt::Key_F);
+    connect(openSearch, &QAction::triggered, this, &MainWindow::OpenSearchTab);
+    this->addAction(openSearch);
+
+    // UI bindings
 	connect(ui->tabWidget, &QTabWidget::currentChanged, this, &MainWindow::OnTabCurrentChanged);
 	connect(ui->tabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::OnTabCloseRequested);
 	connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::OnActionOpenTriggered);
@@ -138,6 +148,18 @@ void MainWindow::OnActionOpenTriggered()
 {
     const QStringList files = QFileDialog::getOpenFileNames(this, tr("Open File"), "./", "Log files (*.log);;Text files (*.txt);;Everything (*)");
     Open(files);
+}
+
+void MainWindow::OpenSearchTab()
+{
+
+    for(LogViewerTab* tab : logTabs)
+    {
+	    if(tab->isActiveWindow())
+	    {
+            tab->OpenSearchTab();
+	    }
+    }
 }
 
 void MainWindow::OnActionSettingsTriggered()
