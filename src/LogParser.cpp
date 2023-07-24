@@ -73,7 +73,7 @@ std::vector<LogEntry> LogParser::Parse()
 	{
 		inputStream = std::make_unique<QTextStream>(&logMessage, QIODevice::ReadOnly);
 	}
-	inputStream->setCodec("UTF-8");
+	inputStream->setEncoding(QStringConverter::Utf8);
 
 	FindLogProfile(inputStream.get());
 

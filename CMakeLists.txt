@@ -13,7 +13,7 @@ if(WIN32)
   set(CMAKE_WIN32_EXECUTABLE ON)
 endif()
 
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt6 COMPONENTS Widgets REQUIRED)
 
 
 file(GLOB SRC_FILES "src/*.cpp" "src/*.ui")
@@ -24,7 +24,7 @@ target_sources(QLogViewer PRIVATE ${SRC_FILES})
 include_directories(src)
 
 
-target_link_libraries(QLogViewer Qt5::Widgets)
+target_link_libraries(QLogViewer Qt6::Widgets)
 
 
 include(FetchContent)
@@ -32,7 +32,7 @@ include(FetchContent)
 FetchContent_Declare(
         yaml-cpp
         GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-        GIT_TAG 0579ae3d976091d7d664aa9d2527e0d0cff25763
+        GIT_TAG master
 )
 
 set(YAML_CPP_BUILD_TESTS OFF)

@@ -74,7 +74,7 @@ QString LogProfile::FilterName(QString name)
 		name = name.left(40);
 	}
 	// Remove special chars
-	name.remove(QRegExp("[¥/\\.?*|<>:]"));
+	name.remove(QRegularExpression("[¥/\\.?*|<>:]"));
 	return name;
 }
 
