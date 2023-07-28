@@ -85,7 +85,7 @@ std::vector<LogEntry> LogParser::Parse()
 	uint64_t currentLine = 1;
 	while (!(msg = GetNextMessage(*inputStream)).isEmpty())
 	{
-		if (!msg.isEmpty()) entries.push_back(ParseMessage(msg, currentLine));
+		entries.push_back(ParseMessage(msg, currentLine));
 		currentLine = lineNumber;
 	}
 	if (inputFile)
@@ -132,8 +132,7 @@ QString LogParser::GetNextMessage(QTextStream& inputStream)
 
 QString GetMatchFromRawData(const QRegularExpressionMatch& match, const QString& group)
 {
-	QStringView view = match.capturedView(group);
-	return QString::fromRawData((QChar*)view.utf16(), view.length());
+	return match.captured(group);
 }
 
 LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumber)
@@ -159,8 +158,15 @@ LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumbe
 		const QString type = GetMatchFromRawData(match, MATCH_GROUP_LEVEL);
 		e.level = GetLogLevel(type);
 
-		//TODO
-		e.timeStamp = QDateTime::fromString("20" + e.components[LogComponent::DATE] + ' ' + e.components[LogComponent::TIME], Qt::ISODateWithMs);
+		// Prefix 2-digit years with century; 4-digit years are used as-is
+		const QString& dateStr = e.components[LogComponent::DATE];
+		const QString fullDate = (dateStr.length() == 10) ? dateStr : ("20" + dateStr);
+		// Try space-separated formats (milliseconds, then seconds)
+		e.timeStamp = QDateTime::fromString(fullDate + ' ' + e.components[LogComponent::TIME], "yyyy-MM-dd hh:mm:ss.zzz");
+		if (!e.timeStamp.isValid())
+		{
+			e.timeStamp = QDateTime::fromString(fullDate + ' ' + e.components[LogComponent::TIME], "yyyy-MM-dd hh:mm:ss");
+		}
 	}
 	else
 	{

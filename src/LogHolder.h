@@ -64,14 +64,14 @@ public:
         return filteredLogEntries.size();
     }
 
-    [[nodiscard]] QStringView GetFilteredLineNumber(int editorLineNumber) const
+    [[nodiscard]] QStringView GetFilteredLineNumber(size_t editorLineNumber) const
     {
         //TODO handle multi line messages
         if (editorLineNumber >= filteredLogEntries.size()) return EMPTY_MESSAGE;
         return FormattedStringCache::NumberAsString(filteredLogEntries[editorLineNumber]->lineNumber);
     }
 
-    [[nodiscard]] QStringView GetFilteredEntryNumber(int editorLineNumber) const
+    [[nodiscard]] QStringView GetFilteredEntryNumber(size_t editorLineNumber) const
     {
         //TODO handle multi line messages
         if (editorLineNumber >= filteredLogEntries.size()) return EMPTY_MESSAGE;
@@ -94,7 +94,7 @@ public:
 	    return systemInfo;
     }
 
-	[[nodiscard]] inline const std::vector<std::shared_ptr<LogLevel>>& GetUsedLogLevels()
+	[[nodiscard]] inline const std::vector<std::shared_ptr<LogLevel>>& GetUsedLogLevels() const
 	{
 		return usedLogProfiles;
 	}

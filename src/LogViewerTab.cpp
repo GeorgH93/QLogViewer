@@ -49,9 +49,11 @@ LogViewerTab::~LogViewerTab()
 
 void LogViewerTab::OnSelectedLineChange() const
 {
-	const auto textCursor = ui.logViewer->textCursor();
 	const auto& entries = logHolder.GetFilteredEntries();
-	const auto lineNumber = entries[std::min(static_cast<size_t>(textCursor.blockNumber()), entries.size() - 1)]->lineNumber;
+	if (entries.empty()) return;
+	const auto textCursor = ui.logViewer->textCursor();
+	const auto blockNr = static_cast<size_t>(textCursor.blockNumber());
+	const auto lineNumber = entries[std::min(blockNr, entries.size() - 1)]->lineNumber;
 	QTextCursor cursor = ui.fullLogView->textCursor();
 	cursor.movePosition(QTextCursor::Start);
 	if (lineNumber > 0)

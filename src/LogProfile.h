@@ -84,8 +84,8 @@ public:
 	void SetFilePath(const std::string& newPath);
 
 
-	[[nodiscard]] inline const uint32_t GetLinesToCheckForDetection() const { return detectionLinesToCheck; }
-	[[nodiscard]] inline const uint32_t GetLinesToCheckForSystemInformation() const { return sysInfoLinesToCheck; }
+	[[nodiscard]] inline uint32_t GetLinesToCheckForDetection() const { return detectionLinesToCheck; }
+	[[nodiscard]] inline uint32_t GetLinesToCheckForSystemInformation() const { return sysInfoLinesToCheck; }
 	[[nodiscard]] inline const uint32_t GetSystemInfoLinesToCheck() const { return sysInfoLinesToCheck; }
 
 	void SetLinesToCheckForDetection(const uint32_t lines);

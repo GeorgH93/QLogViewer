@@ -24,6 +24,7 @@
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
 #include <fstream>
+#include <QDebug>
 
 AppConfig::AppConfig()
 	: filesToKeepInHistory(12)
@@ -48,10 +49,17 @@ void AppConfig::Load()
 void AppConfig::LoadConfig()
 {
 	if (!std::filesystem::exists(filePath)) return;
-	YAML::Node config = YAML::LoadFile(filePath);
-	copyOnWrite = config["CopyOnWrite"].as<bool>(copyOnWrite);
-	filesToKeepInHistory = config["FilesToKeepInHistory"].as<uint32_t>(filesToKeepInHistory);
-	highlightedLineBackgroundColor = config["HighlightedLineBackgroundColor"].as<QColor>(highlightedLineBackgroundColor);
+	try
+	{
+		YAML::Node config = YAML::LoadFile(filePath);
+		copyOnWrite = config["CopyOnWrite"].as<bool>(copyOnWrite);
+		filesToKeepInHistory = config["FilesToKeepInHistory"].as<uint32_t>(filesToKeepInHistory);
+		highlightedLineBackgroundColor = config["HighlightedLineBackgroundColor"].as<QColor>(highlightedLineBackgroundColor);
+	}
+	catch (const YAML::Exception& e)
+	{
+		qWarning() << "Failed to load config:" << e.what();
+	}
 }
 
 void AppConfig::Save()
@@ -59,6 +67,11 @@ void AppConfig::Save()
 	HandleBackupFiles();
 	std::ofstream stream;
 	stream.open(filePath, std::ios::out);
+	if (!stream.is_open())
+	{
+		qWarning() << "Failed to open config file for writing:" << filePath.c_str();
+		return;
+	}
 	YAML::Emitter configWriter(stream);
 
 	YAML::Node config;

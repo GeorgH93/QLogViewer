@@ -15,16 +15,18 @@
  *   along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
+#include <catch2/catch_test_macros.hpp>
+#include "LogFilter.h"
 #include "LogEntry.h"
 
-class LogFilter final
+TEST_CASE("LogFilter: default ShowEntry always returns true", "[LogFilter]")
 {
-public:
-	LogFilter() = default;
+	LogFilter filter;
+	LogEntry entry{};
+	CHECK(filter.ShowEntry(entry) == true);
+}
 
-	~LogFilter() = default;
-
-	bool ShowEntry(const LogEntry& logEntry) { return true; }
-};
+TEST_CASE("LogFilter: can be default constructed", "[LogFilter]")
+{
+	REQUIRE_NOTHROW([]() { LogFilter f; (void)f; }());
+}

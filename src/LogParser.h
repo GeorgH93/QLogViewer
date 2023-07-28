@@ -30,7 +30,7 @@ class LogProfile;
 class LogParser final
 {
 	QFile* inputFile = nullptr;
-	QString logMessage = nullptr;
+	QString logMessage;
 	QString readAhead;
 
 	uint64_t entryCount = 0;

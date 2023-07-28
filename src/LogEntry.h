@@ -34,12 +34,12 @@ public:
 
 struct LogEntry
 {
-	uint64_t entryNumber;
-	uint64_t lineNumber;
+	uint64_t entryNumber = 0;
+	uint64_t lineNumber = 0;
 	QDateTime timeStamp;
 	std::shared_ptr<LogLevel> level;
 	std::array<QString, 8> components;
 
-	std::chrono::microseconds sinceStart, sincePrevious;
+	std::chrono::microseconds sinceStart{0}, sincePrevious{0};
 	QString sinceStartString, sincePreviousString;
 };

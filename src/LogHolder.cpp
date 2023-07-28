@@ -36,10 +36,17 @@ void LogHolder::PreprocessLogEntries()
 	if (logEntries.empty()) return;
 	const LogEntry* first = &logEntries[0];
 	const LogEntry* previous = &logEntries[0];
-	LogEntry* current = nullptr;
 	for (auto& logEntry : logEntries)
 	{
-		current = &logEntry;
+		LogEntry* current = &logEntry;
+		if (current->timeStamp.isValid() && first->timeStamp.isValid())
+		{
+			current->sinceStart = std::chrono::microseconds(first->timeStamp.msecsTo(current->timeStamp) * 1000);
+		}
+		if (current->timeStamp.isValid() && previous->timeStamp.isValid())
+		{
+			current->sincePrevious = std::chrono::microseconds(previous->timeStamp.msecsTo(current->timeStamp) * 1000);
+		}
 		previous = current;
 	}
 }
@@ -75,8 +82,8 @@ void LogHolder::Load(const QString &log)
 
 void LogHolder::Load(const std::string &filePath)
 {
-	QFile f(QString(filePath.c_str()));
-	Load(&f);
+	LogParser parser(filePath);
+	Load(parser);
 }
 
 std::vector<const LogEntry*> LogHolder::Find(const std::function<bool(const LogEntry&)>& searchFilter) const

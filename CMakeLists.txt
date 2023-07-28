@@ -17,14 +17,17 @@ find_package(Qt6 COMPONENTS Widgets REQUIRED)
 
 
 file(GLOB SRC_FILES "src/*.cpp" "src/*.ui")
+# Remove main.cpp from the shared library sources
+list(FILTER SRC_FILES EXCLUDE REGEX ".*main\.cpp$")
+
+# Shared library of all sources (used by both app and tests)
+add_library(QLogViewerLib STATIC ${SRC_FILES})
+target_include_directories(QLogViewerLib PUBLIC src)
+target_link_libraries(QLogViewerLib Qt6::Widgets)
+
 add_executable(QLogViewer "src/main.cpp")
-
-target_sources(QLogViewer PRIVATE ${SRC_FILES})
-
-include_directories(src)
-
-
-target_link_libraries(QLogViewer Qt6::Widgets)
+target_include_directories(QLogViewer PRIVATE src)
+target_link_libraries(QLogViewer QLogViewerLib)
 
 
 include(FetchContent)
@@ -37,4 +40,24 @@ FetchContent_Declare(
 
 set(YAML_CPP_BUILD_TESTS OFF)
 FetchContent_MakeAvailable(yaml-cpp)
-target_link_libraries(QLogViewer yaml-cpp)
+target_link_libraries(QLogViewerLib yaml-cpp)
+
+# ---- Tests ----
+FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG v3.5.2
+)
+FetchContent_MakeAvailable(Catch2)
+
+file(GLOB TEST_SOURCES "tests/*.cpp")
+add_executable(QLogViewerTests ${TEST_SOURCES})
+target_include_directories(QLogViewerTests PRIVATE src)
+target_link_libraries(QLogViewerTests PRIVATE
+    QLogViewerLib
+    Catch2::Catch2
+)
+
+include(CTest)
+include(Catch)
+catch_discover_tests(QLogViewerTests)

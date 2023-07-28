@@ -25,6 +25,7 @@
 #include <filesystem>
 #include <fstream>
 #include <QFile>
+#include <QDebug>
 #include <yaml-cpp/yaml.h>
 
 // TODO cache yaml config tree??
@@ -38,11 +39,13 @@ LogProfile::LogProfile(const std::string& path)
 	// Allow easy usage of this constructor by handling external profile file locations
 	if (!path.empty() && path.rfind(AppConfig::GetProfilesLocation().toStdString(), 0) != 0)
 	{
-		const std::string& targetPath = AppConfig::GetProfilesLocation().toStdString() + filePath.substr(filePath.find_last_of("/"), filePath.size() - 1);
+		const auto lastSep = filePath.find_last_of("/\\");
+		const std::string fileName = (lastSep != std::string::npos) ? filePath.substr(lastSep + 1) : filePath;
+		const std::string targetPath = AppConfig::GetProfilesLocation().toStdString() + fileName;
 
-		std::filesystem::copy_file(filePath, targetPath);
-		
-		filePath = targetPath;
+		std::error_code ec;
+		std::filesystem::copy_file(filePath, targetPath, ec);
+		if (!ec) { filePath = targetPath; }
 	}
 
 	Load();
@@ -80,8 +83,8 @@ QString LogProfile::FilterName(QString name)
 
 const std::string LogProfile::GetFileName()
 {
-	std::string filepath = filePath.substr(filePath.find_last_of("/") + 1, filePath.length() - 1);
-	return filepath;
+	const auto lastSep = filePath.find_last_of("/\\");
+	return (lastSep != std::string::npos) ? filePath.substr(lastSep + 1) : filePath;
 }
 
 void LogProfile::SetProfileName(const QString& name)
@@ -137,7 +140,16 @@ void LogProfile::SetIcon(const QString& iconFilePath)
 void LogProfile::Load()
 {
 	auto defaultProfile = LogProfile::GetDefault();
-	YAML::Node config = YAML::LoadFile(filePath);
+	YAML::Node config;
+	try
+	{
+		config = YAML::LoadFile(filePath);
+	}
+	catch (const YAML::Exception& e)
+	{
+		qWarning() << "Failed to load profile from" << filePath.c_str() << ":" << e.what();
+		return;
+	}
 	profileName = config["Name"].as<QString>();
 	priority = config["Priority"].as<int>(1);
 	detectionRegex = QRegularExpression(config["DetectionRegex"].as<QString>(defaultProfile->detectionRegex.pattern()));

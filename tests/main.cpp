@@ -15,16 +15,14 @@
  *   along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+// Catch2 requires a QCoreApplication instance for Qt types to function correctly.
+// We provide a custom main that boots one before running any tests.
 
-#include "LogEntry.h"
+#include <catch2/catch_session.hpp>
+#include <QCoreApplication>
 
-class LogFilter final
+int main(int argc, char* argv[])
 {
-public:
-	LogFilter() = default;
-
-	~LogFilter() = default;
-
-	bool ShowEntry(const LogEntry& logEntry) { return true; }
-};
+	QCoreApplication app(argc, argv);
+	return Catch::Session().run(argc, argv);
+}
