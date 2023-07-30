@@ -22,6 +22,7 @@
 #include <QString>
 #include <QTextStream>
 #include <QRegularExpression>
+#include <memory>
 
 //TODO improve handling of multi line log messages
 
@@ -29,13 +30,12 @@ class LogProfile;
 
 class LogParser final
 {
-	QFile* inputFile = nullptr;
+	std::unique_ptr<QFile> inputFile;
 	QString logMessage;
 	QString readAhead;
 
 	uint64_t entryCount = 0;
 	uint64_t lineNumber = 0;
-	bool ownsFile = false;
 
 	QMap<QString, std::shared_ptr<LogLevel>> logLevelMap;
 
@@ -52,16 +52,17 @@ public:
 
 	QString version, device, os;
 
-	LogParser(const std::string& filePath) : inputFile(new QFile(QString(filePath.c_str()))), ownsFile(true)
+	LogParser(const std::string& filePath) : inputFile(std::make_unique<QFile>(QString::fromStdString(filePath)))
 	{}
 
+	// Note: takes ownership of the file pointer
 	explicit LogParser(QFile* file) : inputFile(file)
 	{}
 
 	explicit LogParser(const QString& log) : logMessage(log)
 	{}
 
-	~LogParser();
+	~LogParser() = default;
 
 	std::vector<LogEntry> Parse();
 

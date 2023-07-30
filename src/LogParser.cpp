@@ -32,13 +32,7 @@ namespace
 	const QString MATCH_GROUP_LEVEL = "level";
 }
 
-LogParser::~LogParser()
-{
-	if (ownsFile)
-	{
-		delete inputFile;
-	}
-}
+
 
 void LogParser::FindLogProfile(QTextStream* inputStream)
 {
@@ -67,7 +61,7 @@ std::vector<LogEntry> LogParser::Parse()
 	if (inputFile)
 	{
 		if (!inputFile->open(QIODevice::ReadOnly)) { return entries; }
-		inputStream = std::make_unique<QTextStream>(inputFile);
+		inputStream = std::make_unique<QTextStream>(inputFile.get());
 	}
 	else
 	{
