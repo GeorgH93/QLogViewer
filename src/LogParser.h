@@ -24,7 +24,6 @@
 #include <QRegularExpression>
 #include <memory>
 
-//TODO improve handling of multi line log messages
 
 class LogProfile;
 
@@ -77,7 +76,7 @@ private:
 
 	QString GetNextMessage(QTextStream& inputStream);
 
-	LogEntry ParseMessage(const QString& message, uint64_t startLineNumber);
+	LogEntry ParseMessage(const QString& message, uint64_t startLineNumber, uint8_t lineCount);
 
 	bool IsNewLogMessage(const QString& string);
 

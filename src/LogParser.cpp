@@ -73,13 +73,14 @@ std::vector<LogEntry> LogParser::Parse()
 
 	LoadRegexesFromProfile();
 
-	//TODO fill logType with known log types from profile
-
 	QString msg;
 	uint64_t currentLine = 1;
+	uint8_t lineCount = 1;
 	while (!(msg = GetNextMessage(*inputStream)).isEmpty())
 	{
-		entries.push_back(ParseMessage(msg, currentLine));
+		// Calculate how many lines this message spans
+		lineCount = static_cast<uint8_t>(1 + msg.count(QChar(0x000023CE))); // Count return symbols
+		entries.push_back(ParseMessage(msg, currentLine, lineCount));
 		currentLine = lineNumber;
 	}
 	if (inputFile)
@@ -129,11 +130,13 @@ QString GetMatchFromRawData(const QRegularExpressionMatch& match, const QString&
 	return match.captured(group);
 }
 
-LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumber)
+LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumber, uint8_t lineCount)
 {
 	LogEntry e;
 	e.entryNumber = ++entryCount;
 	e.lineNumber = startLineNumber;
+	e.lineCount = lineCount;
+	e.endLineNumber = startLineNumber + lineCount - 1;
 	const auto match = logEntryRegex.match(message);
 	TryExtractEnvironment(message);
 
