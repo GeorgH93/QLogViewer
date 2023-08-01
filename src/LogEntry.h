@@ -35,11 +35,16 @@ public:
 struct LogEntry
 {
 	uint64_t entryNumber = 0;
-	uint64_t lineNumber = 0;
+	uint64_t lineNumber = 0;       // Starting line number (1-based)
+	uint64_t endLineNumber = 0;    // Ending line number (inclusive, for multi-line messages)
+	uint8_t lineCount = 1;         // Number of lines this entry spans
 	QDateTime timeStamp;
 	std::shared_ptr<LogLevel> level;
 	std::array<QString, 8> components;
 
 	std::chrono::microseconds sinceStart{0}, sincePrevious{0};
 	QString sinceStartString, sincePreviousString;
+
+	// Helper to check if this is a multi-line entry
+	[[nodiscard]] bool IsMultiLine() const { return lineCount > 1; }
 };

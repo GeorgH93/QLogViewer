@@ -20,15 +20,27 @@
 #include "ui_LogViewerTab.h"
 #include "LogHolder.h"
 #include <QIcon>
+#include <QFutureWatcher>
+#include <memory>
 
 class LogViewer;
+
+struct LoadResult
+{
+	bool success = false;
+	QString errorMessage;
+	QString logContent;
+	LogHolder logHolder;
+	QString systemInfo;
+	QIcon tabIcon;
+};
 
 class LogViewerTab final : public QSplitter
 {
 	Q_OBJECT
 
 public:
-	LogViewerTab(QFile* file, QWidget *parent = nullptr);
+	LogViewerTab(const QString& filePath, QWidget *parent = nullptr);
 
 	~LogViewerTab() override;
 
@@ -42,13 +54,24 @@ public:
 
 	[[nodiscard]] inline const QString& GetSystemInfo() const { return systemInfo; }
 
+	[[nodiscard]] bool IsLoading() const { return isLoading; }
+
+signals:
+	void LoadCompleted(bool success, const QString& errorMessage);
+
 private slots:
 	void OnSelectedLineChange() const;
 
+	void OnLoadFinished();
+
 private:
-	void Load(QFile* file);
+	void SetupUI();
+
+	void DisplayLoadedContent(const LoadResult& result);
 
 	void HighlightCurrentLineInFullView() const;
+
+	static LoadResult LoadFileAsync(const QString& filePath);
 
 	Ui::LogViewerTabClass ui;
 
@@ -57,4 +80,7 @@ private:
 	QIcon tabIcon;
 
 	LogHolder logHolder;
+
+	QFutureWatcher<LoadResult>* loadWatcher = nullptr;
+	bool isLoading = false;
 };

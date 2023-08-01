@@ -23,16 +23,44 @@
 #include "Profiler.hpp"
 #include <QFile>
 #include <QFileInfo>
+#include <QProgressDialog>
+#include <QtConcurrent>
+#include <QMessageBox>
 
-LogViewerTab::LogViewerTab(QFile* file, QWidget *parent)
-	: QSplitter(parent), tabToolTip(file->fileName()), fileName(file->fileName())
+LogViewerTab::LogViewerTab(const QString& filePath, QWidget *parent)
+	: QSplitter(parent), tabToolTip(filePath), fileName(filePath)
 {
-	ui.setupUi(this);
+	SetupUI();
 
-	const QFileInfo fileInfo(file->fileName());
+	const QFileInfo fileInfo(filePath);
 	tabTitle = fileInfo.fileName();
 
-	Load(file);
+	// Start async loading
+	isLoading = true;
+	loadWatcher = new QFutureWatcher<LoadResult>(this);
+	connect(loadWatcher, &QFutureWatcher<LoadResult>::finished, this, &LogViewerTab::OnLoadFinished);
+
+	// Show loading state in the viewer
+	ui.logViewer->setPlainText(tr("Loading file: %1...").arg(tabTitle));
+
+	// Start the async load
+	QFuture<LoadResult> future = QtConcurrent::run(&LogViewerTab::LoadFileAsync, filePath);
+	loadWatcher->setFuture(future);
+}
+
+LogViewerTab::~LogViewerTab()
+{
+	if (loadWatcher && loadWatcher->isRunning())
+	{
+		loadWatcher->cancel();
+		loadWatcher->waitForFinished();
+	}
+	ui.logViewer = nullptr;
+}
+
+void LogViewerTab::SetupUI()
+{
+	ui.setupUi(this);
 
 	// Prevent collapsing the main log view
 	const auto mainView = ui.mainViewSplitter;
@@ -42,13 +70,84 @@ LogViewerTab::LogViewerTab(QFile* file, QWidget *parent)
 	connect(ui.logViewer, &LogViewer::cursorPositionChanged, this, &LogViewerTab::OnSelectedLineChange);
 }
 
-LogViewerTab::~LogViewerTab()
+LoadResult LogViewerTab::LoadFileAsync(const QString& filePath)
 {
-	ui.logViewer = nullptr;
+	LoadResult result;
+
+	QFile file(filePath);
+	if (!file.exists())
+	{
+		result.success = false;
+		result.errorMessage = QObject::tr("File does not exist: %1").arg(filePath);
+		return result;
+	}
+
+	if (!file.open(QIODevice::ReadOnly))
+	{
+		result.success = false;
+		result.errorMessage = QObject::tr("Cannot open file: %1\nError: %2")
+			.arg(filePath).arg(file.errorString());
+		return result;
+	}
+
+	// Read file content
+	result.logContent = QString(file.readAll());
+	file.close();
+
+	// Parse the log
+	result.logHolder.Load(result.logContent);
+	result.systemInfo = result.logHolder.GetSystemInfo();
+	result.tabIcon = result.logHolder.GetLogProfile()->GetIcon();
+	result.success = true;
+
+	return result;
+}
+
+void LogViewerTab::OnLoadFinished()
+{
+	if (!loadWatcher)
+	{
+		return;
+	}
+
+	LoadResult result = loadWatcher->result();
+	isLoading = false;
+
+	DisplayLoadedContent(result);
+
+	emit LoadCompleted(result.success, result.errorMessage);
+}
+
+void LogViewerTab::DisplayLoadedContent(const LoadResult& result)
+{
+	if (!result.success)
+	{
+		ui.logViewer->setPlainText(tr("Error loading file:\n%1").arg(result.errorMessage));
+		return;
+	}
+
+	// Store the loaded data
+	logHolder = std::move(const_cast<LoadResult&>(result).logHolder);
+	systemInfo = result.systemInfo;
+	tabIcon = result.tabIcon;
+
+	// Display full log in the full view
+	ui.fullLogView->setPlainText(result.logContent);
+
+	// Apply default filter (show all entries)
+	logHolder.Filter([](const LogEntry&) -> bool { return true; });
+
+	// Set up the filtered view
+	ui.logViewer->SetLogHolder(&logHolder);
 }
 
 void LogViewerTab::OnSelectedLineChange() const
 {
+	if (isLoading)
+	{
+		return;
+	}
+
 	const auto& entries = logHolder.GetFilteredEntries();
 	if (entries.empty()) return;
 	const auto textCursor = ui.logViewer->textCursor();
@@ -63,16 +162,14 @@ void LogViewerTab::OnSelectedLineChange() const
 	ui.fullLogView->setTextCursor(cursor);
 	ui.fullLogView->centerCursor();
 
-	if (true) //TODO check if highlighting is enabled
-	{
-		HighlightCurrentLineInFullView();
-	}
+	// Highlight current line in full view
+	HighlightCurrentLineInFullView();
 }
 
 void LogViewerTab::HighlightCurrentLineInFullView() const
 {
 	QList<QTextEdit::ExtraSelection> extraSelections;
-	
+
 	QTextEdit::ExtraSelection selection;
 
 	selection.format.setBackground(AppConfig::GetInstance()->GetHighlightedLineBackgroundColor());
@@ -83,32 +180,3 @@ void LogViewerTab::HighlightCurrentLineInFullView() const
 
 	ui.fullLogView->setExtraSelections(extraSelections);
 }
-
-void LogViewerTab::Load(QFile* file)
-{
-	if (!file->open(QIODevice::ReadOnly))
-	{
-		// TODO handle error
-		return;
-	}
-	QString log;
-	{
-		BlockProfiler profileLoadFile("Load log file to RAM");
-		log = QString(file->readAll());
-	}
-	file->close();
-	{
-		BlockProfiler profilerSetFullLog("Set full log view");
-		// Based on application_621.log: Below method call causes 94MB of memory usage
-		ui.fullLogView->setPlainText(log);
-	}
-	
-	logHolder.Load(log);
-	logHolder.Filter([](auto) -> bool { return true; }); //TODO
-	systemInfo = logHolder.GetSystemInfo();
-	tabIcon = logHolder.GetLogProfile()->GetIcon();
-	
-	ui.logViewer->SetLogHolder(&logHolder);
-	
-}
-

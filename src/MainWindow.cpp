@@ -87,28 +87,40 @@ void MainWindow::Open(const QStringList& files)
 
 void MainWindow::Open(const QString& filePath)
 {
-    QFile file(filePath);
-	if (file.exists())
-	{ //TODO run async
-		LogViewerTab* viewerTab = new LogViewerTab(&file, ui->tabWidget);
-		AddTab(viewerTab);
-		RecentFiles::GetInstance().Add(filePath);
-	}
-	else
-	{
-		QMessageBox::warning(this, tr("File not found"), tr("Cannot load file:\n%1").arg(filePath));
-	}
+	// Create the tab - it will handle async loading and error display internally
+	LogViewerTab* viewerTab = new LogViewerTab(filePath, ui->tabWidget);
+	AddTab(viewerTab);
+	RecentFiles::GetInstance().Add(filePath);
 }
 
 void MainWindow::AddTab(LogViewerTab* viewerTab)
 {
     ui->stackedWidget->setCurrentIndex(1); // Switch to tab view
     logTabs.append(viewerTab);
-    ui->tabWidget->addTab(viewerTab, viewerTab->GetTabTitle());
-    ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
-    const int index = ui->tabWidget->currentIndex();
+    const int index = ui->tabWidget->addTab(viewerTab, viewerTab->GetTabTitle());
+    ui->tabWidget->setCurrentIndex(index);
     ui->tabWidget->setTabToolTip(index, viewerTab->GetTabToolTip());
-    ui->tabWidget->setTabIcon(index, viewerTab->GetTabIcon());
+
+    // Connect to update tab icon and info when loading completes
+    connect(viewerTab, &LogViewerTab::LoadCompleted, this, [this, viewerTab](bool success, const QString& errorMessage) {
+        const int tabIndex = ui->tabWidget->indexOf(viewerTab);
+        if (tabIndex >= 0)
+        {
+            ui->tabWidget->setTabIcon(tabIndex, viewerTab->GetTabIcon());
+            // Update status bar if this is the current tab
+            if (ui->tabWidget->currentIndex() == tabIndex)
+            {
+                if (success)
+                {
+                    statusBar()->showMessage(viewerTab->GetSystemInfo());
+                }
+                else
+                {
+                    statusBar()->showMessage(tr("Failed to load: %1").arg(errorMessage));
+                }
+            }
+        }
+    });
 }
 
 void MainWindow::OnTabCurrentChanged(int index)

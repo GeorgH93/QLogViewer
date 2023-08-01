@@ -60,22 +60,43 @@ public:
 
     [[nodiscard]] size_t GetFilteredLineCount() const
     {
-        //TODO handle multi line messages
-        return filteredLogEntries.size();
+        // Count total lines including multi-line entries
+        size_t totalLines = 0;
+        for (const auto* entry : filteredLogEntries)
+        {
+            totalLines += entry->lineCount;
+        }
+        return totalLines;
     }
 
     [[nodiscard]] QStringView GetFilteredLineNumber(size_t editorLineNumber) const
     {
-        //TODO handle multi line messages
-        if (editorLineNumber >= filteredLogEntries.size()) return EMPTY_MESSAGE;
-        return FormattedStringCache::NumberAsString(filteredLogEntries[editorLineNumber]->lineNumber);
+        // Find the entry that contains the given editor line number
+        size_t currentLine = 0;
+        for (const auto* entry : filteredLogEntries)
+        {
+            if (editorLineNumber >= currentLine && editorLineNumber < currentLine + entry->lineCount)
+            {
+                return FormattedStringCache::NumberAsString(entry->lineNumber);
+            }
+            currentLine += entry->lineCount;
+        }
+        return EMPTY_MESSAGE;
     }
 
     [[nodiscard]] QStringView GetFilteredEntryNumber(size_t editorLineNumber) const
     {
-        //TODO handle multi line messages
-        if (editorLineNumber >= filteredLogEntries.size()) return EMPTY_MESSAGE;
-        return FormattedStringCache::NumberAsString(filteredLogEntries[editorLineNumber]->entryNumber);
+        // Find the entry that contains the given editor line number
+        size_t currentLine = 0;
+        for (const auto* entry : filteredLogEntries)
+        {
+            if (editorLineNumber >= currentLine && editorLineNumber < currentLine + entry->lineCount)
+            {
+                return FormattedStringCache::NumberAsString(entry->entryNumber);
+            }
+            currentLine += entry->lineCount;
+        }
+        return EMPTY_MESSAGE;
     }
 
     [[nodiscard]] inline uint64_t GetMaxLineNumber() const
