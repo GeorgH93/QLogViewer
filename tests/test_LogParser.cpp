@@ -225,3 +225,220 @@ TEST_CASE("LogParser: TIME component is extracted", "[LogParser]")
 	REQUIRE(entries.size() == 1);
 	CHECK(!entries[0].components[LogComponent::TIME].isEmpty());
 }
+
+
+// ---------------------------------------------------------------------------
+// Edge cases - Empty lines
+// Note: The parser appears to skip empty lines (no entries produced)
+// ---------------------------------------------------------------------------
+TEST_CASE("LogParser: single empty line produces no entries", "[LogParser]")
+	{
+	auto entries = ParseString("\n");
+	CHECK(entries.empty());  // Empty lines are skipped
+}
+
+TEST_CASE("LogParser: multiple empty lines produce no entries", "[LogParser]")
+	{
+	auto entries = ParseString("\n\n\n");
+	CHECK(entries.empty());  // Empty lines are skipped
+}
+
+TEST_CASE("LogParser: leading empty line is skipped", "[LogParser]")
+	{
+	const QString log = "\n" + LINE_INFO;
+	auto entries = ParseString(log);
+	REQUIRE(entries.size() == 1);  // Only the INFO line produces an entry
+}
+
+TEST_CASE("LogParser: trailing empty line produces no extra entry", "[LogParser]")
+{
+	const QString log = LINE_INFO + "\n";
+	auto entries = ParseString(log);
+	REQUIRE(entries.size() == 1);  // No extra entry from trailing newline
+}
+
+TEST_CASE("LogParser: empty lines between log entries are skipped", "[LogParser]")
+{
+	const QString log = LINE_INFO + "\n\n" + LINE_ERROR;
+	auto entries = ParseString(log);
+	CHECK(entries.size() == 2);  // Empty line is skipped
+}
+
+// ---------------------------------------------------------------------------
+// Edge cases - Whitespace
+// ---------------------------------------------------------------------------
+TEST_CASE("LogParser: line with only spaces is skipped or produces empty entry", "[LogParser]")
+{
+	auto entries = ParseString("   \n");
+	// Whitespace-only lines may be skipped or produce an entry
+	CHECK((entries.empty() || (entries.size() == 1)));
+}
+
+TEST_CASE("LogParser: line with tabs produces entry", "[LogParser]")
+{
+	auto entries = ParseString("\t\t\t\n");
+	REQUIRE(entries.size() == 1);
+}
+
+// ---------------------------------------------------------------------------
+// Edge cases - Malformed input
+// ---------------------------------------------------------------------------
+TEST_CASE("LogParser: line with partial date format", "[LogParser]")
+{
+	// Missing parts of the date/time format
+	auto entries = ParseString("23-01-15 INFO message\n");
+	REQUIRE(entries.size() == 1);
+	// Should still produce an entry, just not a full match
+	CHECK(!entries[0].components[LogComponent::MESSAGE].isEmpty());
+}
+
+TEST_CASE("LogParser: line with invalid time format", "[LogParser]")
+{
+	auto entries = ParseString("23-01-15 99:99:99.999 INFO message in f() function at line 1\n");
+	REQUIRE(entries.size() == 1);
+	// Time might not parse correctly, but entry should still exist
+	CHECK(!entries[0].timeStamp.isValid());
+}
+
+TEST_CASE("LogParser: line with missing message part", "[LogParser]")
+{
+	auto entries = ParseString("23-01-15 10:00:00.000 INFO\n");
+	REQUIRE(entries.size() == 1);
+	// Entry should exist even without full "in X() function at line Y" part
+}
+
+TEST_CASE("LogParser: binary garbage in log is handled gracefully", "[LogParser]")
+{
+	// Binary garbage may be skipped or produce an entry - just ensure no crash
+	QString garbage = QString::fromUtf8("\x01\x02\x03\xFF\xFE\n");
+	auto entries = ParseString(garbage);
+	// Parser should handle this without crashing
+	// It may skip the line or produce an entry
+	CHECK(true);  // If we got here, no crash occurred
+}
+
+TEST_CASE("LogParser: very long line", "[LogParser]")
+{
+	QString longLine = "23-01-15 10:00:00.000 INFO ";
+	longLine += QString(100000, 'x');
+	longLine += " in f() function at line 1\n";
+
+	auto entries = ParseString(longLine);
+	REQUIRE(entries.size() == 1);
+	CHECK(entries[0].components[LogComponent::MESSAGE].length() >= 100000);
+}
+
+// ---------------------------------------------------------------------------
+// Edge cases - Special characters
+// ---------------------------------------------------------------------------
+TEST_CASE("LogParser: message with unicode characters", "[LogParser]")
+{
+	const QString log = "23-01-15 10:00:00.000 INFO Unicode: 你好世界 🌍 in f() function at line 1\n";
+	auto entries = ParseString(log);
+	REQUIRE(entries.size() == 1);
+	CHECK(entries[0].components[LogComponent::MESSAGE].contains("你好世界"));
+}
+
+TEST_CASE("LogParser: message with newlines escaped in message", "[LogParser]")
+{
+	// This tests how the parser handles a message containing literal \n text (not actual newline)
+	const QString log = "23-01-15 10:00:00.000 INFO Error: \\n in data in f() function at line 1\n";
+	auto entries = ParseString(log);
+	REQUIRE(entries.size() == 1);
+}
+
+TEST_CASE("LogParser: message with special regex characters", "[LogParser]")
+{
+	const QString log = "23-01-15 10:00:00.000 INFO Special: [test] (group) $var in f() function at line 1\n";
+	auto entries = ParseString(log);
+	REQUIRE(entries.size() == 1);
+	CHECK(entries[0].components[LogComponent::MESSAGE].contains("[test]"));
+}
+
+// ---------------------------------------------------------------------------
+// Line number tracking
+// Note: Empty lines are skipped by the parser
+// ---------------------------------------------------------------------------
+TEST_CASE("LogParser: line numbers are sequential", "[LogParser]")
+{
+	const QString log = LINE_INFO + LINE_ERROR;
+	auto entries = ParseString(log);
+	REQUIRE(entries.size() == 2);
+	CHECK(entries[0].lineNumber == 1);
+	CHECK(entries[1].lineNumber == 2);
+}
+
+TEST_CASE("LogParser: entry numbers are sequential", "[LogParser]")
+{
+	// Use two entries without empty line between
+	const QString log = LINE_INFO + LINE_ERROR;
+	auto entries = ParseString(log);
+	REQUIRE(entries.size() == 2);
+	CHECK(entries[0].entryNumber == 1);
+	CHECK(entries[1].entryNumber == 2);
+}
+
+// Profile detection edge cases
+// ---------------------------------------------------------------------------
+TEST_CASE("LogParser: GetUsedProfile returns profile after parsing empty string", "[LogParser]")
+{
+	LogParser parser(QString(""));
+	parser.Parse();
+	// Even with empty input, a profile should be assigned (default)
+	CHECK(parser.GetUsedProfile() != nullptr);
+}
+
+// ---------------------------------------------------------------------------
+// System info edge cases
+// ---------------------------------------------------------------------------
+TEST_CASE("LogParser: version without newline is extracted", "[LogParser]")
+{
+	const QString log = "Version: 1.2.3";  // No newline at end
+	LogParser parser(log);
+	parser.Parse();
+	CHECK(parser.version.contains("1.2.3"));
+}
+
+TEST_CASE("LogParser: OS info is extracted", "[LogParser]")
+{
+	const QString log = "OS: Windows 10.0\n" + LINE_INFO;
+	LogParser parser(log);
+	parser.Parse();
+	CHECK(parser.os.contains("Windows"));
+}
+
+TEST_CASE("LogParser: multiple version lines uses first", "[LogParser]")
+{
+	const QString log = "Version: 1.0.0\nVersion: 2.0.0\n" + LINE_INFO;
+	LogParser parser(log);
+	parser.Parse();
+	CHECK(parser.version.contains("1.0.0"));
+}
+
+// ---------------------------------------------------------------------------
+// Log levels edge cases
+// ---------------------------------------------------------------------------
+TEST_CASE("LogParser: unknown log level is handled", "[LogParser]")
+{
+	const QString log = "23-01-15 10:00:00.000 CUSTOM message in f() function at line 1\n";
+	auto entries = ParseString(log);
+	REQUIRE(entries.size() == 1);
+	CHECK(entries[0].level != nullptr);
+	CHECK(entries[0].level->GetLevelName() == "CUSTOM");
+}
+
+TEST_CASE("LogParser: log level with numbers", "[LogParser]")
+{
+	const QString log = "23-01-15 10:00:00.000 LEVEL1 message in f() function at line 1\n";
+	auto entries = ParseString(log);
+	REQUIRE(entries.size() == 1);
+	CHECK(entries[0].level->GetLevelName() == "LEVEL1");
+}
+
+TEST_CASE("LogParser: log level with underscore", "[LogParser]")
+{
+	const QString log = "23-01-15 10:00:00.000 LOG_LEVEL message in f() function at line 1\n";
+	auto entries = ParseString(log);
+	REQUIRE(entries.size() == 1);
+	CHECK(entries[0].level->GetLevelName() == "LOG_LEVEL");
+}
