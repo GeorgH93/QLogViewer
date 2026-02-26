@@ -44,7 +44,7 @@ public:
 		int maxChars = 0;
 		for(const auto& level : usedLevels)
 		{
-			maxChars = std::max(maxChars, level->GetLevelName().length());
+			maxChars = std::max(maxChars, (int)level->GetLevelName().length());
 		}
 		SetWidthForCharCount(maxChars);
 	}

@@ -114,6 +114,7 @@ void LogViewerTab::Load(QFile* file)
 	file->close();
 	{
 		BlockProfiler profilerSetFullLog("Set full log view");
+		// Based on application_621.log: Below method call causes 94MB of memory usage
 		ui.fullLogView->setPlainText(log);
 	}
 	

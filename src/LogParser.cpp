@@ -21,6 +21,17 @@
 #include <QRegularExpression>
 #include <memory>
 
+namespace
+{
+	const QString MATCH_GROUP_DATE = "date";
+	const QString MATCH_GROUP_TIME = "time";
+	const QString MATCH_GROUP_THREAD = "thread";
+	const QString MATCH_GROUP_SUBSYS = "subsys";
+	const QString MATCH_GROUP_MESSAGE = "message";
+	const QString MATCH_GROUP_WHERE = "where";
+	const QString MATCH_GROUP_LEVEL = "level";
+}
+
 LogParser::~LogParser()
 {
 	if (ownsFile)
@@ -62,7 +73,7 @@ std::vector<LogEntry> LogParser::Parse()
 	{
 		inputStream = std::make_unique<QTextStream>(&logMessage, QIODevice::ReadOnly);
 	}
-	inputStream->setCodec("UTF-8");
+	inputStream->setEncoding(QStringConverter::Utf8);
 
 	FindLogProfile(inputStream.get());
 
@@ -119,6 +130,12 @@ QString LogParser::GetNextMessage(QTextStream& inputStream)
 	return message;
 }
 
+QString GetMatchFromRawData(const QRegularExpressionMatch& match, const QString& group)
+{
+	QStringView view = match.capturedView(group);
+	return QString::fromRawData((QChar*)view.utf16(), view.length());
+}
+
 LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumber)
 {
 	LogEntry e;
@@ -126,17 +143,21 @@ LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumbe
 	e.lineNumber = startLineNumber;
 	const auto match = logEntryRegex.match(message);
 	TryExtractEnvironment(message);
+
+	e.components[LogComponent::ORIGINAL_MESSAGE] = message;
+
 	if (match.hasMatch())
 	{
-		e.components[LogComponent::DATE] = match.captured("date");
-		e.components[LogComponent::TIME] = match.captured("time");
-		e.components[LogComponent::THREAD] = match.captured("thread");
-		e.components[LogComponent::SUB_SYS] = match.captured("subsys");
-		e.components[LogComponent::MESSAGE] = match.captured("message");
-		e.components[LogComponent::WHERE] = match.captured("where");
+		e.components[LogComponent::DATE] = GetMatchFromRawData(match, MATCH_GROUP_DATE);
+		e.components[LogComponent::TIME] = GetMatchFromRawData(match, MATCH_GROUP_TIME);
+		e.components[LogComponent::THREAD] = GetMatchFromRawData(match, MATCH_GROUP_THREAD);
+		e.components[LogComponent::SUB_SYS] = GetMatchFromRawData(match, MATCH_GROUP_SUBSYS);
+		e.components[LogComponent::MESSAGE] = GetMatchFromRawData(match, MATCH_GROUP_MESSAGE);
+		e.components[LogComponent::WHERE] = GetMatchFromRawData(match, MATCH_GROUP_WHERE);
 
 		// Read log level
-		e.level = GetLogLevel(match.captured("level"));
+		const QString type = GetMatchFromRawData(match, MATCH_GROUP_LEVEL);
+		e.level = GetLogLevel(type);
 
 		//TODO
 		e.timeStamp = QDateTime::fromString("20" + e.components[LogComponent::DATE] + ' ' + e.components[LogComponent::TIME], Qt::ISODateWithMs);
@@ -146,7 +167,6 @@ LogEntry LogParser::ParseMessage(const QString& message, uint64_t startLineNumbe
 		e.components[LogComponent::MESSAGE] = message;
 		e.level = GetLogLevel("");
 	}
-	e.components[LogComponent::ORIGINAL_MESSAGE] = message;
 
 	return e;
 }

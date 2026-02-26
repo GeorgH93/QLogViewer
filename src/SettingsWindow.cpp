@@ -100,7 +100,7 @@ void SettingsWindow::on_logLevelTable_cellClicked(int row, int column)
 	if (color.isValid())
 	{
 		ui.logLevelTable->setItem(row, column, new QTableWidgetItem(color.name()));
-		ui.logLevelTable->item(row, column)->setBackgroundColor(color);
+		ui.logLevelTable->item(row, column)->setBackground(color);
 	}
 }
 
